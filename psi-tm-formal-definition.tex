@@ -49,27 +49,27 @@ where:
 \item $q \in Q$ -- current state
 \item $\alpha \in \Gamma^*$ -- tape content to the left of the head
 \item $\beta \in \Gamma^*$ -- tape content to the right of the head
-\item $\psi \in \Psi$ -- introspective state, where $\Psi$ is a finite set of introspective metadata
+\item $\psi \in \Psi_k$ -- introspective state, where $\Psi_k$ is the set of introspective metadata of depth $\leq k$
 \end{itemize}
 \end{definition}
 
 \begin{definition}[Introspective Function]
-The function $\iota: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi$ defines introspective metadata:
-$$\iota(\alpha, \beta, k) = \psi$$
+The function $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ defines introspective metadata:
+$$\iota_k(\alpha, \beta, k) = \psi$$
 where $k$ is the limitation on introspection depth, and $\psi$ contains only structural information of depth at most $k$.
 \end{definition}
 
 \subsection{Transition Function}
 
 \begin{definition}[Psi-TM Transition Function]
-The transition function $\delta: Q \times \Gamma \times \Psi \to Q \times \Gamma \times \{L, R, S\}$ is defined as:
+The transition function $\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$ is defined as:
 $$\delta(q, a, \psi) = (q', b, d)$$
 where:
 \begin{itemize}
 \item $q, q' \in Q$
 \item $a, b \in \Gamma$
 \item $d \in \{L, R, S\}$ -- head movement direction
-\item $\psi \in \Psi$ -- current introspective metadata
+\item $\psi \in \Psi_k$ -- current introspective metadata
 \end{itemize}
 \end{definition}
 
@@ -77,8 +77,8 @@ where:
 
 \begin{definition}[k-Limited Introspection]
 Introspection is called k-limited if for any $\alpha, \beta \in \Gamma^*$:
-$$|\iota(\alpha, \beta, k)| \leq f(k)$$
-where $f: \mathbb{N} \to \mathbb{N}$ is a polynomial function, and $\iota$ cannot access the complete tape content, only structural patterns of depth $k$.
+$$|\iota_k(\alpha, \beta, k)| \leq f(k)$$
+where $f: \mathbb{N} \to \mathbb{N}$ is a polynomial function, and $\iota_k$ cannot access the complete tape content, only structural patterns of depth $k$.
 \end{definition}
 
 \section{Basic Properties of Psi-TM}
@@ -92,11 +92,11 @@ For any standard Turing machine $M$, there exists an equivalent Psi-TM $M_{psi}$
 \begin{proof}
 Let $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$ be a standard Turing machine.
 
-We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept}, q_{reject}, \iota)$ as follows:
+We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept}, q_{reject}, \iota_k)$ as follows:
 
 1. $Q_{psi} = Q \cup Q_{psi}$, where $Q_{psi} = \emptyset$ initially
-2. $\iota(\alpha, \beta, k) = \emptyset$ for all $\alpha, \beta, k$ (empty introspection)
-3. $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$
+2. $\iota_k(\alpha, \beta, k) = \emptyset$ for all $\alpha, \beta, k$ (empty introspection)
+3. $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$ where $\delta_{psi}: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$ and $\delta: Q \times \Gamma \to Q \times \Gamma \times \{L, R, S\}$ is the standard TM transition function
 
 Clearly, $M_{psi}$ simulates $M$ step-by-step, since introspection is not used in standard states.
 
@@ -109,7 +109,7 @@ Conversely, any Psi-TM can be simulated by a standard Turing machine by explicit
 There exist problems $L$ such that:
 \begin{enumerate}
 \item $L \in \text{PSPACE}$ for standard Turing machines
-\item $L \in \text{P}$ for Psi-TM with suitable introspection
+\item $L \in \text{Psi-P}_k$ for Psi-TM with suitable introspection
 \end{enumerate}
 \end{theorem}
 
@@ -121,11 +121,11 @@ Consider the Structural Pattern Recognition (SPR) problem:
 For standard Turing machines, this problem requires $\Omega(n^k)$ time, as it is necessary to track $k$ levels of nesting.
 
 For Psi-TM with k-limited introspection:
-1. $\iota(w, \varepsilon, k)$ provides structural information about patterns of depth $\leq k$
+1. $\iota_k(w, \varepsilon, k)$ provides structural information about patterns of depth $\leq k$
 2. The machine can make decisions based on introspective metadata
 3. Execution time: $O(n)$
 
-Thus, SPR $\in \text{P}$ for Psi-TM, but $\notin \text{P}$ for standard Turing machines (under standard complexity assumptions).
+Thus, SPR $\in \text{Psi-P}_k$ for Psi-TM, but $\notin \text{P}$ for standard Turing machines (under standard complexity assumptions).
 \end{proof}
 
 \subsection{Minimality of Introspection}
@@ -157,11 +157,32 @@ Psi-TM is a strict subset of SA-TM, where introspection is limited to constant d
 Let $M_{sa}$ be an SA-TM with full introspection.
 
 We construct an equivalent Psi-TM $M_{psi}$:
-1. $\iota(\alpha, \beta, k) = \iota_{sa}(\alpha, \beta) \cap \Psi_k$, where $\Psi_k$ is metadata of depth $\leq k$
-2. $\delta_{psi}(q, a, \psi) = \delta_{sa}(q, a, \psi)$ for $\psi \in \Psi_k$
+1. $\iota_k(\alpha, \beta, k) = \iota_{sa}(\alpha, \beta) \cap \Psi_k$, where $\Psi_k$ is metadata of depth $\leq k$
+2. $\delta_{psi}(q, a, \psi) = \delta_{sa}(q, a, \psi)$ for $\psi \in \Psi_k$ where $\delta_{psi}: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$ and $\delta_{sa}$ is the SA-TM transition function
 
 The constraint $k = O(1)$ ensures minimality of introspection while preserving the ability to bypass complexity barriers.
 \end{proof}
+
+\section{Complexity Classes}
+
+\begin{definition}[Psi-P Class]
+The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with k-limited introspection in polynomial time.
+\end{definition}
+
+\begin{definition}[Psi-NP Class]
+The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with k-limited introspection.
+\end{definition}
+
+\begin{definition}[Psi-PSPACE Class]
+The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with k-limited introspection using polynomial space.
+\end{definition}
+
+\begin{theorem}[Class Hierarchy]
+For any $k_1 < k_2 = O(1)$:
+$$\text{Psi-P}_{k_1} \subseteq \text{Psi-P}_{k_2} \subseteq \text{PSPACE}$$
+$$\text{Psi-NP}_{k_1} \subseteq \text{Psi-NP}_{k_2} \subseteq \text{NPSPACE}$$
+$$\text{Psi-PSPACE}_{k_1} \subseteq \text{Psi-PSPACE}_{k_2} \subseteq \text{EXPSPACE}$$
+\end{theorem}
 
 \section{Conclusion}
 

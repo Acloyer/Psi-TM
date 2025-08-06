@@ -170,7 +170,7 @@ Verifier algorithm:
 \item Parse transcript $w = (q_0, \gamma_0), (q_1, \gamma_1), \ldots, (q_t, \gamma_t)$
 \item For each step $(q_j, \gamma_j) \to (q_{j+1}, \gamma_{j+1})$:
    \begin{itemize}
-   \item Verify $\delta(q_j, \gamma_j, \psi_j) = (q_{j+1}, \gamma_{j+1}, \text{move})$
+   \item Verify $\delta(q_j, \gamma_j, \psi_j) = (q_{j+1}, \gamma_{j+1}, \text{move})$ where $\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$
    \item Validate introspection $\psi_j = \iota_k(\cdot, \cdot, k)$ with $k = O(1)$
    \item Check oracle queries against $O_\Psi$
    \end{itemize}
@@ -326,10 +326,15 @@ The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with k-l
 The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with k-limited introspection.
 \end{definition}
 
+\begin{definition}[Psi-PSPACE Class]
+The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with k-limited introspection using polynomial space.
+\end{definition}
+
 \begin{theorem}[Class Hierarchy]
 For any $k_1 < k_2 = O(1)$:
 $$\text{Psi-P}_{k_1} \subseteq \text{Psi-P}_{k_2} \subseteq \text{PSPACE}$$
 $$\text{Psi-NP}_{k_1} \subseteq \text{Psi-NP}_{k_2} \subseteq \text{NPSPACE}$$
+$$\text{Psi-PSPACE}_{k_1} \subseteq \text{Psi-PSPACE}_{k_2} \subseteq \text{EXPSPACE}$$
 \end{theorem}
 
 \section{Future Work}
