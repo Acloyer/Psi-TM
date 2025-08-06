@@ -98,7 +98,7 @@ We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept},
 2. $\iota_k(\alpha, \beta, k) = \emptyset$ for all $\alpha, \beta, k$ (empty introspection)
 3. $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$ where $\delta_{psi}: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$ and $\delta: Q \times \Gamma \to Q \times \Gamma \times \{L, R, S\}$ is the standard TM transition function
 
-Clearly, $M_{psi}$ simulates $M$ step-by-step, since introspection is not used in standard states.
+\textbf{Simulation Verification:} $M_{psi}$ simulates $M$ step-by-step because introspection is not used in standard states, and the transition function $\delta_{psi}$ reduces to $\delta$ when $\psi = \emptyset$.
 
 Conversely, any Psi-TM can be simulated by a standard Turing machine by explicitly encoding introspective metadata in the state.
 \end{proof}
