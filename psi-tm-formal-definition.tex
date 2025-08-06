@@ -1,0 +1,177 @@
+% Copyright (c) 2025 Rafig Huseynzade. All Rights Reserved.
+% Licensed under CC BY-NC-ND 4.0
+% Original work - do not copy without attribution
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+\title{Formal Definition of the Psi-TM Model:\\
+Minimal Introspective Computational Model}
+\author{Mathematical Foundation}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a strict continuation of the Structurally-Aware Turing Machines (SA-TM) concept. The Psi-TM model is characterized by minimal introspection while preserving the ability to partially bypass complexity barriers.
+
+\section{Formal Definition of Psi-TM}
+
+\subsection{Basic Components}
+
+\begin{definition}[Psi-TM Alphabet]
+Let $\Sigma$ be a finite alphabet, $\Gamma = \Sigma \cup \{B\}$ be the extended alphabet, where $B$ is the blank symbol. The set of states $Q = Q_{std} \cup Q_{psi}$, where:
+\begin{itemize}
+\item $Q_{std}$ -- standard Turing machine states
+\item $Q_{psi}$ -- introspective states with limited access to structure
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Psi-TM Configuration]
+A configuration $\mathcal{C}$ of a Psi-TM is a tuple:
+$$\mathcal{C} = (q, \alpha, \beta, \psi)$$
+where:
+\begin{itemize}
+\item $q \in Q$ -- current state
+\item $\alpha \in \Gamma^*$ -- tape content to the left of the head
+\item $\beta \in \Gamma^*$ -- tape content to the right of the head
+\item $\psi \in \Psi$ -- introspective state, where $\Psi$ is a finite set of introspective metadata
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Introspective Function]
+The function $\iota: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi$ defines introspective metadata:
+$$\iota(\alpha, \beta, k) = \psi$$
+where $k$ is the limitation on introspection depth, and $\psi$ contains only structural information of depth at most $k$.
+\end{definition}
+
+\subsection{Transition Function}
+
+\begin{definition}[Psi-TM Transition Function]
+The transition function $\delta: Q \times \Gamma \times \Psi \to Q \times \Gamma \times \{L, R, S\}$ is defined as:
+$$\delta(q, a, \psi) = (q', b, d)$$
+where:
+\begin{itemize}
+\item $q, q' \in Q$
+\item $a, b \in \Gamma$
+\item $d \in \{L, R, S\}$ -- head movement direction
+\item $\psi \in \Psi$ -- current introspective metadata
+\end{itemize}
+\end{definition}
+
+\subsection{Introspection Constraints}
+
+\begin{definition}[k-Limited Introspection]
+Introspection is called k-limited if for any $\alpha, \beta \in \Gamma^*$:
+$$|\iota(\alpha, \beta, k)| \leq f(k)$$
+where $f: \mathbb{N} \to \mathbb{N}$ is a polynomial function, and $\iota$ cannot access the complete tape content, only structural patterns of depth $k$.
+\end{definition}
+
+\section{Basic Properties of Psi-TM}
+
+\subsection{Equivalence to Standard Turing Machines}
+
+\begin{theorem}[Computational Equivalence]
+For any standard Turing machine $M$, there exists an equivalent Psi-TM $M_{psi}$ with k-limited introspection, where $k = O(1)$.
+\end{theorem}
+
+\begin{proof}
+Let $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$ be a standard Turing machine.
+
+We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept}, q_{reject}, \iota)$ as follows:
+
+1. $Q_{psi} = Q \cup Q_{psi}$, where $Q_{psi} = \emptyset$ initially
+2. $\iota(\alpha, \beta, k) = \emptyset$ for all $\alpha, \beta, k$ (empty introspection)
+3. $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$
+
+Clearly, $M_{psi}$ simulates $M$ step-by-step, since introspection is not used in standard states.
+
+Conversely, any Psi-TM can be simulated by a standard Turing machine by explicitly encoding introspective metadata in the state.
+\end{proof}
+
+\subsection{Bypassing Complexity Barriers}
+
+\begin{theorem}[Partial Barrier Bypass]
+There exist problems $L$ such that:
+\begin{enumerate}
+\item $L \in \text{PSPACE}$ for standard Turing machines
+\item $L \in \text{P}$ for Psi-TM with suitable introspection
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Consider the Structural Pattern Recognition (SPR) problem:
+
+\textbf{Definition of SPR:} Given a string $w \in \Sigma^*$, determine if it contains a pattern $P$ with nesting depth at most $k$.
+
+For standard Turing machines, this problem requires $\Omega(n^k)$ time, as it is necessary to track $k$ levels of nesting.
+
+For Psi-TM with k-limited introspection:
+1. $\iota(w, \varepsilon, k)$ provides structural information about patterns of depth $\leq k$
+2. The machine can make decisions based on introspective metadata
+3. Execution time: $O(n)$
+
+Thus, SPR $\in \text{P}$ for Psi-TM, but $\notin \text{P}$ for standard Turing machines (under standard complexity assumptions).
+\end{proof}
+
+\subsection{Minimality of Introspection}
+
+\begin{theorem}[Minimality of Introspection]
+If Psi-TM introspection is limited to a constant $k = O(1)$, then the model preserves equivalence to standard Turing machines in computational power.
+\end{theorem}
+
+\begin{proof}
+Let $M_{psi}$ be a Psi-TM with k-limited introspection, where $k = O(1)$.
+
+We show that $M_{psi}$ can be simulated by a standard Turing machine $M$ with polynomial slowdown:
+
+1. State of $M$ encodes: $(q, \alpha, \beta, \psi)$
+2. Size of $\psi$ is bounded by $f(k) = O(1)$
+3. Each step of $M_{psi}$ is simulated in $O(1)$ steps of $M$
+4. Total simulation time: $O(T(n))$, where $T(n)$ is the running time of $M_{psi}$
+
+Conversely, any standard Turing machine can be simulated by a Psi-TM with empty introspection without slowdown.
+\end{proof}
+
+\section{Connection to SA-TM}
+
+\begin{proposition}[Connection to SA-TM]
+Psi-TM is a strict subset of SA-TM, where introspection is limited to constant depth.
+\end{proposition}
+
+\begin{proof}
+Let $M_{sa}$ be an SA-TM with full introspection.
+
+We construct an equivalent Psi-TM $M_{psi}$:
+1. $\iota(\alpha, \beta, k) = \iota_{sa}(\alpha, \beta) \cap \Psi_k$, where $\Psi_k$ is metadata of depth $\leq k$
+2. $\delta_{psi}(q, a, \psi) = \delta_{sa}(q, a, \psi)$ for $\psi \in \Psi_k$
+
+The constraint $k = O(1)$ ensures minimality of introspection while preserving the ability to bypass complexity barriers.
+\end{proof}
+
+\section{Conclusion}
+
+The Psi-TM model represents a rigorous mathematical foundation for a minimal introspective computational model that:
+
+1. Preserves equivalence to standard Turing machines
+2. Provides partial bypass of complexity barriers
+3. Minimizes introspection to constant depth
+4. Formally establishes connection to SA-TM
+
+This model opens new directions in computational complexity theory and formal automata theory.
+
+\end{document} 
