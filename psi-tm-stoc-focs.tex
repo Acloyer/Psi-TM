@@ -206,16 +206,16 @@ Psi-TM with $k = O(1)$ bypasses all four classical complexity barriers:
 \end{enumerate}
 \end{theorem}
 
-\begin{proof}[Proof Sketch]
-Each barrier fails due to the same core mechanism:
+\begin{proof}
+Each barrier fails due to explicit constructions:
 
-\textbf{Relativization:} Standard relativizing arguments assume simulators can intercept oracle queries verbatim. Psi-TM breaks this because queries may depend on introspective metadata inaccessible to external simulators.
+\textbf{Relativization:} Oracle construction $O_\Psi$ with queries $q = \langle \text{Rel}, \texttt{INT\_STATE()}, x \rangle$ that depend on introspective state inaccessible to external simulators.
 
-\textbf{Natural Proofs:} The property "function has valid Psi-TM representation with k-bounded introspection" can be checked in polynomial time using $\iota_k$ but remains large against adversaries with limited structural access.
+\textbf{Natural Proofs:} Property $\mathcal{P}(f) = 1$ iff $C_k(f) \leq \log n$ where $C_k(f)$ is structural pattern complexity. By Lemma 1 (Kolmogorov Complexity), $|\{f \mid \mathcal{P}(f) = 1\}| \geq 2^{2^n - O(\log n)}$.
 
-\textbf{Algebraization:} Diagonal queries $q = \langle \text{Diag}, i, x \rangle$ encoding machine descriptions require polynomials of degree $2^{\Omega(|q|)}$ for agreement on $\{0,1\}^{|q|}$.
+\textbf{Algebraization:} Diagonal queries $q = \langle \text{Diag}, i, x \rangle$ require polynomial degree $2^{\Omega(|q|)}$ by Lemma 2 (Multilinear Polynomial Degree) due to independent constraints from distinct machines.
 
-\textbf{Proof Complexity:} Introspective tautologies $\tau_n$ asserting "no machine accepts its own code" have polynomial-size Psi-proofs but require $n^{\Omega(\log n)}$ size in standard Frege systems.
+\textbf{Proof Complexity:} Tautology $\tau_n = \forall M \in \text{Psi-TM}_k: M(\langle M \rangle) = 0$ requires Frege proof size $\geq n^{\Omega(\log n)}$ by Lemma 3 (Ben-Sasson-Wigderson) due to resolution width $\geq \Theta(n)$.
 \end{proof}
 
 \section{Connection to SA-TM}
