@@ -281,7 +281,7 @@ The fraction of functions $f: \{0,1\}^n \to \{0,1\}$ with $|P_2(f)| \leq \text{p
 \begin{enumerate}
 \item Functions with polynomial-size depth-2 patterns form constructible class
 \item By counting: at least $2^{2^n}/\text{poly}(n) = 2^{2^n - O(n)}$ such functions exist
-\item Fraction: $2^{2^n - O(n)}/2^{2^n} = 2^{-O(n)} \geq \text{constant}$ for sufficiently large $n$ ∎
+\item Fraction: $2^{2^n - O(n)}/2^{2^n} = 2^{-O(n)} \geq \text{constant}$ for sufficiently large $n$ \qed
 \end{enumerate}
 \end{proof}
 
@@ -355,7 +355,7 @@ Define structural pattern complexity $C_k(f)$ as minimum description length of k
 \item \textbf{Counting Bound:} By Kolmogorov complexity: $|S_n^k| \geq 2^{2^n} / n^{O(1)} = 2^{2^n - O(\log n)}$
 \item \textbf{Pattern Recognition:} For $f \in S_n^k$, introspection $\iota_k(\langle f \rangle, \varepsilon, k)$ yields compressed pattern in $O(n)$ time
 \item \textbf{Verification:} Property $\mathcal{P}(f) = 1$ iff $C_k(f) \leq \log n$, computable in polynomial time
-\item \textbf{Largeness Conclusion:} $|\{f \mid \mathcal{P}(f) = 1\}| \geq 2^{2^n - O(\log n)}$ ∎
+\item \textbf{Largeness Conclusion:} $|\{f \mid \mathcal{P}(f) = 1\}| \geq 2^{2^n - O(\log n)}$ \qed
 \end{enumerate}
 \end{proof}
 \item \textbf{Usefulness:} $\mathcal{P}$ distinguishes easy and hard functions:
@@ -401,7 +401,7 @@ Any polynomial $p: \mathbb{F}^m \to \mathbb{F}$ agreeing with diagonalization fu
 \item \textbf{Independence Set:} For distinct machines $M_1, \ldots, M_T$ with $T = 2^{\Omega(m)}$, inputs $x_1, \ldots, x_T$ are disjoint
 \item \textbf{Boolean Function Complexity:} Each $M_i(x_i)$ contributes independent constraint to polynomial interpolation
 \item \textbf{Degree Bound:} By multilinear polynomial theory, degree $\geq \log_2(T) = \Omega(m)$
-\item \textbf{Exponential Requirement:} For $m = n + O(\log n)$, degree $\geq 2^{\Omega(n)}$ required ∎
+\item \textbf{Exponential Requirement:} For $m = n + O(\log n)$, degree $\geq 2^{\Omega(n)}$ required \qed
 \end{enumerate}
 \end{proof}
 
@@ -451,7 +451,7 @@ Tautology $\tau_n = \forall M \in \text{Psi-TM}_k: M(\langle M \rangle) = 0$ req
 \item \textbf{Disjunctive Form:} $\tau_n \equiv \bigwedge_{M \in \mathcal{M}_n} \neg M(\langle M \rangle)$
 \item \textbf{Resolution Complexity:} Each clause $\neg M_i(\langle M_i \rangle)$ requires separate resolution derivation
 \item \textbf{Width Lower Bound:} By pigeonhole principle, resolution width $\geq \log|\mathcal{M}_n| = \Theta(n)$
-\item \textbf{Size-Width Relationship:} Frege size $\geq (\text{width})^{\Omega(\log n)} = n^{\Omega(\log n)}$ by Ben-Sasson-Wigderson theorem ∎
+\item \textbf{Size-Width Relationship:} Frege size $\geq (\text{width})^{\Omega(\log n)} = n^{\Omega(\log n)}$ by Ben-Sasson-Wigderson theorem \qed
 \end{enumerate}
 \end{proof}
 
