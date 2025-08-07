@@ -273,15 +273,33 @@ A model $M$ bypasses barrier $B$ if:
 \end{enumerate}
 \end{definition}
 
-\begin{definition}[Structural Depth Hierarchy]
-For function $f: \{0,1\}^n \to \{0,1\}$:
-\begin{align}
-P_1(f) &= \{(i,j) : \exists x,y \in \{0,1\}^n \text{ s.t. } x_i \oplus x_j \neq y_i \oplus y_j \text{ and } f(x) \neq f(y)\} \text{ (direct correlations)}\\
-P_2(f) &= P_1(f) \cup \{(S,T) : f(x) = g(h_S(x), h_T(x)), |S|,|T| \leq \log n\}\\
-P_k(f) &= \bigcup_{i=1}^{k-1} \{(P,Q) : P \in P_i(f), Q \in P_{k-i}(f)\}
-\end{align}
-Where $h_S(x)$ denotes projection of $x$ onto coordinates in $S$, and $g$ is an arbitrary Boolean function.
+\begin{definition}[Recursive Structural Depth]
+For function $f: \{0,1\}^n \to \{0,1\}$ and depth $k \geq 1$:
+
+\textbf{Base case:}
+$$P_1(f) = \{(i,j) : \exists x,y \in \{0,1\}^n \text{ s.t. } x_i \oplus x_j \neq y_i \oplus y_j \text{ and } f(x) \neq f(y)\}$$
+
+\textbf{Recursive construction for $k \geq 2$:}
+$$P_k(f) = P_{k-1}(f) \cup \{\text{compositions of patterns from } P_1(f), \ldots, P_{k-1}(f)\}$$
+
+More formally, $P_k(f)$ consists of:
+\begin{enumerate}
+\item All patterns from $P_{k-1}(f)$ (inheritance)
+\item New depth-$k$ patterns formed by composing lower-depth patterns:
+   $$\{(P_1 \circ \cdots \circ P_m) : P_i \in P_{d_i}(f), \sum d_i = k, m \geq 2\}$$
+\end{enumerate}
+
+\textbf{Intuition:} Each level adds compositions of simpler patterns, creating a hierarchy where depth-$k$ patterns capture $k$-level structural dependencies in $f$.
 \end{definition}
+
+\begin{example}[Structural Depth Intuition]
+\begin{itemize}
+\item \textbf{Depth 1}: Direct bit correlations (e.g., $f$ depends on $x_1 \oplus x_2$)
+\item \textbf{Depth 2}: Compositions of direct correlations (e.g., $f$ depends on $(x_1 \oplus x_2) \wedge (x_3 \oplus x_4)$)
+\item \textbf{Depth 3}: Three-level nested dependencies (e.g., majority of depth-2 patterns)
+\end{itemize}
+This hierarchy captures increasingly complex structural patterns, with each level requiring more introspection depth to detect.
+\end{example}
 
 \begin{theorem}[Depth-2 Pattern Prevalence]
 The fraction of functions $f: \{0,1\}^n \to \{0,1\}$ with $|P_2(f)| \leq \text{poly}(n)$ is at least $2^{-O(n)}$.
@@ -1335,16 +1353,11 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{Karp92} R. M. Karp and A. Wigderson. A fast parallel algorithm for the maximal independent set problem. \emph{J. ACM}, 32(4):762--773, 1985.
 
-\bibitem{Karp93} R. M. Karp and A. Wigderson. The complexity of parallel search. \emph{J. Comput. Syst. Sci.}, 36(2):225--253, 1988.
+\bibitem{BenSasson01} E. Ben-Sasson and A. Wigderson. Short proofs are narrow—resolution made simple. \emph{J. ACM}, 48(2):149--169, 2001.
 
-\bibitem{Karp94} R. M. Karp and A. Wigderson. A fast parallel algorithm for the maximal independent set problem. \emph{J. ACM}, 32(4):762--773, 1985.
+\bibitem{Raz04} R. Raz. Multilinear-$NC_1 \neq NC_2$. In \emph{FOCS}, pages 344--351, 2004.
 
-\bibitem{BenSasson01} E. Ben-Sasson and A. Wigderson. Short proofs are narrow—resolution made simple. 
-      J. ACM, 48(2):149–169, 2001.
-
-\bibitem{Raz04} R. Raz. Multilinear-$NC_1 \neq NC_2$. In FOCS, pages 344–351, 2004.
-
-\bibitem{Sherstov11} A. Sherstov. The pattern matrix method. SIAM J. Comput., 40(6):1969–2000, 2011.
+\bibitem{Sherstov11} A. Sherstov. The pattern matrix method. \emph{SIAM J. Comput.}, 40(6):1969--2000, 2011.
 
 \end{thebibliography}
 
