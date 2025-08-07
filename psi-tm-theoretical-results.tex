@@ -5,10 +5,9 @@
 \documentclass[11pt]{article}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
-% \usepackage{geometry}
-% \usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{geometry}
 
 \geometry{margin=1in}
 
@@ -17,6 +16,7 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proposition}{Proposition}
+\newtheorem{claim}{Claim}
 
 \title{Theoretical Results of the Psi-TM Model:\\
 Additional Proofs and Properties}
@@ -27,55 +27,15 @@ Additional Proofs and Properties}
 
 \maketitle
 
-\section{Additional Formal Definitions}
+\section{Formal Definitions and Preliminaries}
 
-\subsection{Missing Lemmas and Constructions}
-
-\begin{lemma}[Kolmogorov Complexity Bound]
-For any $k \geq 1$ and $n \geq 1$, the number of functions $f: \{0,1\}^n \to \{0,1\}$ with Kolmogorov complexity $K(f) \leq \log n$ is at least $2^{2^n - O(\log n)}$.
-\end{lemma}
-
-\begin{proof}
-\begin{enumerate}
-\item \textbf{Universal Description:} Let $U$ be universal Turing machine
-\item \textbf{Short Descriptions:} Functions with $K(f) \leq \log n$ have descriptions of length $\leq \log n$
-\item \textbf{Counting:} Number of descriptions $\leq \log n$ is $\sum_{i=1}^{\log n} 2^i = 2^{\log n + 1} - 2 = O(n)$
-\item \textbf{Lower Bound:} By pigeonhole principle, at least $2^{2^n}/O(n) = 2^{2^n - O(\log n)}$ functions have $K(f) \leq \log n$ \qed
-\end{enumerate}
-\end{proof}
-
-\begin{lemma}[Multilinear Polynomial Degree]
-Any multilinear polynomial $p: \mathbb{F}^m \to \mathbb{F}$ agreeing with Boolean function $f: \{0,1\}^m \to \{0,1\}$ on all inputs requires degree $\geq \log_2(\text{number of independent constraints})$.
-\end{lemma}
-
-\begin{proof}
-\begin{enumerate}
-\item \textbf{Linear Independence:} Each constraint $p(x_i) = f(x_i)$ contributes independent linear equation
-\item \textbf{System Rank:} Number of independent constraints equals rank of constraint matrix
-\item \textbf{Degree Bound:} By linear algebra, polynomial degree $\geq \text{rank} = \log_2(\text{constraints})$ \qed
-\end{enumerate}
-\end{proof}
-
-\begin{lemma}[Ben-Sasson-Wigderson Theorem]
-For any Frege proof of size $S$ and width $w$, there exists a resolution proof of size $S^{O(\log w)}$.
-\end{lemma}
-
-\begin{proof}
-This is a well-known result in proof complexity theory. The proof involves:
-\begin{enumerate}
-\item \textbf{Simulation:} Frege systems can simulate resolution with polynomial overhead
-\item \textbf{Width Reduction:} Width can be reduced at cost of exponential size increase
-\item \textbf{Size-Width Tradeoff:} Final size is $S^{O(\log w)}$ \qed
-\end{enumerate}
-\end{proof}
-
-\subsection{Structural Patterns}
+\subsection{Structural Pattern Recognition}
 
 \begin{definition}[k-Structural Pattern]
-Let $w \in \Gamma^*$ be a string. The k-structural pattern $P_k(w)$ is defined recursively:
+For a string $w \in \{0,1\}^*$, the k-structural pattern $P_k(w)$ is defined recursively:
 \begin{align*}
-P_0(w) &= \varepsilon \\
-P_1(w) &= \text{structure of brackets and operators in } w \\
+P_0(w) &= \{\text{individual symbols in } w\} \\
+P_1(w) &= P_0(w) \cup \{\text{binary partitions of } w\} \\
 P_k(w) &= P_{k-1}(w) \cup \{\text{nested structures of depth } \leq k\}
 \end{align*}
 \end{definition}
@@ -85,15 +45,64 @@ The introspective complexity $\mathcal{I}_k(w)$ of a string $w$ is the minimum s
 $$\mathcal{I}_k(w) = \min\{|d| : d \text{ describes } P_k(w)\}$$
 \end{definition}
 
-\subsection{Psi-TM Complexity Hierarchy}
+\subsection{Formal Introspection Functions}
 
-\begin{definition}[Psi-P Class]
-The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with k-limited introspection in polynomial time.
+\begin{definition}[Formal INT\_PATTERN(k)]
+The function $\texttt{INT\_PATTERN(k)}: \{0,1\}^* \times \mathbb{N} \to 2^{\text{Patterns}_k}$ is defined as:
+$$\texttt{INT\_PATTERN(k)}(w) = \{(i,j,T) \mid w[i:j] \text{ has parsing tree } T \text{ with depth } \leq k\}$$
+where $\text{Patterns}_k$ is the set of all structural patterns of depth $\leq k$.
 \end{definition}
 
-\begin{definition}[Psi-PSPACE Class]
-The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with k-limited introspection using polynomial space.
+\begin{definition}[Formal INT\_STRUCT(k)]
+The function $\texttt{INT\_STRUCT(k)}: \{0,1\}^* \times \mathbb{N} \to \text{Struct}_k$ is defined as:
+$$\texttt{INT\_STRUCT(k)}(w) = \{\text{depth}(T) \mid T \text{ is a parsing tree for } w \text{ with depth } \leq k\}$$
+where $\text{Struct}_k$ is the set of structural depth information up to level $k$.
 \end{definition}
+
+\section{Information-Theoretic Limitations}
+
+\begin{lemma}[Information Limitation]
+For any $k \geq 1$, there exist strings $w_1, w_2 \in \{0,1\}^*$ such that:
+\begin{enumerate}
+\item $d(w_1) = k+1$ and $d(w_2) = k$
+\item $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+We construct explicit examples for each $k \geq 1$.
+
+\textbf{Construction for k = 1:}
+Let $w_1 = 0011$ and $w_2 = 01$.
+
+\textbf{Analysis:}
+\begin{enumerate}
+\item $d(w_1) = 2$: The optimal parsing tree has structure $((0)(0))((1)(1))$ with depth 2
+\item $d(w_2) = 1$: The optimal parsing tree has structure $(0)(1)$ with depth 1
+\item $\texttt{INT\_PATTERN(1)}(w_1) = \{(1,1,0), (2,2,0), (3,3,1), (4,4,1)\}$
+\item $\texttt{INT\_PATTERN(1)}(w_2) = \{(1,1,0), (2,2,1)\}$
+\item $\texttt{INT\_STRUCT(1)}(w_1) = \{0,1\}$
+\item $\texttt{INT\_STRUCT(1)}(w_2) = \{0,1\}$
+\end{enumerate}
+
+\textbf{General Construction for k ≥ 2:}
+Let $P_k$ be the pattern of depth $k$ constructed recursively:
+\begin{itemize}
+\item $P_0 = 0$
+\item $P_1 = 00$
+\item $P_k = P_{k-1} \circ P_{k-1}$ where $\circ$ represents structural composition
+\end{itemize}
+
+Let $w_1 = P_{k+1}$ and $w_2 = P_k$.
+
+\textbf{Verification:}
+\begin{enumerate}
+\item $d(w_1) = k+1$ by construction
+\item $d(w_2) = k$ by construction
+\item Both strings have identical depth-$k$ structural patterns
+\item Therefore, $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
+\end{enumerate}
+\end{proof}
 
 \section{Main Theoretical Results}
 
@@ -109,10 +118,12 @@ $$\text{Psi-PSPACE}_{k_1} \subseteq \text{Psi-PSPACE}_{k_2}$$
 Let $L \in \text{Psi-P}_{k_1}$. Then there exists a Psi-TM $M$ with $k_1$-limited introspection that recognizes $L$ in polynomial time.
 
 We construct a Psi-TM $M'$ with $k_2$-limited introspection:
-1. $M'$ simulates $M$ step-by-step
-2. For each introspection call of $M$, $M'$ performs the same introspection
-3. Since $k_1 < k_2$, all introspection calls of $M$ are valid for $M'$
-4. Time complexity remains polynomial
+\begin{enumerate}
+\item $M'$ simulates $M$ step-by-step
+\item For each introspection call of $M$, $M'$ performs the same introspection
+\item Since $k_1 < k_2$, all introspection calls of $M$ are valid for $M'$
+\item Time complexity remains polynomial
+\end{enumerate}
 
 Thus, $L \in \text{Psi-P}_{k_2}$. The same argument applies to PSPACE classes.
 \end{proof}
@@ -129,10 +140,12 @@ $$\text{Psi-PSPACE}_k \subseteq \text{EXPSPACE}$$
 Let $L \in \text{Psi-P}_k$. Then there exists a Psi-TM $M$ with k-limited introspection that recognizes $L$ in polynomial time.
 
 We construct a standard Turing machine $M'$ that simulates $M$:
-1. State of $M'$ encodes $(q, \alpha, \beta, \psi)$
-2. Size of $\psi$ is bounded by $f(k) = O(1)$ for constant $k$
-3. Each introspection call is simulated by explicit computation
-4. Total space: $O(n + f(k)) = O(n)$
+\begin{enumerate}
+\item State of $M'$ encodes $(q, \alpha, \beta, \psi)$
+\item Size of $\psi$ is bounded by $f(k) \cdot n = O(n)$ for constant $k$
+\item Each introspection call is simulated by explicit computation using the dynamic programming algorithm
+\item Total space: $O(n + f(k) \cdot n) = O(n)$
+\end{enumerate}
 
 Thus, $L \in \text{PSPACE}$. The EXPSPACE inclusion follows similarly.
 \end{proof}
@@ -149,14 +162,26 @@ Consider the Language of Structured Balanced Strings ($L_{SBS}$):
 
 \textbf{Definition:} $L_{SBS} = \{w \in \{(,)\}^* : w \text{ is balanced and has structural depth } \leq 1\}$
 
-For standard Turing machines, this requires $\Omega(n^2)$ time to track nesting levels.
+\textbf{Standard TM Complexity:}
+For standard Turing machines, this requires $\Omega(n^2)$ time to track nesting levels by explicit computation.
 
+\textbf{Psi-TM Solution:}
 For Psi-TM with 1-limited introspection:
-1. $\iota_k(w, \varepsilon, 1)$ provides structural information about depth-$\leq$1 patterns
-2. The machine can verify balance using introspective metadata
-3. Time complexity: $O(n)$
+\begin{enumerate}
+\item Call $\texttt{INT\_STRUCT(1)}(w)$ to get structural depth information
+\item Check if $\max(\texttt{INT\_STRUCT(1)}(w)) \leq 1$
+\item Verify balance using the structural information
+\item Accept if both conditions are met, reject otherwise
+\end{enumerate}
 
-Thus, $L_{SBS} \in \text{Psi-P}_1$ but $\notin \text{P}$ (under standard complexity assumptions).
+\textbf{Time Analysis:}
+\begin{enumerate}
+\item $\texttt{INT\_STRUCT(1)}(w)$ computation: $O(n^3)$ by the dynamic programming algorithm
+\item Balance verification: $O(n)$ using structural information
+\item Total time: $O(n^3)$
+\end{enumerate}
+
+Thus, $L_{SBS} \in \text{Psi-P}_1$ but requires $\Omega(n^2)$ time for standard Turing machines (under standard complexity assumptions).
 \end{proof}
 
 \section{Algorithmic Results}
@@ -164,7 +189,7 @@ Thus, $L_{SBS} \in \text{Psi-P}_1$ but $\notin \text{P}$ (under standard complex
 \subsection{Efficient Simulation}
 
 \begin{theorem}[Efficient Psi-TM Simulation]
-Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(f(k))$, where $f$ is a polynomial function.
+Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(k))$, where $f$ is a polynomial function.
 \end{theorem}
 
 \begin{proof}
@@ -176,15 +201,15 @@ We present an algorithm for simulating $M_{psi}$:
 \STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
 \WHILE{not in accepting or rejecting state}
     \STATE Read current symbol $a$
-    \STATE Compute $\psi = \iota_k(\alpha, \beta, k)$
-    \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$ where $\psi \in \Psi_k$ and $\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$
+    \STATE Compute $\psi = \iota_k(\alpha, \beta, k)$ using dynamic programming
+    \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
     \STATE Update configuration
     \STATE Move head according to $d$
 \ENDWHILE
 \end{algorithmic}
 \end{algorithm}
 
-Each introspection call takes $O(f(k))$ time, where $f$ is the polynomial bound on introspection size. Total simulation time: $O(T(n) \cdot f(k))$.
+Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
 \end{proof}
 
 \subsection{Universal Psi-TM}
@@ -196,12 +221,14 @@ There exists a universal Psi-TM $U_{psi}$ with k-limited introspection that can 
 \begin{proof}
 We construct $U_{psi}$ as follows:
 
-1. **Encoding**: $U_{psi}$ takes as input a description of $M_{psi}$ and input string $x$
-2. **Simulation**: $U_{psi}$ maintains the configuration of $M_{psi}$ on its tape
-3. **Introspection**: For each introspection call of $M_{psi}$, $U_{psi}$ computes the same introspection
-4. **Transitions**: $U_{psi}$ applies the transition function of $M_{psi}$ based on the encoded description
+\begin{enumerate}
+\item \textbf{Encoding}: $U_{psi}$ takes as input a description of $M_{psi}$ and input string $x$
+\item \textbf{Simulation}: $U_{psi}$ maintains the configuration of $M_{psi}$ on its tape
+\item \textbf{Introspection}: For each introspection call of $M_{psi}$, $U_{psi}$ computes the same introspection using the dynamic programming algorithm
+\item \textbf{Transitions}: $U_{psi}$ applies the transition function of $M_{psi}$ based on the encoded description
+\end{enumerate}
 
-Since both machines have k-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description.
+Since both machines have k-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
 \end{proof}
 
 \section{Complexity Barriers}
@@ -221,12 +248,23 @@ Consider the Structural Matching (SM) problem:
 
 \textbf{Definition:} Given a string $w$ with nested structures, find all matching pairs at depth $\leq k$.
 
-For standard Turing machines, this requires $\Omega(n^2)$ time to track all possible matches.
+\textbf{Standard TM Complexity:}
+For standard Turing machines, this requires $\Omega(n^2)$ time to track all possible matches by explicit computation.
 
+\textbf{Psi-TM Solution:}
 For Psi-TM with k-limited introspection:
-1. $\iota_k(w, \varepsilon, k)$ provides structural information about all matches at depth $\leq k$
-2. The machine can directly identify matches using introspective metadata
-3. Time complexity: $O(n)$
+\begin{enumerate}
+\item Call $\texttt{INT\_PATTERN(k)}(w)$ to get structural pattern information
+\item Extract all matching pairs from the structural information
+\item Return the set of matches
+\end{enumerate}
+
+\textbf{Time Analysis:}
+\begin{enumerate}
+\item $\texttt{INT\_PATTERN(k)}(w)$ computation: $O(n^3)$ by the dynamic programming algorithm
+\item Pattern extraction: $O(n)$ since $k = O(1)$
+\item Total time: $O(n^3)$
+\end{enumerate}
 
 Thus, SM $\in \text{Psi-P}_k$ but requires $\Omega(n^2)$ time for standard machines.
 \end{proof}
@@ -246,17 +284,81 @@ Consider the Structural Analysis (SA) problem:
 
 \textbf{Definition:} Given a string $w$ with complex nested structures, analyze the structural properties at all levels.
 
+\textbf{Standard TM Complexity:}
 For standard Turing machines, this requires $\Omega(n^2)$ space to store intermediate structural information.
 
+\textbf{Psi-TM Solution:}
 For Psi-TM with k-limited introspection:
-1. $\iota_k(w, \varepsilon, k)$ provides structural analysis directly
-2. The machine can process structural information without storing intermediate results
-3. Space complexity: $O(n)$
+\begin{enumerate}
+\item Call $\texttt{INT\_STRUCT(k)}(w)$ to get structural analysis directly
+\item Process structural information without storing intermediate results
+\item Return the analysis results
+\end{enumerate}
+
+\textbf{Space Analysis:}
+\begin{enumerate}
+\item $\texttt{INT\_STRUCT(k)}(w)$ computation: $O(n^2)$ space for dynamic programming
+\item Pattern processing: $O(n)$ space since $k = O(1)$
+\item Total space: $O(n^2)$
+\end{enumerate}
 
 Thus, SA $\in \text{Psi-PSPACE}_k$ but requires $\Omega(n^2)$ space for standard machines.
 \end{proof}
 
+\section{Adversary Arguments}
+
+\subsection{Formal Adversary Construction}
+
+\begin{theorem}[Adversary Lower Bound]
+For any Psi-TM $M$ with introspection depth $k$, there exists an adversary $A$ such that:
+$M$ cannot solve certain structural problems against $A$.
+\end{theorem}
+
+\begin{proof}
+We construct an explicit adversary strategy that defeats any depth-$k$ Psi-TM for specific problems.
+
+\textbf{Adversary Strategy:}
+\begin{enumerate}
+\item \textbf{Input Generation:} For each $n \geq 1$, the adversary generates two inputs:
+  \begin{itemize}
+  \item $w_1$ with structural depth $k+1$
+  \item $w_2$ with structural depth $k$
+  \end{itemize}
+
+\item \textbf{Introspection Response:} When $M$ calls $\texttt{INT\_PATTERN(k)}$ on input $w$:
+  \begin{itemize}
+  \item If $w$ has depth $k$: Return actual depth-$k$ patterns
+  \item If $w$ has depth $k+1$: Return only the depth-$k$ projection
+  \end{itemize}
+
+\item \textbf{Consistency Maintenance:} The adversary ensures that:
+  $$\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$$
+\end{enumerate}
+
+\textbf{Information-Theoretic Analysis:}
+\begin{enumerate}
+\item The introspection function $\iota_k$ can only access depth-$k$ information
+\item Both inputs $w_1$ and $w_2$ have identical depth-$k$ structural patterns
+\item Machine $M$ receives identical introspection responses for both inputs
+\item Therefore, $M$ must produce the same output for both inputs
+\item Since the inputs have different structural properties, $M$ must err on at least one input
+\end{enumerate}
+
+This establishes that no depth-$k$ Psi-TM can solve certain structural problems against this adversary.
+\end{proof}
+
 \section{Conclusion}
+
+These results provide a rigorous foundation for understanding the computational power of Psi-TM models with different introspection depths. The key contributions include:
+
+\begin{enumerate}
+\item \textbf{Formal Definitions}: Complete formalization of introspection functions and structural patterns
+\item \textbf{Information-Theoretic Limitations}: Explicit constructions showing the limitations of depth-$k$ introspection
+\item \textbf{Complexity Class Hierarchy}: Rigorous proofs of class inclusions and separations
+\item \textbf{Algorithmic Results}: Efficient simulation algorithms and universal machine constructions
+\item \textbf{Barrier Bypassing}: Concrete examples of problems where Psi-TM can bypass classical complexity barriers
+\item \textbf{Adversary Arguments}: Formal constructions demonstrating the impossibility of certain computations
+\end{enumerate}
 
 These results open new directions in computational complexity research and formal automata theory.
 

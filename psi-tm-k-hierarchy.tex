@@ -3,26 +3,30 @@
 % Original work - do not copy without attribution
 
 \documentclass[11pt]{article}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
-\usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{algorithm, algorithmic}
+\usepackage{tikz}
+\usepackage{hyperref}
 \usepackage{geometry}
+\usepackage{mathtools}
 
 \geometry{margin=1in}
 
-\newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proposition}{Proposition}
+\newtheorem{example}{Example}
 \newtheorem{claim}{Claim}
 
-\title{Strict Hierarchy of Introspective Computational Models:\\
-Psi-TM and the k-Depth Hierarchy}
+\title{Psi-TM k-Hierarchy Characterization:\\
+\large{Strict Inclusion and Language Separation}}
+
 \author{Rafig Huseynzade\\
 Arizona State University\\
 \href{mailto:huseynzaderafig@gmail.com}{huseynzaderafig@gmail.com}}
+
 \date{\today}
 
 \begin{document}
@@ -30,94 +34,31 @@ Arizona State University\\
 \maketitle
 
 \begin{abstract}
-We establish a strict hierarchy of computational models based on introspection depth, proving that for each $k \geq 1$, there exists a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$. This demonstrates that increasing introspection depth provides strictly more computational power, establishing the hierarchy $\text{Psi-TM}_1 \subsetneq \text{Psi-TM}_2 \subsetneq \text{Psi-TM}_3 \subsetneq \cdots$. We provide explicit language constructions, formal adversary arguments, and complexity class separations for each level of the hierarchy.
+We establish a strict hierarchy of Psi-TM models parameterized by introspection depth $k$. Our main result proves that for each $k \geq 1$, there exists a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$. This demonstrates that increasing introspection depth provides strictly more computational power, establishing the hierarchy $\text{Psi-TM}_1 \subsetneq \text{Psi-TM}_2 \subsetneq \text{Psi-TM}_3 \subsetneq \cdots \subsetneq \text{SA-TM}$. We further analyze the collapse threshold and provide explicit constructions for separating languages at each level.
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction and Motivation}
 
-The Psi-TM (Psi-Turing Machine) model extends standard Turing machines with minimal introspection capabilities, where introspection depth is limited to a constant $k = O(1)$. This model has been shown to bypass classical complexity barriers with minimal introspection requirements. The fundamental question addressed in this work is whether there exists a strict hierarchy of computational power based on introspection depth.
+The Psi-TM model extends standard Turing machines with minimal introspection capabilities, where introspection depth is limited to a constant $k = O(1)$. Previous work established that Psi-TM can bypass all four classical complexity barriers with minimal introspection requirements: relativization requires $k \geq 1$, natural proofs and proof complexity require $k \geq 2$, and algebraization requires $k \geq 3$.
+
+The fundamental question addressed in this work is whether there exists a strict hierarchy of computational power based on introspection depth:
 
 \textbf{Main Question:} Does $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$ hold for all $k \geq 1$?
+
+This question has profound implications for understanding the relationship between introspection depth and computational capability. A positive answer would establish that each additional level of introspection provides strictly more computational power, while a negative answer would indicate a collapse point beyond which increased introspection offers no additional advantage.
 
 \textbf{Our Contributions:}
 \begin{enumerate}
 \item \textbf{Strict Hierarchy Theorem:} For each $k \geq 1$, we prove $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$
-\item \textbf{Explicit Language Construction:} We construct concrete languages $L_k$ that separate each level
-\item \textbf{Formal Adversary Arguments:} We provide rigorous information-theoretic lower bounds
-\item \textbf{Complexity Class Separations:} We establish corresponding separations in complexity classes
-\item \textbf{Optimal Introspection Depth:} We prove that $k = 3$ is optimal for bypassing all classical barriers
+\item \textbf{Explicit Language Construction:} We construct languages $L_k$ that separate each level
+\item \textbf{Structural Depth Analysis:} We characterize the structural patterns that require depth $k+1$ introspection
+\item \textbf{Collapse Threshold Investigation:} We analyze whether the hierarchy collapses at some finite $k^*$
+\item \textbf{Complexity Class Implications:} We establish corresponding separations in complexity classes
 \end{enumerate}
 
-\section{Formal Definitions}
+\section{Formal Definitions: Psi-TM_k}
 
-\subsection{Structural Depth}
-
-\begin{definition}[Formal Structural Depth]
-For a string $w \in \{0,1\}^*$, the structural depth $d(w)$ is defined as:
-$$d(w) = \min_{T_w} \text{depth}(T_w)$$
-where the minimum is taken over all possible parsing trees $T_w$ for $w$.
-
-\textbf{Base cases:}
-\begin{itemize}
-\item $d(\varepsilon) = 0$ (empty string)
-\item $d(0) = d(1) = 0$ (single symbols)
-\end{itemize}
-
-\textbf{Recursive case:}
-For $|w| > 1$, $d(w) = \min_{w=uv} \{1 + \max(d(u), d(v))\}$ where the minimum is taken over all binary partitions of $w$.
-\end{definition}
-
-\begin{lemma}[Well-Definedness of Structural Depth]
-The structural depth function $d: \{0,1\}^* \to \mathbb{N}$ is well-defined and computable in $O(n^3)$ time.
-\end{lemma}
-
-\begin{proof}
-\textbf{Well-Definedness:}
-\begin{enumerate}
-\item For strings of length $\leq 1$, $d(w)$ is explicitly defined
-\item For longer strings, the minimum exists because:
-  \begin{itemize}
-  \item The set of possible partitions is finite (at most $n-1$ partitions for length $n$)
-  \item Each partition yields a finite depth value
-  \item The minimum of a finite set of natural numbers exists
-  \end{itemize}
-\end{enumerate}
-
-\textbf{Computability:}
-We provide a dynamic programming algorithm:
-
-\begin{algorithm}
-\caption{Structural Depth Computation}
-\begin{algorithmic}
-\STATE \textbf{Input:} String $w = w_1w_2\ldots w_n$
-\STATE \textbf{Output:} Structural depth $d(w)$
-\STATE Initialize $dp[i][j] = 0$ for all $i \leq j$
-\FOR{$i = 1$ to $n$}
-    \STATE $dp[i][i] = 0$ \COMMENT{Base case: single symbols}
-\ENDFOR
-\FOR{$\text{len} = 2$ to $n$}
-    \FOR{$i = 1$ to $n-\text{len}+1$}
-        \STATE $j = i + \text{len} - 1$
-        \STATE $dp[i][j] = \infty$
-        \FOR{$k = i$ to $j-1$}
-            \STATE $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
-        \ENDFOR
-    \ENDFOR
-\ENDFOR
-\RETURN $dp[1][n]$
-\end{algorithmic}
-\end{algorithm}
-
-\textbf{Correctness:}
-\begin{enumerate}
-\item Base cases are handled correctly
-\item For each substring $w[i:j]$, we try all possible binary partitions
-\item The algorithm computes the minimum depth over all parsing trees
-\item Time complexity: $O(n^3)$ due to three nested loops
-\end{enumerate}
-\end{proof}
-
-\subsection{Psi-TM Model}
+\subsection{Introspection Depth Hierarchy}
 
 \begin{definition}[Psi-TM_k Model]
 For each $k \geq 1$, a Psi-TM with introspection depth $k$ is a 7-tuple:
@@ -131,13 +72,24 @@ where:
 \end{itemize}
 \end{definition}
 
-\begin{definition}[Formal Introspection Functions]
-The introspection API at level $k$ provides:
+\begin{definition}[Structural Depth]
+For a string $w \in \Gamma^*$, the structural depth $d(w)$ is defined recursively:
 \begin{itemize}
-\item $\texttt{INT\_PATTERN(k)}: \Gamma^* \times \mathbb{N} \to 2^{\text{Patterns}_k}$
-\item $\texttt{INT\_STRUCT(k)}: \Gamma^* \times \mathbb{N} \to \text{Struct}_k$
+\item $d(w) = 0$ if $w$ contains no nested patterns
+\item $d(w) = 1 + \max\{d(w_1), d(w_2)\}$ if $w = w_1 \circ w_2$ where $\circ$ represents a structural composition
+\item $d(w) = k$ if $w$ contains $k$-level nested structural patterns
 \end{itemize}
-where $\text{Patterns}_k$ is the set of all structural patterns of depth $\leq k$.
+\end{definition}
+
+\begin{definition}[k-Level Introspection API]
+The introspection API at level $k$ provides access to:
+\begin{itemize}
+\item $\texttt{INT\_STATE()}$: Current state (depth 1)
+\item $\texttt{INT\_CODE(i)}$: Code symbol at position $i$ (depth 1)
+\item $\texttt{INT\_INPUT(j)}$: Input symbol at position $j$ (depth 1)
+\item $\texttt{INT\_STRUCT(d)}$: Structural patterns at depth $d \leq k$
+\item $\texttt{INT\_PATTERN(k)}$: Complete structural pattern of depth $k$
+\end{itemize}
 \end{definition}
 
 \subsection{Complexity Classes}
@@ -201,6 +153,8 @@ Therefore, $L_k \in \text{Psi-P}_{k+1}$.
 \end{proof}
 
 \section{Main Result: Strict Hierarchy}
+
+\subsection{Theorem A: Strict Inclusion}
 
 \begin{theorem}[Strict Hierarchy]
 \label{thm:strict-hierarchy}
@@ -308,148 +262,7 @@ $$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1}$$
 This holds for all $k \geq 1$, establishing the strict hierarchy.
 \end{proof}
 
-\section{Adversary Arguments}
-
-\subsection{Formal Adversary Construction}
-
-\begin{theorem}[Adversary Lower Bound]
-\label{thm:adversary-lower-bound}
-For any Psi-TM $M$ with introspection depth $k$, there exists an adversary $A$ such that:
-$M$ cannot solve $L_k$ against $A$.
-\end{theorem}
-
-\begin{proof}
-We construct an explicit adversary strategy that defeats any depth-$k$ Psi-TM.
-
-\textbf{Adversary Strategy:}
-\begin{enumerate}
-\item \textbf{Input Generation:} For each $n \geq 1$, the adversary generates two inputs:
-  \begin{itemize}
-  \item $w_1 = \text{encode}(T_1)\#1^n$ where $T_1$ has depth $k+1$ and evaluates to 1
-  \item $w_2 = \text{encode}(T_2)\#1^n$ where $T_2$ has depth $k$ and evaluates to 0
-  \end{itemize}
-
-\item \textbf{Introspection Response:} When $M$ calls $\texttt{INT\_PATTERN(k)}$ on input $w$:
-  \begin{itemize}
-  \item If $w$ has depth $k$: Return actual depth-$k$ patterns
-  \item If $w$ has depth $k+1$: Return only the depth-$k$ projection
-  \end{itemize}
-
-\item \textbf{Consistency Maintenance:} The adversary ensures that:
-  $$\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$$
-\end{enumerate}
-
-\textbf{Information-Theoretic Analysis:}
-\begin{enumerate}
-\item The introspection function $\iota_k$ can only access depth-$k$ information
-\item Both inputs $w_1$ and $w_2$ have identical depth-$k$ structural patterns
-\item Machine $M$ receives identical introspection responses for both inputs
-\item Therefore, $M$ must produce the same output for both inputs
-\item Since $w_1 \in L_k$ and $w_2 \notin L_k$, $M$ must err on at least one input
-\end{enumerate}
-
-\textbf{Error Probability:}
-The adversary can generate inputs such that $M$ errs with probability at least $1/2$ by ensuring that the machine cannot distinguish between valid and invalid inputs based solely on depth-$k$ information.
-
-This establishes that no depth-$k$ Psi-TM can solve $L_k$ against this adversary.
-\end{proof}
-
-\section{Complexity Class Implications}
-
-\subsection{Class Separations}
-
-\begin{theorem}[Complexity Class Separations]
-For all $k \geq 1$:
-$$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1} \subsetneq \text{PSPACE}$$
-$$\text{Psi-NP}_k \subsetneq \text{Psi-NP}_{k+1} \subsetneq \text{NPSPACE}$$
-$$\text{Psi-PSPACE}_k \subsetneq \text{Psi-PSPACE}_{k+1} \subsetneq \text{EXPSPACE}$$
-\end{theorem}
-
-\begin{proof}
-\textbf{Strict Inclusions:}
-Follow from the main hierarchy theorem and the explicit language constructions.
-
-\textbf{PSPACE Inclusions:}
-Any Psi-TM with constant introspection depth can be simulated by a standard Turing machine with polynomial space overhead, as shown in the formal definition document.
-
-\textbf{Proper Inclusions:}
-The languages $L_k$ demonstrate that the inclusions are proper, as they belong to higher levels but not to lower levels of the hierarchy.
-\end{proof}
-
-\subsection{Barrier Bypass Hierarchy}
-
-\begin{theorem}[Barrier Bypass Hierarchy]
-The complexity barriers form a strict hierarchy based on introspection depth requirements:
-\begin{enumerate}
-\item Relativization: requires $k \geq 1$
-\item Natural Proofs: requires $k \geq 2$
-\item Proof Complexity: requires $k \geq 2$
-\item Algebraization: requires $k \geq 3$
-\end{enumerate}
-\end{theorem}
-
-\begin{proof}
-This follows from the individual barrier minimality theorems established in the barrier minimality document. The hierarchy is strict because:
-
-\begin{enumerate}
-\item A Psi-TM with $k = 1$ can bypass relativization but not natural proofs or proof complexity
-\item A Psi-TM with $k = 2$ can bypass relativization, natural proofs, and proof complexity but not algebraization
-\item A Psi-TM with $k = 3$ can bypass all four barriers
-\end{enumerate}
-
-This establishes the strict hierarchy of barrier bypass requirements.
-\end{proof}
-
-\section{Algorithmic Results}
-
-\subsection{Efficient Simulation}
-
-\begin{theorem}[Efficient Psi-TM Simulation]
-Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(k))$, where $f$ is a polynomial function.
-\end{theorem}
-
-\begin{proof}
-We present an algorithm for simulating $M_{psi}$:
-
-\begin{algorithm}
-\caption{Psi-TM Simulation}
-\begin{algorithmic}
-\STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
-\WHILE{not in accepting or rejecting state}
-    \STATE Read current symbol $a$
-    \STATE Compute $\psi = \iota_k(\alpha, \beta, k)$ using dynamic programming
-    \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
-    \STATE Update configuration
-    \STATE Move head according to $d$
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
-
-Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
-\end{proof}
-
-\subsection{Universal Psi-TM}
-
-\begin{theorem}[Existence of Universal Psi-TM]
-There exists a universal Psi-TM $U_{psi}$ with k-limited introspection that can simulate any Psi-TM $M_{psi}$ with k-limited introspection with polynomial slowdown.
-\end{theorem}
-
-\begin{proof}
-We construct $U_{psi}$ as follows:
-
-\begin{enumerate}
-\item \textbf{Encoding}: $U_{psi}$ takes as input a description of $M_{psi}$ and input string $x$
-\item \textbf{Simulation}: $U_{psi}$ maintains the configuration of $M_{psi}$ on its tape
-\item \textbf{Introspection}: For each introspection call of $M_{psi}$, $U_{psi}$ computes the same introspection using the dynamic programming algorithm
-\item \textbf{Transitions}: $U_{psi}$ applies the transition function of $M_{psi}$ based on the encoded description
-\end{enumerate}
-
-Since both machines have k-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
-\end{proof}
-
-\section{Lower Bounds}
-
-\subsection{Time Complexity Lower Bounds}
+\subsection{Theorem B: Lower Bound on Structural Depth}
 
 \begin{theorem}[Structural Depth Lower Bound]
 \label{thm:structural-depth-lower-bound}
@@ -522,6 +335,133 @@ A Psi-TM with introspection depth $k+1$ can recognize $w_n$ in $O(n)$ time by di
 This establishes the $\Omega(n^{k+1})$ lower bound for depth-$k$ machines.
 \end{proof}
 
+\section{Adversary Arguments}
+
+\subsection{Formal Adversary Construction}
+
+\begin{theorem}[Adversary Lower Bound]
+\label{thm:adversary-lower-bound}
+For any Psi-TM $M$ with introspection depth $k$, there exists an adversary $A$ such that:
+$M$ cannot solve $L_k$ against $A$.
+\end{theorem}
+
+\begin{proof}
+We construct an explicit adversary strategy that defeats any depth-$k$ Psi-TM.
+
+\textbf{Adversary Strategy:}
+\begin{enumerate}
+\item \textbf{Input Generation:} For each $n \geq 1$, the adversary generates two inputs:
+  \begin{itemize}
+  \item $w_1 = \text{encode}(T_1)\#1^n$ where $T_1$ has depth $k+1$ and evaluates to 1
+  \item $w_2 = \text{encode}(T_2)\#1^n$ where $T_2$ has depth $k$ and evaluates to 0
+  \end{itemize}
+
+\item \textbf{Introspection Response:} When $M$ calls $\texttt{INT\_PATTERN(k)}$ on input $w$:
+  \begin{itemize}
+  \item If $w$ has depth $k$: Return actual depth-$k$ patterns
+  \item If $w$ has depth $k+1$: Return only the depth-$k$ projection
+  \end{itemize}
+
+\item \textbf{Consistency Maintenance:} The adversary ensures that:
+  $$\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$$
+\end{enumerate}
+
+\textbf{Information-Theoretic Analysis:}
+\begin{enumerate}
+\item The introspection function $\iota_k$ can only access depth-$k$ information
+\item Both inputs $w_1$ and $w_2$ have identical depth-$k$ structural patterns
+\item Machine $M$ receives identical introspection responses for both inputs
+\item Therefore, $M$ must produce the same output for both inputs
+\item Since $w_1 \in L_k$ and $w_2 \notin L_k$, $M$ must err on at least one input
+\end{enumerate}
+
+\textbf{Error Probability:}
+The adversary can generate inputs such that $M$ errs with probability at least $1/2$ by ensuring that the machine cannot distinguish between valid and invalid inputs based solely on depth-$k$ information.
+
+This establishes that no depth-$k$ Psi-TM can solve $L_k$ against this adversary.
+\end{proof}
+
+\section{Complexity Class Implications}
+
+\subsection{Class Separations}
+
+\begin{theorem}[Complexity Class Separations]
+For all $k \geq 1$:
+$$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1} \subsetneq \text{PSPACE}$$
+$$\text{Psi-NP}_k \subsetneq \text{Psi-NP}_{k+1} \subsetneq \text{NPSPACE}$$
+$$\text{Psi-PSPACE}_k \subsetneq \text{Psi-PSPACE}_{k+1} \subsetneq \text{EXPSPACE}$$
+\end{theorem}
+
+\begin{proof}
+\textbf{Strict Inclusions:}
+Follow from the main hierarchy theorem and the explicit language constructions.
+
+\textbf{PSPACE Inclusions:}
+Any Psi-TM with constant introspection depth can be simulated by a standard Turing machine with polynomial space overhead, as shown in the formal definition document.
+
+\textbf{Proper Inclusions:}
+The languages $L_k$ demonstrate that the inclusions are proper, as they belong to higher levels but not to lower levels of the hierarchy.
+\end{proof}
+
+\subsection{Collapse Threshold Analysis}
+
+\begin{theorem}[No Finite Collapse]
+The Psi-TM hierarchy does not collapse at any finite level $k^*$.
+\end{theorem}
+
+\begin{proof}
+For any finite $k^*$, we can construct a language $L_{k^*+1}$ that requires depth $k^*+1$ introspection but cannot be recognized by any depth-$k^*$ Psi-TM.
+
+This follows from the explicit construction of $L_k$ for each $k \geq 1$ and the adversary arguments that show the impossibility of depth-$k$ machines recognizing depth-$(k+1)$ languages.
+\end{proof}
+
+\section{Algorithmic Results}
+
+\subsection{Efficient Simulation}
+
+\begin{theorem}[Efficient Psi-TM Simulation]
+Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(k))$, where $f$ is a polynomial function.
+\end{theorem}
+
+\begin{proof}
+We present an algorithm for simulating $M_{psi}$:
+
+\begin{algorithm}
+\caption{Psi-TM Simulation}
+\begin{algorithmic}
+\STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
+\WHILE{not in accepting or rejecting state}
+    \STATE Read current symbol $a$
+    \STATE Compute $\psi = \iota_k(\alpha, \beta, k)$ using dynamic programming
+    \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
+    \STATE Update configuration
+    \STATE Move head according to $d$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
+\end{proof}
+
+\subsection{Universal Psi-TM}
+
+\begin{theorem}[Existence of Universal Psi-TM]
+There exists a universal Psi-TM $U_{psi}$ with k-limited introspection that can simulate any Psi-TM $M_{psi}$ with k-limited introspection with polynomial slowdown.
+\end{theorem}
+
+\begin{proof}
+We construct $U_{psi}$ as follows:
+
+\begin{enumerate}
+\item \textbf{Encoding}: $U_{psi}$ takes as input a description of $M_{psi}$ and input string $x$
+\item \textbf{Simulation}: $U_{psi}$ maintains the configuration of $M_{psi}$ on its tape
+\item \textbf{Introspection}: For each introspection call of $M_{psi}$, $U_{psi}$ computes the same introspection
+\item \textbf{Transitions}: $U_{psi}$ applies the transition function of $M_{psi}$ based on the encoded description
+\end{enumerate}
+
+Since both machines have k-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
+\end{proof}
+
 \section{Conclusion}
 
 We have established a strict hierarchy of Psi-TM models based on introspection depth, with the following key results:
@@ -531,11 +471,9 @@ We have established a strict hierarchy of Psi-TM models based on introspection d
 \item \textbf{Explicit Constructions}: We provided concrete language constructions $L_k$ that separate each level
 \item \textbf{Adversary Arguments}: We constructed formal adversaries that demonstrate the impossibility of depth-$k$ machines recognizing depth-$(k+1)$ languages
 \item \textbf{Complexity Implications}: We established corresponding separations in complexity classes
-\item \textbf{Barrier Bypass}: We proved that $k = 3$ is optimal for bypassing all classical complexity barriers
+\item \textbf{No Collapse}: We proved that the hierarchy does not collapse at any finite level
 \end{enumerate}
 
 These results provide a rigorous foundation for understanding the relationship between introspection depth and computational power in the Psi-TM model, opening new directions in computational complexity theory and formal automata theory.
-
-The discovery that introspection depth creates a strict computational hierarchy has profound implications for understanding the relationship between self-reflection and computational capability. This work provides a foundation for future research in introspective computation and opens new directions in complexity theory.
 
 \end{document} 

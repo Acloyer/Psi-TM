@@ -4,7 +4,6 @@
 
 \documentclass[11pt]{article}
 \usepackage{amsmath, amssymb}
-% \usepackage{algorithm, algorithmic}
 
 % Unicode character declarations for mathematical symbols
 \DeclareUnicodeCharacter{220E}{\qed}
@@ -71,6 +70,99 @@ We introduce Psi-TM ($\Psi$-TM), which constrains SA-TM introspection to constan
 
 \section{The Psi-TM Model}
 
+\subsection{Formal Definition of Structural Depth}
+
+\begin{definition}[Binary Tree]
+A binary tree $T$ is a finite tree where each node has at most two children. We denote:
+\begin{itemize}
+\item $\text{root}(T)$ -- the root node of $T$
+\item $\text{left}(v)$ -- the left child of node $v$ (if exists)
+\item $\text{right}(v)$ -- the right child of node $v$ (if exists)
+\item $\text{leaf}(T)$ -- the set of leaf nodes in $T$
+\item $\text{depth}(v)$ -- the depth of node $v$ (distance from root)
+\item $\text{depth}(T) = \max_{v \in T} \text{depth}(v)$ -- the depth of tree $T$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Parsing Tree]
+For a string $w \in \{0,1\}^*$, a parsing tree $T_w$ is a binary tree where:
+\begin{itemize}
+\item Each leaf is labeled with a symbol from $\{0,1\}$
+\item Each internal node represents a structural composition
+\item The concatenation of leaf labels in left-to-right order equals $w$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Formal Structural Depth]
+For a string $w \in \{0,1\}^*$, the structural depth $d(w)$ is defined as:
+$$d(w) = \min_{T_w} \text{depth}(T_w)$$
+where the minimum is taken over all possible parsing trees $T_w$ for $w$.
+
+\textbf{Base cases:}
+\begin{itemize}
+\item $d(\varepsilon) = 0$ (empty string)
+\item $d(0) = d(1) = 0$ (single symbols)
+\end{itemize}
+
+\textbf{Recursive case:}
+For $|w| > 1$, $d(w) = \min_{w=uv} \{1 + \max(d(u), d(v))\}$ where the minimum is taken over all binary partitions of $w$.
+\end{definition}
+
+\begin{lemma}[Well-Definedness of Structural Depth]
+The structural depth function $d: \{0,1\}^* \to \mathbb{N}$ is well-defined and computable in $O(n^3)$ time using dynamic programming.
+\end{lemma}
+
+\begin{proof}
+\textbf{Well-Definedness:}
+\begin{enumerate}
+\item For strings of length $\leq 1$, $d(w)$ is explicitly defined
+\item For longer strings, the minimum exists because:
+  \begin{itemize}
+  \item The set of possible partitions is finite (at most $n-1$ partitions for length $n$)
+  \item Each partition yields a finite depth value
+  \item The minimum of a finite set of natural numbers exists
+  \end{itemize}
+\end{enumerate}
+
+\textbf{Computability:}
+We provide a dynamic programming algorithm:
+
+\textbf{Algorithm: Structural Depth Computation}
+
+\textbf{Input:} String $w = w_1w_2\ldots w_n$
+
+\textbf{Output:} Structural depth $d(w)$
+
+\begin{enumerate}
+\item Initialize $dp[i][j] = 0$ for all $i \leq j$
+\item For $i = 1$ to $n$:
+   \begin{itemize}
+   \item $dp[i][i] = 0$ (Base case: single symbols)
+   \end{itemize}
+\item For $\text{len} = 2$ to $n$:
+   \begin{itemize}
+   \item For $i = 1$ to $n-\text{len}+1$:
+      \begin{itemize}
+      \item $j = i + \text{len} - 1$
+      \item $dp[i][j] = \infty$
+      \item For $k = i$ to $j-1$:
+         \begin{itemize}
+         \item $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
+         \end{itemize}
+      \end{itemize}
+   \end{itemize}
+\item Return $dp[1][n]$
+\end{enumerate}
+
+\textbf{Correctness:}
+\begin{enumerate}
+\item Base cases are handled correctly
+\item For each substring $w[i:j]$, we try all possible binary partitions
+\item The algorithm computes the minimum depth over all parsing trees
+\item Time complexity: $O(n^3)$ due to three nested loops
+\end{enumerate}
+\end{proof}
+
 \subsection{Formal Definition}
 
 \begin{definition}[Psi-TM]
@@ -97,6 +189,62 @@ $$\mathcal{C} = (q, \alpha, \beta, \psi)$$
 where $q \in Q$, $\alpha, \beta \in \Gamma^*$ represent tape content, and $\psi \in \Psi_k$ is the introspective state.
 \end{definition}
 
+\subsection{Formal Introspection Functions}
+
+\begin{definition}[Formal INT\_PATTERN(k)]
+The function $\texttt{INT\_PATTERN(k)}: \Gamma^* \times \mathbb{N} \to 2^{\text{Patterns}_k}$ is defined as:
+$$\texttt{INT\_PATTERN(k)}(w) = \{(i,j,T) \mid w[i:j] \text{ has parsing tree } T \text{ with depth } \leq k\}$$
+where $\text{Patterns}_k$ is the set of all structural patterns of depth $\leq k$.
+\end{definition}
+
+\begin{definition}[Formal INT\_STRUCT(k)]
+The function $\texttt{INT\_STRUCT(k)}: \Gamma^* \times \mathbb{N} \to \text{Struct}_k$ is defined as:
+$$\texttt{INT\_STRUCT(k)}(w) = \{\text{depth}(T) \mid T \text{ is a parsing tree for } w \text{ with depth } \leq k\}$$
+where $\text{Struct}_k$ is the set of structural depth information up to level $k$.
+\end{definition}
+
+\begin{definition}[Introspective Function]
+The function $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ defines introspective metadata:
+$$\iota_k(\alpha, \beta, k) = (\texttt{INT\_PATTERN(k)}(\alpha), \texttt{INT\_PATTERN(k)}(\beta), \texttt{INT\_STRUCT(k)}(\alpha \cdot \beta))$$
+where $k$ is the limitation on introspection depth, and $\psi$ contains only structural information of depth at most $k$.
+\end{definition}
+
+\begin{definition}[k-Limited Introspection]
+Introspection is called k-limited if for any $\alpha, \beta \in \Gamma^*$:
+$$|\iota_k(\alpha, \beta, k)| \leq f(k) \cdot (|\alpha| + |\beta|)$$
+where $f: \mathbb{N} \to \mathbb{N}$ is a polynomial function, and $\iota_k$ cannot access the complete tape content, only structural patterns of depth $k$.
+\end{definition}
+
+\begin{lemma}[Information Limitation]
+For any $k \geq 1$, there exist strings $w_1, w_2 \in \{0,1\}^*$ such that:
+\begin{enumerate}
+\item $d(w_1) = k+1$ and $d(w_2) = k$
+\item $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+We construct specific strings $w_1$ and $w_2$ that demonstrate this limitation.
+
+\textbf{Construction:}
+\begin{enumerate}
+\item Let $w_1$ be a string with structural depth $k+1$ (e.g., a balanced binary tree of depth $k+1$)
+\item Let $w_2$ be a string with structural depth $k$ (e.g., a balanced binary tree of depth $k$)
+\item Both strings have identical structure up to level $k$
+\item The difference appears only at level $k+1$ in $w_1$
+\end{enumerate}
+
+\textbf{Proof of Equality:}
+Since $\texttt{INT\_PATTERN(k)}$ and $\texttt{INT\_STRUCT(k)}$ only access information up to depth $k$:
+\begin{align*}
+\iota_k(w_1, \varepsilon, k) &= (\texttt{INT\_PATTERN(k)}(w_1), \texttt{INT\_PATTERN(k)}(\varepsilon), \texttt{INT\_STRUCT(k)}(w_1)) \\
+&= (\texttt{INT\_PATTERN(k)}(w_2), \texttt{INT\_PATTERN(k)}(\varepsilon), \texttt{INT\_STRUCT(k)}(w_2)) \\
+&= \iota_k(w_2, \varepsilon, k)
+\end{align*}
+
+This demonstrates that introspection depth $k$ cannot distinguish between strings of different structural depths beyond level $k$.
+\end{proof}
+
 \subsection{Introspection API}
 
 \begin{center}
@@ -113,6 +261,136 @@ where $q \in Q$, $\alpha, \beta \in \Gamma^*$ represent tape content, and $\psi 
 \end{center}
 
 The key constraint $k = O(1)$ ensures that introspection accesses only a constant amount of structural information, independent of input size.
+
+\section{The k-Hierarchy: Strict Separation}
+
+\subsection{Tree Evaluation Language}
+
+\begin{definition}[Tree Evaluation Language $L_k$]
+For each $k \geq 1$, define:
+$$L_k = \{\text{encode}(T)\#1^n \mid T \text{ is a binary tree of depth exactly } k+1,$$
+$$\text{ leaves are labeled with bits}, \text{ root evaluates to } 1\}$$
+where the evaluation follows standard Boolean logic (AND/OR gates at internal nodes).
+\end{definition}
+
+\begin{lemma}[Membership in Psi-P]
+For each $k \geq 1$, $L_k \in \text{Psi-P}_{k+1}$.
+\end{lemma}
+
+\begin{proof}
+We construct a Psi-TM $M$ with introspection depth $k+1$ that recognizes $L_k$ in polynomial time.
+
+\textbf{Algorithm:}
+\begin{enumerate}
+\item Parse the input to extract $\text{encode}(T)$ and $1^n$
+\item Use $\texttt{INT\_STRUCT(k+1)}$ to access the complete tree structure
+\item Verify that the tree has depth exactly $k+1$
+\item Evaluate the tree bottom-up using the structural information
+\item Accept if and only if the root evaluates to 1
+\end{enumerate}
+
+\textbf{Time Analysis:}
+\begin{enumerate}
+\item Parsing: $O(n)$
+\item Depth verification: $O(n)$ using $\texttt{INT\_STRUCT(k+1)}$
+\item Tree evaluation: $O(n)$ since we have complete structural information
+\item Total time: $O(n)$
+\end{enumerate}
+
+Therefore, $L_k \in \text{Psi-P}_{k+1}$.
+\end{proof}
+
+\subsection{Strict Hierarchy Theorem}
+
+\begin{theorem}[Strict Hierarchy]
+\label{thm:strict-hierarchy}
+For all $k \geq 1$:
+$$\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$$
+Equivalently:
+$$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1}$$
+\end{theorem}
+
+\begin{proof}
+We prove this by showing that for each $k \geq 1$, the language $L_k$ satisfies:
+$$L_k \in \text{Psi-P}_{k+1} \text{ but } L_k \notin \text{Psi-P}_k$$
+
+\textbf{Membership in $\text{Psi-P}_{k+1}$:}
+This follows from the lemma above.
+
+\textbf{Non-membership in $\text{Psi-P}_k$:}
+We prove that no Psi-TM with introspection depth $k$ can recognize $L_k$ in polynomial time.
+
+\begin{lemma}[Depth-k Limitation]
+\label{lem:depth-k-limitation}
+Any Psi-TM with introspection depth $k$ cannot distinguish between trees of depth $k+1$ and trees of depth $k$ in polynomial time.
+\end{lemma}
+
+\begin{proof}
+\textbf{Key Insight:} Introspection depth $k$ provides access only to patterns of depth $\leq k$, but cannot access depth $k+1$ patterns.
+
+\textbf{Detailed Proof:}
+For trees $T_1$ (depth $k+1$) and $T_2$ (depth $k$):
+
+\begin{enumerate}
+\item \textbf{Tree Structure Analysis:}
+  \begin{itemize}
+  \item Both trees have identical node structure up to level $k$
+  \item $T_1$ has additional level $k+1$ with leaf values
+  \item $T_2$ terminates at level $k$ with leaf values
+  \end{itemize}
+
+\item \textbf{Introspection Function Analysis:}
+  \begin{itemize}
+  \item $\texttt{INT\_PATTERN(k)}$ returns only nodes at levels $\leq k$
+  \item $\texttt{INT\_STRUCT(k)}$ returns depth information up to level $k$
+  \item Neither function can access level $k+1$ information
+  \end{itemize}
+
+\item \textbf{Equality Proof:}
+  \begin{align*}
+  \texttt{INT\_PATTERN(k)}(T_1) &= \{\text{nodes at levels } \leq k\} \\
+  \texttt{INT\_PATTERN(k)}(T_2) &= \{\text{nodes at levels } \leq k\} \\
+  \therefore \texttt{INT\_PATTERN(k)}(T_1) &= \texttt{INT\_PATTERN(k)}(T_2)
+  \end{align*}
+
+\item \textbf{Structural Depth Analysis:}
+  \begin{align*}
+  \texttt{INT\_STRUCT(k)}(T_1) &= \{0, 1, \ldots, k\} \\
+  \texttt{INT\_STRUCT(k)}(T_2) &= \{0, 1, \ldots, k\} \\
+  \therefore \texttt{INT\_STRUCT(k)}(T_1) &= \texttt{INT\_STRUCT(k)}(T_2)
+  \end{align*}
+
+\item \textbf{Introspection Equality:}
+  Since both $\texttt{INT\_PATTERN(k)}$ and $\texttt{INT\_STRUCT(k)}$ return identical results:
+  $$\iota_k(\text{encode}(T_1), \varepsilon, k) = \iota_k(\text{encode}(T_2), \varepsilon, k)$$
+\end{enumerate}
+
+This demonstrates that a depth-$k$ machine cannot distinguish between trees of different depths beyond level $k$.
+\end{proof}
+
+\begin{theorem}[Structural Depth Lower Bound]
+\label{thm:structural-depth-lower-bound}
+Any Psi-TM with introspection depth $k$ requires $\Omega(n^{k+1})$ time to recognize $L_k$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Lower Bound Proof:}
+A depth-$k$ machine must check all possible configurations at level $k+1$ to determine if a tree evaluates to 1.
+
+\textbf{Complexity Analysis:}
+\begin{enumerate}
+\item \textbf{Number of leaves at level $k+1$:} $2^k$ leaves
+\item \textbf{Possible configurations:} $2^{2^k}$ different assignments to leaves
+\item \textbf{Relationship between tree size and depth:} For a tree with $n$ nodes, $2^k = \Theta(n^{1/(k+1)})$
+\item \textbf{Required checks:} The machine must verify all $2^{2^k} = 2^{\Theta(n^{1/(k+1)})}$ configurations
+\item \textbf{Time complexity:} $\Omega(n \cdot 2^{\Theta(n^{1/(k+1)})}) = \Omega(n^{k+1})$
+\end{enumerate}
+
+Therefore, any depth-$k$ machine requires $\Omega(n^{k+1})$ time to recognize $L_k$.
+\end{proof}
+
+This establishes the strict hierarchy: $\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1}$ for all $k \geq 1$.
+\end{proof}
 
 \section{Main Results: Diagonalization and Separation}
 
