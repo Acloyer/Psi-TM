@@ -81,16 +81,7 @@ For a string $w \in \Gamma^*$, the structural depth $d(w)$ is defined recursivel
 \end{itemize}
 \end{definition}
 
-\begin{definition}[k-Level Introspection API]
-The introspection API at level $k$ provides access to:
-\begin{itemize}
-\item $\texttt{INT\_STATE()}$: Current state (depth 1)
-\item $\texttt{INT\_CODE(i)}$: Code symbol at position $i$ (depth 1)
-\item $\texttt{INT\_INPUT(j)}$: Input symbol at position $j$ (depth 1)
-\item $\texttt{INT\_STRUCT(d)}$: Structural patterns at depth $d \leq k$
-\item $\texttt{INT\_PATTERN(k)}$: Complete structural pattern of depth $k$
-\end{itemize}
-\end{definition}
+\paragraph{Selectors (single semantics).} Introspective access is restricted to selectors over $y=\iota_k(\mathcal{C},n)$: $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, and $\mathrm{VIEW\_WIN}(y,d)$ for $d\le k$. Legacy $\texttt{INT\_*}$ names are aliases to these views.
 
 \subsection{Complexity Classes}
 
@@ -135,7 +126,7 @@ We construct a Psi-TM $M$ with introspection depth $k+1$ that recognizes $L_k$ i
 \textbf{Algorithm:}
 \begin{enumerate}
 \item Parse the input to extract $\text{encode}(T)$ and $1^n$
-\item Use $\texttt{INT\_STRUCT(k+1)}$ to access the complete tree structure
+\item Obtain $y=\iota_{k+1}(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_{k+1}(y)$ to access the tree structure up to depth $k{+}1$
 \item Verify that the tree has depth exactly $k+1$
 \item Evaluate the tree bottom-up using the structural information
 \item Accept if and only if the root evaluates to 1
@@ -144,7 +135,7 @@ We construct a Psi-TM $M$ with introspection depth $k+1$ that recognizes $L_k$ i
 \textbf{Time Analysis:}
 \begin{enumerate}
 \item Parsing: $O(n)$
-\item Depth verification: $O(n)$ using $\texttt{INT\_STRUCT(k+1)}$
+\item Depth verification: $O(n)$ using selectors over $\mathrm{decode}_{k+1}(y)$
 \item Tree evaluation: $O(n)$ since we have complete structural information
 \item Total time: $O(n)$
 \end{enumerate}
@@ -193,30 +184,17 @@ For trees $T_1$ (depth $k+1$) and $T_2$ (depth $k$):
   \item $T_2$ terminates at level $k$ with leaf values
   \end{itemize}
 
-\item \textbf{Introspection Function Analysis:}
-  \begin{itemize}
-  \item $\texttt{INT\_PATTERN(k)}$ returns only nodes at levels $\leq k$
-  \item $\texttt{INT\_STRUCT(k)}$ returns depth information up to level $k$
-  \item Neither function can access level $k+1$ information
-  \end{itemize}
+\item \textbf{Selector Analysis:}
+  Decoding $y=\iota_k(\mathcal{C},n)$ exposes only depth-$\le k$ tags and values; level $k{+}1$ information is not accessible to selectors.
 
-\item \textbf{Equality Proof:}
-  \begin{align*}
-  \texttt{INT\_PATTERN(k)}(T_1) &= \{\text{nodes at levels } \leq k\} \\
-  \texttt{INT\_PATTERN(k)}(T_2) &= \{\text{nodes at levels } \leq k\} \\
-  \therefore \texttt{INT\_PATTERN(k)}(T_1) &= \texttt{INT\_PATTERN(k)}(T_2)
-  \end{align*}
+\item \textbf{Selector Equality:}
+  Since depth-$\le k$ features coincide, all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ return identical values on $\text{encode}(T_1)$ and $\text{encode}(T_2)$
 
-\item \textbf{Structural Depth Analysis:}
-  \begin{align*}
-  \texttt{INT\_STRUCT(k)}(T_1) &= \{0, 1, \ldots, k\} \\
-  \texttt{INT\_STRUCT(k)}(T_2) &= \{0, 1, \ldots, k\} \\
-  \therefore \texttt{INT\_STRUCT(k)}(T_1) &= \texttt{INT\_STRUCT(k)}(T_2)
-  \end{align*}
+\item \textbf{Depth-$k$ agreement:}
+  Both inputs share the same depth-$k$ features; therefore selectors agree at depth $k$.
 
-\item \textbf{Introspection Equality:}
-  Since both $\texttt{INT\_PATTERN(k)}$ and $\texttt{INT\_STRUCT(k)}$ return identical results:
-  $$\iota_k(\text{encode}(T_1), \varepsilon, k) = \iota_k(\text{encode}(T_2), \varepsilon, k)$$
+\item \textbf{Selector Equality:}
+  Since depth-$\le k$ features coincide, all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ return identical values on $\text{encode}(T_1)$ and $\text{encode}(T_2)$
 
 \item \textbf{Machine Limitation:}
   Machine $M$ with introspection depth $k$ receives identical introspection responses for both inputs and therefore cannot distinguish between them.
@@ -228,11 +206,8 @@ For any Psi-TM $M$ with introspection depth $k$, we construct an adversary $A$ t
 \textbf{Adversary Strategy:}
 \begin{enumerate}
 \item On input $w = \text{encode}(T)\#1^n$:
-  \begin{itemize}
-  \item If $T$ has depth $k$: Return actual depth-$k$ patterns via $\texttt{INT\_PATTERN(k)}$
-  \item If $T$ has depth $k+1$: Return only the depth-$k$ projection via $\texttt{INT\_PATTERN(k)}$
-  \end{itemize}
-\item The adversary ensures that $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$ for any two inputs $w_1, w_2$ where one has depth $k$ and the other has depth $k+1$
+  ensure that for any call $y=\iota_k(\mathcal{C},n)$, selectors over $\mathrm{decode}_k(y)$ reveal only depth-$\le k$ features (for depth $k{+}1$ inputs, the depth-$k$ projection is revealed).
+\item The adversary ensures that all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ agree on $w_1$ and $w_2$ when one has depth $k$ and the other $k{+}1$
 \end{enumerate}
 
 \textbf{Information-Theoretic Argument:}
@@ -240,7 +215,7 @@ For any Psi-TM $M$ with introspection depth $k$, we construct an adversary $A$ t
 \item Let $T_1$ be a tree of depth $k+1$ and $T_2$ be a tree of depth $k$
 \item Both trees have identical depth-$k$ structural patterns
 \item The introspection function $\iota_k$ can only access depth-$k$ information
-\item Therefore, $\iota_k(\text{encode}(T_1), \varepsilon, k) = \iota_k(\text{encode}(T_2), \varepsilon, k)$
+\item Therefore, all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ agree on $\text{encode}(T_1)$ and $\text{encode}(T_2)$
 \item Machine $M$ cannot distinguish between these inputs
 \item Since one input is in $L_k$ and the other is not, $M$ must err on at least one input
 \end{enumerate}
@@ -363,7 +338,7 @@ We construct an explicit adversary strategy that defeats any depth-$k$ Psi-TM.
   \end{itemize}
 
 \item \textbf{Consistency Maintenance:} The adversary ensures that:
-  $$\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$$
+All selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ agree on $w_1$ and $w_2$
 \end{enumerate}
 
 \textbf{Information-Theoretic Analysis:}
@@ -432,7 +407,7 @@ We present an algorithm for simulating $M_{psi}$:
 \STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
 \WHILE{not in accepting or rejecting state}
     \STATE Read current symbol $a$
-    \STATE Compute $\psi = \iota_k(\alpha, \beta, k)$ using dynamic programming
+\STATE Compute the required selectors from $y=\iota_k(\mathcal{C},n)$
     \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
     \STATE Update configuration
     \STATE Move head according to $d$

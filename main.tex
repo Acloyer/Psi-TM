@@ -20,6 +20,7 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{assumption}[theorem]{Assumption}
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{example}[theorem]{Example}
@@ -68,10 +69,10 @@ We introduce Psi-TM ($\Psi$-TM), which constrains SA-TM introspection to constan
 \begin{enumerate}
 \item \textbf{Formal Model:} Complete 7-tuple specification of Psi-TM with $k$-limited introspection
 \item \textbf{Main Result:} Oracle separation $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ via diagonalization
-\item \textbf{Barrier Analysis:} Systematic bypass of all four classical complexity barriers
+\item \textbf{Barrier Analysis:} Conservative status across the four classical complexity barriers
 \item \textbf{Computational Equivalence:} Polynomial simulation between Psi-TM and standard TMs
 \item \textbf{Minimality Analysis:} Strict hierarchy of minimal $k$ requirements for barrier bypass
-\item \textbf{Optimal Design:} $k=3$ provides complete barrier bypass with minimal introspection
+\item \textbf{Optimal Design:} $k=3$ is a plausible target; full bypass remains conditional on algebraization
 \end{enumerate}
 
 \section{The Psi-TM Model}
@@ -195,88 +196,65 @@ $$\mathcal{C} = (q, \alpha, \beta, \psi)$$
 where $q \in Q$, $\alpha, \beta \in \Gamma^*$ represent tape content, and $\psi \in \Psi_k$ is the introspective state.
 \end{definition}
 
-\subsection{Formal Introspection Functions}
+\subsection{Introspection as views over $\iota_k$}
 
-\begin{definition}[Formal INT\_PATTERN(k)]
-The function $\texttt{INT\_PATTERN(k)}: \Gamma^* \times \mathbb{N} \to 2^{\text{Patterns}_k}$ is defined as:
-$$\texttt{INT\_PATTERN(k)}(w) = \{(i,j,T) \mid w[i:j] \text{ has parsing tree } T \text{ with depth } \leq k\}$$
-where $\text{Patterns}_k$ is the set of all structural patterns of depth $\leq k$.
+\begin{definition}[Introspection codeword]
+For a configuration $\mathcal{C}=(q,\alpha,\beta,\psi)$ on input $x\in\bits^n$, a single introspection call returns the binary word
+\[
+y \;=\; \iota_k(\mathcal{C},n)\in\Psi_k,
+\]
+encoded via the canonical prefix-free code $C_k$ from Definition~\ref{def:psi-k} and bounded in length by $B(k,n)$ (Lemma~\ref{lem:length-bound}).
 \end{definition}
 
-\begin{definition}[Formal INT\_STRUCT(k)]
-The function $\texttt{INT\_STRUCT(k)}: \Gamma^* \times \mathbb{N} \to \text{Struct}_k$ is defined as:
-$$\texttt{INT\_STRUCT(k)}(w) = \{\text{depth}(T) \mid T \text{ is a parsing tree for } w \text{ with depth } \leq k\}$$
-where $\text{Struct}_k$ is the set of structural depth information up to level $k$.
+\begin{definition}[Decoding and selectors]
+Let $\mathrm{decode}_k: \Psi_k \to (\mathsf{Tag}\times\mathbb{N})^{\le k+1}$ be the total decoder inverse to $C_k$. For $y\in\Psi_k$, write $\mathrm{decode}_k(y)=(a_i)_{i=0}^{r}$ with $a_i=(\tau_i,v_i)$. Define selector functions (views) over $y$ as follows:
+\begin{align*}
+\mathrm{VIEW\_STATE}(y) &:= v_i \text{ where } \tau_i=\textsf{state}, \\
+\mathrm{VIEW\_HEAD}(y) &:= v_i \text{ where } \tau_i=\textsf{head}, \\
+\mathrm{VIEW\_WIN}(y,d) &:= v_i \text{ where } \tau_i=\textsf{win}d \text{ for } d\in[1..k].
+\end{align*}
+Each selector is undefined if the corresponding tag is absent; by Definition~\ref{def:iota-k} these tags are present whenever $k\ge 1$.
 \end{definition}
 
-\begin{definition}[Introspective Function]
-The function $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ defines introspective metadata:
-$$\iota_k(\alpha, \beta, k) = (\texttt{INT\_PATTERN(k)}(\alpha), \texttt{INT\_PATTERN(k)}(\beta), \texttt{INT\_STRUCT(k)}(\alpha \cdot \beta))$$
-where $k$ is the limitation on introspection depth, and $\psi$ contains only structural information of depth at most $k$.
+\begin{definition}[Single-semantics rule for introspection]
+Every occurrence of an operation of the form \texttt{INT\_*} in this paper is by definition a shorthand for applying the corresponding selector to the most recently obtained codeword $y=\iota_k(\mathcal{C},n)$. There is no alternative or parallel API for reading state, code, input, or structure: all such accesses are views over the decoded $\iota_k$ codeword, and any bits used must fit within the step budget $B(k,n)$ (Lemma~\ref{lem:one-step-budget}).
 \end{definition}
 
-\begin{definition}[k-Limited Introspection]
-Introspection is called k-limited if for any $\alpha, \beta \in \Gamma^*$:
-$$|\iota_k(\alpha, \beta, k)| \leq f(k) \cdot (|\alpha| + |\beta|)$$
-where $f: \mathbb{N} \to \mathbb{N}$ is a polynomial function, and $\iota_k$ cannot access the complete tape content, only structural patterns of depth $k$.
-\end{definition}
-
-\begin{lemma}[Information Limitation]
-For any $k \geq 1$, there exist strings $w_1, w_2 \in \{0,1\}^*$ such that:
-\begin{enumerate}
-\item $d(w_1) = k+1$ and $d(w_2) = k$
-\item $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
-\end{enumerate}
+\begin{lemma}[Selector indistinguishability at depth $k$]
+\label{lem:selector-indistinguishability}
+For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
 \end{lemma}
 
 \begin{proof}
-We construct specific strings $w_1$ and $w_2$ that demonstrate this limitation.
-
-\textbf{Construction:}
-\begin{enumerate}
-\item Let $w_1$ be a string with structural depth $k+1$ (e.g., a balanced binary tree of depth $k+1$)
-\item Let $w_2$ be a string with structural depth $k$ (e.g., a balanced binary tree of depth $k$)
-\item Both strings have identical structure up to level $k$
-\item The difference appears only at level $k+1$ in $w_1$
-\end{enumerate}
-
-\textbf{Proof of Equality:}
-Since $\texttt{INT\_PATTERN(k)}$ and $\texttt{INT\_STRUCT(k)}$ only access information up to depth $k$:
-\begin{align*}
-\iota_k(w_1, \varepsilon, k) &= (\texttt{INT\_PATTERN(k)}(w_1), \texttt{INT\_PATTERN(k)}(\varepsilon), \texttt{INT\_STRUCT(k)}(w_1)) \\
-&= (\texttt{INT\_PATTERN(k)}(w_2), \texttt{INT\_PATTERN(k)}(\varepsilon), \texttt{INT\_STRUCT(k)}(w_2)) \\
-&= \iota_k(w_2, \varepsilon, k)
-\end{align*}
-
-This demonstrates that introspection depth $k$ cannot distinguish between strings of different structural depths beyond level $k$.
+By the code design for $\mathcal{C}_k$ (Definition~\ref{def:iota-k} and Definition~\ref{def:psi-k}), the admissible tag set at depth $k$ is $\{\textsf{state},\textsf{head},\textsf{win}1,\ldots,\textsf{win}k\}$ and excludes any depth-$(k{+}1)$ tags. Choose $x$ and $x'$ that agree on all depth-$\le k$ local features around the head but differ only in depth-$(k{+}1)$ structure. Then the decoded sequence $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ exposes only these depth-$\le k$ tags and associated values, so
+\[\mathrm{VIEW\_STATE}(y),\ \mathrm{VIEW\_HEAD}(y),\ \mathrm{VIEW\_WIN}(y,d)~(d\le k)\]
+are identical on $x$ and $x'$. Furthermore, the number of possible one-step outcomes is at most $2^{B(k,n)}$ and across $t$ steps at most $2^{t\,B(k,n)}$ (Lemma~\ref{lem:one-step-budget}), which does not allow revealing depth-$(k{+}1)$ features at depth $k$. Hence every selector returns identical outputs on $x$ and $x'$. \qed
 \end{proof}
 
-\subsection{Introspection API}
+\subsection{Introspection selector API (views over $\iota_k$)}
 
 \begin{table}[ht]
 \centering
-\caption{Psi-TM Introspection API}
+\caption{Psi-TM introspection selectors as views over $\iota_k$}
 \label{tab:introspection-api}
 \begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Function} & \textbf{Parameters} & \textbf{Returns} & \textbf{Constraint} \\
+\textbf{Selector} & \textbf{Input} & \textbf{Returns} & \textbf{Constraint} \\
 \hline
-$\texttt{INT\_STATE()}$ & None & Current state $q \in Q$ & $k \geq 1$ \\
+\texttt{VIEW\_STATE}(y) & $y=\iota_k(\mathcal{C},n)$ & Index of current state in $Q$ & $k \ge 1$ \\
 \hline
-$\texttt{INT\_CODE(i)}$ & Index $i \in \mathbb{Z}$ & Code symbol $\delta[i]$ & $|i| \leq k$ \\
+\texttt{VIEW\_HEAD}(y) & $y=\iota_k(\mathcal{C},n)$ & Current input-head position & $k \ge 1$ \\
 \hline
-$\texttt{INT\_INPUT(j)}$ & Position $j \in \mathbb{N}$ & Input symbol at position $j$ & $|j| \leq k$ \\
-\hline
-$\texttt{INT\_STRUCT(d)}$ & Depth $d \in \mathbb{N}$ & Structural patterns at depth $d$ & $d \leq k$ \\
+\texttt{VIEW\_WIN}(y,d) & $y=\iota_k(\mathcal{C},n),\ d\in[1..k]$ & Window summary at depth $d$ & $d \le k$ \\
 \hline
 \multicolumn{4}{|c|}{\textbf{Key Constraint: $k = O(1)$ ensures bounded introspection}} \\
 \hline
 \end{tabular}
 \end{table}
 
-The key constraint $k = O(1)$ ensures that introspection accesses only a constant amount of structural information, independent of input size.
+All selectors are read-only views over $y$; any use of their values must occur within the step in which $y$ was produced unless $y$ is explicitly written to the work tape at the linear cost stated in Definition~\ref{def:cost}. The bound $|y|\le B(k,n)$ controls the maximum information available per step (Lemma~\ref{lem:one-step-budget}).
 
-\section{Formal Semantics and Budgets (v0.6)}
+\section{Formal Semantics and Budgets (v0.7)}
 
 This section fixes the formal semantics of introspection and its resource accounting. All later results that reason about the quantity of introspective information will cite Lemma~\ref{lem:one-step-budget} from this section.
 
@@ -353,13 +331,15 @@ Each call to $\iota_k$ costs exactly one machine step to obtain a read-only buff
 
 \subsection{Information budgets}
 
-\begin{lemma}[One-Step Information Budget]
+\begin{lemma}[One-Step Information Budget and Counting]
 \label{lem:one-step-budget}
-For any input $x\in\bits^n$ and any $\PSi$-TM of depth $k$, a single call to $\iota_k$ returns at most $B(k,n)$ fresh bits of introspective information. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$.
+For any input $x\in\bits^n$ and any $\PSi$-TM of depth $k$, a single call to $\iota_k$ returns an output $y\in\bits^{\le B(k,n)}$ and hence at most $B(k,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{B(k,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t\,B(k,n)}$.
 \end{lemma}
 
 \begin{proof}
-By Definition~\ref{def:iota-k}, $\iota_k(\mathcal{C},n)\in\PSi_k$ and encodes at most $r+1\le k+1$ atoms using the prefix-free code $C_k$. Lemma~\ref{lem:length-bound} upper-bounds the code length by $B(k,n)$, so a single call yields a string of length at most $B(k,n)$. Freshness is measured as the number of output bits not already determined by the prior transcript and input; since the output alphabet is binary and the output is a deterministic function of the current configuration, its conditional Kolmogorov information given the prior transcript is at most its length. Summing over $t$ calls and using subadditivity of information yields the $t\cdot B(k,n)$ bound. \qed
+By Definition~\ref{def:iota-k}, $\iota_k(\mathcal{C},n)\in\PSi_k$ and encodes at most $r+1\le k+1$ atoms using the prefix-free code $C_k$. Lemma~\ref{lem:length-bound} upper-bounds the code length by $B(k,n)$, so a single call yields a string $y\in\bits^{\le B(k,n)}$. Define the injective padding map $\mathrm{pad}_B: \bits^{\le B}\to\bits^{B}$ by $\mathrm{pad}_B(y)=y\,0^{B-|y|}$. Then different outputs map to different padded strings of length $B$, so there are at most $2^{B(k,n)}$ possible outcomes of one call. This also implies that at most $B(k,n)$ fresh bits can be revealed per call.
+
+For $t$ calls producing $(y_1,\ldots,y_t)$ with $|y_j|\le B(k,n)$, the concatenated padded string $\mathrm{pad}_B(y_1)\ldots\mathrm{pad}_B(y_t)\in\bits^{t\,B(k,n)}$ is an injective image of the outcome sequence, hence there are at most $2^{t\,B(k,n)}$ possible sequences. Therefore the cumulative fresh information is at most $t\cdot B(k,n)$. No probabilistic or Kolmogorov arguments are used. \qed
 \end{proof}
 
 \begin{lemma}[Monotonicity and subadditivity]
@@ -396,7 +376,7 @@ $L_k\in \PsiPk$ and can be decided in time $O(n)$ with at most $k$ calls to $\io
 Scan to extract blocks. At each level $i\le k$, one call to $\iota_k$ yields the head position and window summaries (Definition~\ref{def:iota-k}), which bound the cost of locating the needed index within $u_i$ without revisiting prior blocks. Total time is linear in $n$ and total introspective bits are $\le k\,B(k,n)$ by Lemma~\ref{lem:one-step-budget}. \qed
 \end{proof}
 
-\begin{theorem}[Time–information tradeoff]
+\begin{theorem}[Time--information tradeoff]
 \label{thm:tradeoff}
 For every depth-$(k{-}1)$ $\PSi$-TM deciding $L_k$ on inputs of length $n$, if it performs at most $t$ calls to $\iota_{k-1}$ then the transcript contains at most $t\,B(k{-}1,n)$ fresh introspective bits. Consequently, if $t=\mathrm{poly}(\log n)$ there exist inputs on which the machine must spend $\Omega(n)$ additional work-tape operations to resolve the final pointer.
 \end{theorem}
@@ -421,15 +401,15 @@ Enumerate all depth-$(k{-}1)$ polynomial-time oracle $\PSi$-TMs as in Lemma~\ref
 Define language $L_k^{O}$ that, on inputs of the form $x_s$, outputs the oracle bit $O(q_s)$. A depth-$k$ decider reconstructs $q_s$ using at most $k$ applications of $\iota_k$ to assemble the designated string structure and then queries $O$, placing $L_k^{O}\in\Psi\text{-}P_{k}^{O}$. No depth-$(k{-}1)$ polynomial-time decider can compute $L_k^{O}$ by construction, as it would need to ask $q_s$, which it does not (and cannot reconstruct from at most $T_s(n_s) B(k{-}1,n_s)$ introspective bits by Lemma~\ref{lem:one-step-budget}). Hence strictness holds relative to $O_{\PSi,k}$. \qed
 \end{proof}
 
-\begin{corollary}[Hierarchy-Barrier Connection]
-The k-hierarchy directly implies minimal introspection requirements:
+\begin{corollary}[Hierarchy--barrier connection (oracle-relative)]
+Relative to the oracles constructed in Theorem~\ref{thm:oracle-k-hierarchy}, we have the following witness languages:
 \begin{itemize}
     \item $L_0 \in \text{Psi-P}_1 \setminus \text{Psi-P}_0$ 
           implies relativization requires $k \geq 1$
     \item $L_1 \in \text{Psi-P}_2 \setminus \text{Psi-P}_1$ 
-          implies natural proofs require $k \geq 2$  
+          suggests natural proofs phenomena emerge at $k \geq 2$ (partial/conditional)  
     \item $L_2 \in \text{Psi-P}_3 \setminus \text{Psi-P}_2$ 
-          implies algebraization requires $k \geq 3$
+          suggests algebraization phenomena may require $k \geq 3$ (conservative)
 \end{itemize}
 \end{corollary}
 
@@ -440,7 +420,7 @@ The connection follows from the strict hierarchy and barrier bypass requirements
     \item \textbf{Natural Proofs:} $L_1$ requires depth-2 introspection to construct explicit adversaries
     \item \textbf{Algebraization:} $L_2$ requires depth-3 introspection to handle polynomial degree analysis
 \end{itemize}
-Each $L_k$ serves as a witness that the corresponding barrier cannot be bypassed with introspection depth $< k+1$.
+These are oracle-relative indications; unrelativized minimality remains open where not otherwise proved.
 \end{proof}
 
 \begin{figure}[ht]
@@ -451,33 +431,30 @@ Each $L_k$ serves as a witness that the corresponding barrier cannot be bypassed
     every node/.style={rectangle, draw, minimum width=2cm, minimum height=1cm, align=center}
 ]
 % k=0: Standard TM
-\node {Standard TM\\k=0} 
+\node {Standard TM\\k=0\\{\textbf{Minimal Introspection}}} 
     child { node {No Barriers\\Bypassed} };
 
 % k=1: TM + Relativization
-\node at (4,0) {Psi-TM\\k=1}
+\node at (7,0) {Psi-TM\\k=1\\{\textbf{Moderate Introspection}}}
     child { node {Relativization\\Bypass} };
 
 % k=2: + Natural Proofs + Proof Complexity  
-\node at (8,0) {Psi-TM\\k=2}
+\node at (0,-5) {Psi-TM\\k=2\\{\textbf{Complete Introspection}}}
     child { node {Natural Proofs\\Bypass} }
     child { node {Proof Complexity\\Bypass} };
 
 % k=3: Complete
-\node at (12,0) {Psi-TM\\k=3}
+\node at (7,-5) {Psi-TM\\k=3\\{\textbf{Optimal Design}}}
     child { node {Algebraization\\Bypass} }
     child { node {Complete\\Barrier Bypass} };
 
 % Arrows showing progression
-\draw[->, thick] (2,0) -- (3,0);
-\draw[->, thick] (6,0) -- (7,0);
-\draw[->, thick] (10,0) -- (11,0);
-
-% Labels
-\node at (2,-2) {\textbf{Minimal Introspection}};
-\node at (6,-2) {\textbf{Moderate Introspection}};
-\node at (10,-2) {\textbf{Complete Introspection}};
-\node at (14,-2) {\textbf{Optimal Design}};
+\draw[->, thick] (2.3,0) -- (4.55,0);
+\draw[-, thick] (9.45,0) -- (10,0);
+\draw[-, thick] (10,0) -- (10,-3.3);
+\draw[-, thick] (10,-3.3) -- (0,-3.3);
+\draw[->, thick] (0,-3.3) -- (0,-4.2);
+\draw[->, thick] (2.4,-5) -- (5.35,-5);
 
 \end{tikzpicture}
 \caption{The complete k-hierarchy and barrier bypass capabilities}
@@ -557,16 +534,18 @@ For any fixed constant $k$ and any input $x\in\bits^n$, the verifier $V$ runs in
 Recomputing $\iota_k(\mathcal{C}_j,n)$ for each step takes $O(B(k,n))$ time by Definition~\ref{def:iota-k} and the fixed enumeration of atoms; inspecting a transition is constant-time on the local neighborhood. Summed over $t$ steps, the time is $O\big(t\cdot(B(k,n)+1)\big)$, which is polynomial for constant $k$ by \eqref{eq:budget}. Soundness and completeness follow from determinism of $M$, exact recomputation of $\iota_k$, and direct oracle checks. \qed
 \end{proof}
 
-\subsection{P vs NP Separation}
+\subsection{Oracle-Relative P vs NP Separation}
 
-\begin{theorem}[P vs NP Separation in Psi-Model]
+\begin{theorem}[Oracle-Relative separation $P^{O_\Psi}_\Psi \ne NP^{O_\Psi}_\Psi$]
 \label{thm:separation}
-There exists a language $L$ and oracle $O_\Psi$ such that:
-$$L \in NP^{O_\Psi}_\Psi \text{ and } L \notin P^{O_\Psi}_\Psi$$
+There exists a language $L$ and oracle $O_\Psi$ such that
+\[
+L \in NP^{O_\Psi}_\Psi \quad\text{and}\quad L \notin P^{O_\Psi}_\Psi.
+\]
 \end{theorem}
 
 \begin{proof}
-Using oracle $O_\Psi$ from Theorem \ref{thm:diagonal}, define:
+Using $O_\Psi$ from Theorem~\ref{thm:diagonal} (constructed by stages with lengths $n_s=2^{2^s}$), define
 $$L = \{\langle i, x, w \rangle \mid w \text{ is valid transcript of } M_i^{O_\Psi}(x) = 1\}$$
 
 \textbf{Membership in $NP^{O_\Psi}_\Psi$:}
@@ -577,20 +556,23 @@ Verifier algorithm:
    \begin{itemize}
    \item Verify $\delta(q_j, \gamma_j, \psi_j) = (q_{j+1}, \gamma_{j+1}, \text{move})$ where \\
 $\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$
-   \item Validate introspection $\psi_j = \iota_k(\cdot, \cdot, k)$ with $k = O(1)$
+\item Validate introspection $\psi_j = \iota_k(\mathcal{C}_j, n)$ with $k = O(1)$ and $|\psi_j|\le B(k,\len{x})$ (Lemma~\ref{lem:one-step-budget})
    \item Check oracle queries against $O_\Psi$
    \end{itemize}
 \item Accept if all steps valid and final state $\in F$
 \end{enumerate}
-Time complexity: $O(\text{poly}(|w|))$ since $k = O(1)$.
+Time complexity: $O(\mathrm{poly}(|w|))$ by Lemma~\ref{lem:replay} and Lemma~\ref{lem:one-step-budget}.
+
+\noindent\textbf{Selectors and budget.} Each oracle query and any introspective dependency is constructed as $q_j = f(\mathrm{decode}_k(\iota_k(\mathcal{C}_j,n)), x)$ for some computable $f$. By Lemma~\ref{lem:one-step-budget}, one call to $\iota_k$ on inputs of length $n_s$ has at most $2^{B(k,n_s)}$ outcomes; over $T_s(n_s)$ steps there are at most $2^{T_s(n_s)\,B(k,n_s)}$ outcome sequences. The transcript verifier (Lemma~\ref{lem:replay}) recomputes $\iota_k(\mathcal{C}_j,n)$ and checks $|y_j|\le B(k,n)$.
 
 \textbf{Non-membership in $P^{O_\Psi}_\Psi$:}
 Suppose $L \in P^{O_\Psi}_\Psi$ via machine $M_j$. Then $M_j$ can decide whether transcripts are valid.
 
-\textbf{Contradiction Argument:}
+\textbf{Contradiction Argument (counting and diagonalization):}
 \begin{enumerate}
 \item $M_j$ claims to decide transcript validity for all machines
 \item Consider input $(j, x_j, w_j)$ where $w_j$ is the actual transcript of $M_j^{O_\Psi}(x_j)$
+\item By Lemma~\ref{lem:one-step-budget}, in each step there are at most $2^{B(k,\len{x_j})}$ possible introspection outcomes, so over $t$ steps at most $2^{t\,B(k,\len{x_j})}$ possible introspection sequences
 \item By oracle construction: $O_\Psi(\langle \text{Diag}, j, x_j \rangle) = 1 - \text{output}(M_j^{O_\Psi}(x_j))$
 \item If $M_j^{O_\Psi}(x_j) = 1$, then $O_\Psi$ returns 0, making transcript invalid
 \item If $M_j^{O_\Psi}(x_j) = 0$, then $O_\Psi$ returns 1, contradicting the transcript
@@ -635,7 +617,7 @@ A property $\mathcal{P}: \{0,1\}^n \to \{0,1\}$ is \textit{pseudo-natural} if:
 \end{definition}
 
 \begin{definition}[Introspective Query]
-A query $q$ is \textit{introspective} if it contains the result of an introspection call, such as $\texttt{INT\_STATE()}$, $\texttt{INT\_CODE(i)}$, $\texttt{INT\_INPUT(j)}$, or $\texttt{INT\_STRUCT(d)}$. Formally, $q$ is introspective if $q = f(\iota_k(\alpha, \beta, k), x)$ for some computable function $f$.
+A query $q$ is \textit{introspective} if it contains bits derived from the most recent introspection codeword $y=\iota_k(\mathcal{C},n)$ via view selectors (e.g., $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, $\mathrm{VIEW\_WIN}(y,d)$). Formally, $q$ is introspective if $q = f(\mathrm{decode}_k(\iota_k(\mathcal{C}, n)), x)$ for some computable $f$.
 \end{definition}
 
 \begin{definition}[Standard Simulation]
@@ -684,7 +666,7 @@ This hierarchy captures increasingly complex structural patterns, with each leve
 \subsection{Four barriers: conservative statements and open problems}
 
 \begin{theorem}[Relativization, natural proofs, algebraization, proof complexity]
-With the semantics of Section~2 and the budget Lemma~\ref{lem:one-step-budget} in force, the following hold:
+With the introspection semantics of Section~\ref{def:iota-k} and the budget Lemma~\ref{lem:one-step-budget} in force, the following hold:
 \begin{enumerate}
   \item There exists an oracle $O_\PSi$ with $P^{O_\PSi}_\PSi \neq NP^{O_\PSi}_\PSi$ (Theorem~\ref{thm:diagonal}).
   \item The transcript verifier (Lemma~\ref{lem:replay}) runs in polynomial time for fixed $k$.
@@ -708,11 +690,11 @@ There exists a Psi-TM with $k=1$ that bypasses the relativization barrier.
 \begin{proof}
 We construct a Psi-TM $M_1$ with k=1 that cannot be simulated by standard relativizing arguments.
 
-\textbf{Formal Construction:}
+\textbf{Selector-based Construction:}
 \begin{enumerate}
-\item $M_1$ uses $\texttt{INT\_STATE()}$ to access its current state $q \in Q$
-\item On input $x$, $M_1$ constructs query $q = \langle \text{Rel}, \texttt{INT\_STATE()}, x \rangle$
-\item The query depends on introspective metadata inaccessible to external simulators
+\item On input $x$ with configuration $\mathcal{C}$ and $n=\len{x}$, let $y=\iota_1(\mathcal{C},n)$.
+\item Construct $q = f\big(\mathrm{decode}_1(y), x\big)$; for example, include $\mathrm{VIEW\_STATE}(y)$ and $\mathrm{VIEW\_HEAD}(y)$ as fixed fields.
+\item The query depends only on selectors over $\mathrm{decode}_1(y)$ and thus respects the single-semantics rule.
 \end{enumerate}
 
 \textbf{Formal Proof of Non-relativization:}
@@ -721,19 +703,14 @@ $S(x) \neq M_1(x)$ because $S$ cannot access the introspective state information
 
 \textbf{Key Lemma (Non-relativization):} Standard relativizing arguments assume simulators can intercept oracle queries verbatim. However, $M_1$'s queries depend on introspective state information that external simulators cannot access.
 
-\textbf{Formal Argument:}
+\textbf{Selector-based argument and budget:}
 \begin{itemize}
-\item Query construction: $q = f(\texttt{INT\_STATE()}, x)$ where $f$ is computable
-\item External simulator cannot compute $\texttt{INT\_STATE()}$ without access to $M_1$'s internal state
-\item Therefore, simulator cannot predict or intercept $q$ correctly
-\item This breaks the relativization assumption that queries are externally observable
+\item Query construction uses selectors only: $q = f(\mathrm{decode}_1(\iota_1(\mathcal{C},n)), x)$ where $f$ is computable.
+\item By Lemma~\ref{lem:one-step-budget}, one call to $\iota_1$ has at most $2^{B(1,n)}$ outcomes; over $t$ steps at most $2^{t\,B(1,n)}$ sequences.
+\item A standard simulator lacking access to $\iota_1$ cannot determine which outcome occurred and thus cannot predict $q$.
 \end{itemize}
 
-\textbf{Separation Proof:}
-For any standard relativizing simulator $S$, there exists input $x$ such that:
-$S(x) \neq M_1(x)$ because $S$ cannot access the introspective state information used in $M_1$'s query construction.
-
-Thus, $k=1$ suffices to bypass the relativization barrier.
+Therefore, $k=1$ suffices to bypass the relativization barrier. \qed
 \end{proof}
 
 \begin{theorem}[Relativization Requires k$\geq$1]
@@ -757,36 +734,47 @@ A Psi-TM with k=0 has no introspection capabilities, making it equivalent to a s
 Therefore, k $\geq$ 1 is necessary for relativization bypass.
 \end{proof}
 
-\subsubsection{Natural Proofs: RR-style framework}
+\subsubsection{Natural Proofs: RR triplet (strict form)}
 \label{sec:natural-rr}
 
 \begin{definition}[Property family]
 For each $n$, let $\mathcal{P}_n\subseteq \{0,1\}^{2^n}$ be a property of Boolean functions on $n$ variables. We identify $f:\bits^n\to\bits$ with its truth table $\mathrm{TT}(f)\in\bits^{2^n}$.
 \end{definition}
 
-\begin{lemma}[Constructivity]
-There exists a constant-depth $k=2$ $\PSi$-TM that decides $\mathcal{P}_n(\mathrm{TT}(f))$ in time $\mathrm{poly}(2^n)$ and uses at most $O(B(2,2^n))$ introspective bits per step.
+\noindent\textbf{Measure.} Unless stated otherwise, the measure over Boolean functions is the uniform distribution over $\{0,1\}^{\{0,1\}^n}$ (equivalently, uniform truth tables of length $2^n$).
+
+\begin{lemma}[Constructive (in $\Psi$-P$_2$)]
+There exists a uniform depth-$2$ $\PSi$-TM that decides $\mathcal{P}_n(\mathrm{TT}(f))$ in time $\mathrm{poly}(2^n)$. In each step that calls $\iota_2$, the number of possible outcomes is at most $2^{B(2,2^n)}$ by Lemma~\ref{lem:one-step-budget}; over $t=\mathrm{poly}(2^n)$ steps, the number of possible outcome sequences is at most $2^{t\,B(2,2^n)}$.
 \end{lemma}
 \begin{proof}
-The decider computes a simple local statistic (e.g., the Walsh–Hadamard correlation threshold) using standard dynamic programming over the truth table. Each step that uses $\iota_2$ obtains at most $B(2,2^n)$ bits by Lemma~\ref{lem:one-step-budget}; since $k$ is constant and the algorithm performs $\mathrm{poly}(2^n)$ arithmetic operations, the total remains polynomial in $2^n$. \qed
+The decider computes a simple local statistic (e.g., the Walsh--Hadamard correlation threshold) using standard dynamic programming over the truth table. Each step that uses $\iota_2$ obtains at most $B(2,2^n)$ bits by Lemma~\ref{lem:one-step-budget}; since $k$ is constant and the algorithm performs $\mathrm{poly}(2^n)$ arithmetic operations, the total remains polynomial in $2^n$. \qed
 \end{proof}
 
-\begin{lemma}[Largeness]
+\begin{lemma}[Large]
 For threshold $\tau = 2^{-c n}$ and uniformly random $f$, $\Pr[\mathcal{P}_n(\mathrm{TT}(f))=1]\ge 1-2^{-\Omega(2^n)}$.
 \end{lemma}
 \begin{proof}
 By standard Chernoff bounds on sums of independent $\pm1$ variables for Walsh coefficients, all coefficients are at most $2\cdot 2^{n/2}\sqrt{\ln 2}\,\sqrt{2^n}$ with probability $1-2^{-\Omega(2^n)}$. Choosing $\tau$ below this typical scale ensures largeness of the property. \qed
 \end{proof}
 
-\begin{lemma}[Usefulness conditional on PRFs]
-Assuming the existence of pseudorandom function families secure against $\mathrm{poly}(n)$-size circuits, the above $\mathcal{P}_n$ is not useful against that circuit class.
+\begin{assumption}[Pseudorandom functions]
+\label{asm:prf}
+There exists a keyed family $\{F_s\}$ such that for any PPT distinguisher $D$ and any polynomial $p$, 
+\[
+\big|\Pr[D^{F_s(\cdot)}(1^n)=1]-\Pr[D^{U(\cdot)}(1^n)=1]\big|<1/p(n)
+\]
+for all sufficiently large $n$, where $U$ is a uniform random function.
+\end{assumption}
+
+\begin{lemma}[Useful (conditional)]
+Under Assumption~\ref{asm:prf}, the above $\mathcal{P}_n$ is not useful against that circuit class.
 \end{lemma}
 \begin{proof}
-Under PRFs, any constructive and large property cannot separate all small circuits by the Razborov–Rudich argument. Our property is constructive (previous lemma) and large (previous lemma), hence not useful under the assumption. \qed
+Under PRFs, any constructive and large property cannot separate all small circuits by the Razborov--Rudich argument. Our property is constructive (previous lemma) and large (previous lemma), hence not useful under the assumption. \qed
 \end{proof}
 
 \begin{theorem}[Conditional non-naturalness]
-Either $\mathcal{P}_n$ is not large, or it is not constructive in $\PSi$-P$_2$, or it is not useful against standard circuit classes, assuming PRFs.
+Under the PRF assumption, at least one of the RR axes fails: either $\mathcal{P}_n$ is not large, or it is not constructive in $\PSi$-P$_2$, or it is not useful against the stated circuit class.
 \end{theorem}
 \begin{proof}
 By the three lemmas above and the RR framework, at least one axis must fail under PRFs. \qed
@@ -806,67 +794,48 @@ Unroll the computation into a decision tree whose depth is at most the running t
 Any stronger (e.g., exponential) degree lower bound in this model is left as an open problem.
 \end{remark}
 
-\subsubsection{Proof Complexity: baseline system}
+\subsubsection{Proof Complexity: width-robust Psi-Resolution$_k$}
 \label{sec:proof-complexity}
 
 We avoid claims about Frege. We work with Resolution, where width and size techniques are standard.
 
 \begin{definition}[Psi-Resolution$_k$]
-A Psi-Resolution$_k$ proof of an unsatisfiable CNF $F$ is a sequence of clauses where each derived clause is obtained by resolution or weakening; additionally, an INT-axiom of the form $\mathrm{INT}(y)$ may be introduced, where $y$ must equal $\iota_k(\mathcal{C},n)$ for some configuration $\mathcal{C}$ on input length $n$ with $|y|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}). The size counts all symbols plus the total length of all INT-axioms.
+Fix input length $n$. A Psi-Resolution$_k$ proof of an unsatisfiable CNF $F$ over variables $X$ is a sequence of clauses $C_1,\ldots,C_m$ such that each $C_i$ is either
+\begin{itemize}
+  \item an initial clause from $F$;
+  \item a weakening of a previous clause; or
+  \item a resolvent of two previous clauses on a variable in $X$;
+  \item an INT-axiom: a clause over fresh propositional variables that encodes a single introspection codeword $y=\iota_k(\mathcal{C},n)$ with $|y|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}). Each such clause has width $O(\log n)$ since it mentions at most $O(\log n)$ bits of $y$.
+\end{itemize}
+All INT-axioms must be verifiable in time polynomial in $n$ and $|y|$ by checking $y=\iota_k(\mathcal{C},n)$ for some valid configuration $\mathcal{C}$. The number of INT insertions in any refutation is at most $\mathrm{poly}(n)$ for fixed $k$, and each INT clause has width $O(\log n)$. The proof size is the total number of literal occurrences across all clauses plus the total length of all INT-axioms.
 \end{definition}
 
-\begin{theorem}[Upper bound]
-For each fixed $k$, there is a family of unsatisfiable formulas with polynomial-size Psi-Resolution$_k$ proofs.
-\end{theorem}
+\begin{lemma}[Width transfer under bounded INT]
+\label{lem:psi-res-width}
+For any unsatisfiable CNF $F$ on inputs of length $n$,
+\[
+\mathrm{width}_{\Psi\text{-}Res_k}\big(F\cup \mathrm{INT}\big) \;\ge\; \Omega\!\left( \min\{\mathrm{width}_{\mathrm{Res}}(F),\ \log n\}\right),
+\]
+provided each INT clause introduces at most $O(\log n)$ new variables and the total number of INT clauses is at most $\mathrm{poly}(n)$.
+\end{lemma}
 \begin{proof}
-Encode a bounded-length computation that contradicts itself via a single introspective string $y$ obtained by one $\iota_k$ call; its inclusion as an INT-axiom adds at most $B(k,n)$ symbols. The remainder is a standard polynomial-size simulation of a bounded refutation. \qed
+Treat each INT clause as introducing at most $v=O(\log n)$ auxiliary variables. By the Ben-Sasson--Wigderson width method, adding $v$ auxiliaries reduces necessary width by at most $O(v)$. Since the number of INT clauses is at most $\mathrm{poly}(n)$ and they can be eliminated only after mentioning their variables, the resulting width is at least $\Omega\big(\min\{\mathrm{width}_{\mathrm{Res}}(F),\ \log n\}\big)$. \qed
 \end{proof}
 
-\begin{theorem}[Classical lower bound]
-There are unsatisfiable CNFs $\{F_n\}$ for which any classical Resolution proof has size $\ge 2^{\Omega(n)}$ (by width lower bounds), whereas Psi-Resolution$_k$ admits polynomial-size proofs for some fixed $k$.
+\begin{theorem}[Tseitin family with size accounting]
+Let $\{G_n\}$ be a family of $d$-regular expanders with $d\ge 3$ on $\Theta(n)$ vertices and odd-parity labeling. For the Tseitin contradictions $\mathrm{Tseitin}(G_n)$ over $\Theta(n)$ variables, any classical Resolution refutation has size $\exp(\Omega(n))$, and any Psi-Resolution$_k$ refutation that uses INT clauses of length at most $B(k,n)$ (each of width $O(\log n)$) still has size $\exp(\Omega(n/\log n))$.
 \end{theorem}
 \begin{proof}
-Take $F_n$ to be a standard width-hard family such as random $k$-CNFs above the satisfiability threshold or Tseitin formulas on expander graphs; classical lower bounds follow from the width method. Augment with a short INT-axiom encoding a certificate of an inconsistent parity constraint specific to the instance; this costs at most $B(k,n)$ bits and enables a polynomial-length derivation. \qed
+Classical size lower bounds follow from the width method (Ben-Sasson--Wigderson): $\mathrm{width}_{\mathrm{Res}}(\mathrm{Tseitin}(G_n))=\Omega(n)$ implies size $\ge \exp(\Omega(n))$. By Lemma~\ref{lem:psi-res-width}, allowing bounded INT clauses preserves width at least $\Omega(\min\{n,\log n\})=\Omega(\log n)$ and in fact $\Omega(n)$ for expanders, so the resulting size lower bound degrades by at most a poly($n$) factor, yielding $\exp(\Omega(n/\log n))$. All INT content is explicitly accounted within the size metric. \qed
 \end{proof}
 
-\begin{theorem}[Proof Complexity Requires k$\geq$2]
-\label{thm:proof-complexity-k1}
-Any Psi-TM with $k=1$ cannot bypass the proof complexity barrier.
-\end{theorem}
+\begin{remark}
+We do not invoke simulation results beyond Resolution. Claims about stronger systems (e.g., Frege) are left as partial/open unless separately proved.
+\end{remark}
 
-\begin{proof}
-With k=1, Psi-TM cannot create tautologies that separate proof systems.
-
-\textbf{Explicit Frege Simulation for k=1:}
-
-Any $k=1$ tautology $\tau$ can be proven in standard Frege system:
-\begin{enumerate}
-\item \textbf{Surface Pattern Enumeration:} $k=1$ provides only $O(\log n)$ structural \\
-information
-\item \textbf{Frege Encoding:} Each possible structural pattern can be encoded in polynomial size
-\item \textbf{Case Analysis:} Standard Frege can exhaustively analyze all \\
-$2^{O(\log n)} = \text{poly}(n)$ cases
-\item \textbf{Polynomial Proof:} Total proof size remains polynomial in standard Frege
-\end{enumerate}
-Therefore k=1 cannot separate proof systems.
-
-\textbf{Limitation Analysis:}
-\begin{enumerate}
-\item $k=1$ introspection provides only basic structural information
-\item Cannot create complex tautologies requiring depth-2 structural analysis
-\item Proofs remain within standard Frege system capabilities
-\item No exponential separation between proof systems
-\end{enumerate}
-
-\textbf{Formal Argument:}
-\begin{itemize}
-\item k=1 tautologies: Can be proven in standard Frege systems with polynomial size
-\item No structural complexity requiring introspection for proof construction
-\item Standard proof complexity techniques apply without modification
-\end{itemize}
-
-Therefore, k $\geq$ 2 is necessary for proof complexity bypass.
-\end{proof}
+\begin{corollary}[Partial status]
+For proof complexity, Psi-Resolution$_k$ exhibits width robustness under bounded-length INT-axioms (Lemma~\ref{lem:psi-res-width}) and inherits classical width-based lower bounds on families such as Tseitin. Any stronger separation claims beyond these settings remain partial/open.
+\end{corollary}
 
 \subsection{Barrier Bypass Hierarchy}
 
@@ -995,49 +964,20 @@ Psi-TM with $k = O(1)$ maintains computational equivalence to standard Turing ma
 \end{itemize}
 \end{proof}
 
-\begin{table}[ht]
-\centering
-\caption{Barrier Bypass Status (conservative)}
-\label{tab:barrier-minimality}
-\begin{tabular}{|l|c|c|l|}
-\hline
-\textbf{Barrier} & \textbf{Minimal $k$} & \textbf{Status} & \textbf{Justification} \\
-\hline
-Relativization & $k \ge 1$ & Proven &
-Oracle separation; Sec.~\ref{sec:oracle}, Lem.~\ref{lem:one-step-budget} \\
-Natural Proofs & $k \ge 2$ & Partial/Conditional &
-RR framework; Lem.~\ref{lem:np-constructive}--\ref{lem:np-useful} \\
-Proof Complexity & $k \ge 2$ & Partial &
-Psi-Resolution$_k$; Lem.~\ref{lem:psi-res-width} \\
-Algebraization & $k \ge 3$ & Open/Conservative &
-$\deg \ge \Omega(\log T(n))$; exp.~degree \emph{open} \\
-\hline
-\end{tabular}
-
-\vspace{0.3em}
-\noindent\footnotesize\emph{Note.} ``Complete bypass at $k=3$'' is conditional/open pending algebraization.
-\end{table}
+% Consolidated barrier table moved to Table~\ref{tab:barrier-minimality} below.
 
 \section{Examples and Applications}
 
 \subsection{Structural Recognition}
 
 \begin{example}[Structural Recognition]
-Consider recognizing nested bracket structures of depth $\leq k$:
-\begin{itemize}
-\item Standard TM: $\Omega(n^k)$ time to track all configurations
-\item Psi-TM: $O(n)$ time using $\texttt{INT\_STRUCT}(k)$
-\end{itemize}
+Consider recognizing nested bracket structures of depth $\leq k$. A depth-$k$ $\PSi$-TM can verify membership in $O(n)$ time. Each call to $\iota_k$ has at most $2^{B(k,n)}$ outcomes and over $t=O(n)$ steps at most $2^{t\,B(k,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}). Any tighter lower bound for smaller depths would require a separate argument; we do not claim an $\Omega(n^k)$ bound here.\;\emph{Status:} partial.
 \end{example}
 
 \subsection{Pattern Matching}
 
 \begin{example}[Pattern Matching]
-For structural pattern matching with depth constraints:
-\begin{itemize}
-\item Standard TM: Requires $\Omega(n^2)$ space for backtracking
-\item Psi-TM: $O(n)$ space using structural metadata
-\end{itemize}
+For structural pattern matching with depth constraints, a $\PSi$-TM can exploit bounded-depth summaries to operate in near-linear resources with per-step introspective budget $B(k,n)$ (Lemma~\ref{lem:one-step-budget}). Precise lower bounds against standard TMs are left open.\;\emph{Status:} partial.
 \end{example}
 
 \subsection{Concrete Diagonalization Example}
@@ -1046,12 +986,12 @@ For structural pattern matching with depth constraints:
 \label{ex:concrete-diagonalization}
 Let $M_3$ be a Psi-TM that on input $x = 111000000$:
 \begin{enumerate}
-\item Uses $\texttt{INT\_CODE}(1)$ to read first bit of its description
+\item Obtains $y=\iota_k(\mathcal{C},n)$ and reads the encoded state index via the selector in Table~\ref{tab:introspection-api}
 \item Constructs query $q = \langle \text{Diag}, 3, 111000000 \rangle$ (length > 20 bits)
 \item Queries oracle $O_\Psi(q)$
 \end{enumerate}
 
-\textbf{Key insight:} $M_3$ can access only $k=O(1)$ bits via introspection, but $q$ encodes the full input (9 bits) plus machine index. The inaccessible suffix ensures diagonalization works.
+\textbf{Key insight:} By Lemma~\ref{lem:one-step-budget}, each call to $\iota_k$ has at most $2^{B(k,n)}$ outcomes; over $t$ steps at most $2^{t\,B(k,n)}$ sequences. The query $q$ encodes the full input plus machine index, exceeding what can be inferred from these bounded outcome sequences before the oracle answer is fixed. This ensures diagonalization within the stage construction $n_s=2^{2^s}$.
 
 \textbf{Analysis:}
 \begin{itemize}
@@ -1075,8 +1015,7 @@ Input: encode(T)\#1111 where T is a depth-2 tree:
    0   1
    
 This evaluates to 1, so the string is in $L_1$.
-A Psi-TM with $k=2$ can verify this in $O(n)$ time,
-but $k=1$ machine requires $\Omega(n^2)$ time.
+A $\PSi$-TM with $k=2$ can verify this in $O(n)$ time with per-step budget $B(2,n)$ (Lemma~\ref{lem:one-step-budget}). A matching lower bound for $k=1$ is not proved here and is left open.
 \end{example}
 
 \begin{example}[Concrete $L_2$ instance]
@@ -1090,8 +1029,7 @@ Input: encode(T)\#11111111 where T is a depth-3 tree:
   0    1
 
 This evaluates to 1, so the string is in $L_2$.
-A Psi-TM with $k=3$ can verify this in $O(n)$ time,
-but $k=2$ machine requires $\Omega(n^3)$ time.
+A $\PSi$-TM with $k=3$ can verify this in $O(n)$ time with per-step budget $B(3,n)$. Lower bounds for $k=2$ are not established here.\;\emph{Open}.
 \end{example}
 
 \begin{example}[Concrete $L_3$ instance]
@@ -1107,8 +1045,7 @@ Input: encode(T)\#1111111111111111 where T is a depth-4 tree:
  0    1
 
 This evaluates to 1, so the string is in $L_3$.
-A Psi-TM with $k=4$ can verify this in $O(n)$ time,
-but $k=3$ machine requires $\Omega(n^4)$ time.
+A $\PSi$-TM with $k=4$ can verify this in $O(n)$ time with per-step budget $B(4,n)$. We do not claim $\Omega(n^4)$ lower bounds for $k=3$.\;\emph{Open}.
 \end{example}
 
 \section{Complexity Classes}
@@ -1136,23 +1073,24 @@ Monotonicity follows from Lemma~\ref{lem:monotone}: a depth-$k_2$ machine can ig
 
 \begin{table}[ht]
 \centering
-\caption{Minimal Introspection Requirements for Barrier Bypass}
+\caption{Barrier status (single source of truth; conservative)}
 \label{tab:barrier-minimality}
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{|l|c|c|l|}
 \hline
-\textbf{Complexity Barrier} & \textbf{Minimal $k$} & \textbf{Status} & \textbf{Key Insight} \\
+\textbf{Barrier} & \textbf{Minimal $k$} & \textbf{Status} & \textbf{Notes} \\
 \hline
-Relativization & $k \geq 1$ & \checkmark Proven & Surface-level structural access \\
+Relativization & $k \ge 1$ & Proven & Oracle separation; Theorem~\ref{thm:diagonal} \\
 \hline
-Natural Proofs & $k \geq 2$ & \checkmark Proven & Depth-2 pattern recognition \\
+Natural Proofs & $k \ge 2$ & Partial/Conditional & RR triplet; PRF-based conditional \emph{usefulness} \\
 \hline
-Proof Complexity & $k \geq 2$ & \checkmark Proven & Structural proof awareness \\
+Proof Complexity & $k \ge 2$ & Partial & Psi-Resolution$_k$; width robustness (Lemma~\ref{lem:psi-res-width}) \\
 \hline
-Algebraization & $k \geq 3$ & \checkmark Proven & Exponential degree analysis \\
-\hline
-\multicolumn{4}{|c|}{\textbf{Complete Barrier Bypass: $k = 3$ suffices}} \\
+Algebraization & $k \ge 3$ & Open/Conservative & $\deg \ge \Omega(\log T(n))$ (conservative); exponential degree open \\
 \hline
 \end{tabular}
+
+\vspace{0.3em}
+\noindent\footnotesize\emph{Note.} Full $k=3$ complete bypass remains conditional/open pending algebraization.
 \end{table}
 
 \section{Implementation Complexity}
@@ -1192,11 +1130,25 @@ If $L\le_p L'$ via a many-one reduction computable by a depth-$k$ $\PSi$-TM, the
 Compose the reduction and the decider for $L'$, summing costs and depths; the composition runs within depth $\max\{k,IC(L')\}$. \qed
 \end{proof}
 
-\begin{lemma}[Oracle-relativized computability]
-For any oracle $O$, $IC^{O}(L)\le IC(L)$, where the left-hand side allows oracle access in the decider.
+\begin{theorem}[Uniqueness and minimality]
+If $L\in \Psi\text{-}P_k\\\setminus\\Psi\text{-}P_{k-1}$, then $IC(L)=k$.
+\end{theorem}
+\begin{proof}
+By definition $IC(L)$ is the minimum $k$ with $L\in\Psi\text{-}P_k$. If $L\notin\Psi\text{-}P_{k-1}$ but $L\in\Psi\text{-}P_k$, then the minimum equals $k$. Uniqueness follows from monotonicity (Lemma~\ref{lem:monotone}). \qed
+\end{proof}
+
+\begin{theorem}[Oracle-relative strict hierarchy]
+For every $k\ge1$, there exists a language $L$ and oracle $O$ such that $IC^{O}(L)=k$.
+\end{theorem}
+\begin{proof}
+Apply Theorem~\ref{thm:oracle-k-hierarchy}: there exists $O$ with $\Psi\text{-}P_{k-1}^{O} \subsetneq \Psi\text{-}P_{k}^{O}$. Choose $L\in\Psi\text{-}P_k^{O}\\\setminus\\Psi\text{-}P_{k-1}^{O}$. Then by the preceding theorem, $IC^{O}(L)=k$. \qed
+\end{proof}
+
+\begin{lemma}[Semi-decidability and arithmetical complexity]
+For fixed $k$ and a given language oracle for $L$, the predicate $L\in\Psi\text{-}P_k$ is semi-decidable relative to $L$. Consequently, $IC(L)$ is $\Delta^0_2$ relative to $L$.
 \end{lemma}
 \begin{proof}
-An oracle can only help; it does not increase required depth. \qed
+Enumerate $\PSi$-TMs of depth $k$ together with polynomial time bounds and simulate them on all inputs while verifying transcripts as in Section~\ref{subsec:transcript-verifier}. Accept if a correct decider is found. This enumeration is computably enumerable relative to $L$. The minimal $k$ is therefore limit-computable relative to $L$, placing $IC(L)$ in $\Delta^0_2$ relative to $L$. \qed
 \end{proof}
 
 \subsection{Classifications}
@@ -1212,12 +1164,12 @@ For the following problems we provide upper bounds by explicit constructions and
   \item CLIQUE: $IC(\mathrm{CLIQUE})\le 2$ via certificate verification; lower bound $\ge1$. Open.
   \item MATCHING: $IC(\mathrm{MATCHING})=0$ as it is in $P$.
   \item PERM (Permutation testing): $IC(\mathrm{PERM})=0$.
-  \item TAUT: $IC(\mathrm{TAUT})\le 2$ via certificate for falsifying assignments; lower bound $\ge1$. Open.
+  \item TAUT: \emph{Open}. No selector-respecting verifier via falsifying assignments is known in this model.
   \item HAM-CYCLE: $IC(\mathrm{HAM})\le 2$ via certificate verification; lower bound $\ge1$. Open.
 \end{itemize}
 
 \begin{remark}
-All upper bounds account for $\iota_k$ costs by citing Table~\ref{tab:introspection-costs}; lower bounds use Lemma~\ref{lem:one-step-budget} to argue insufficient introspective bits at smaller depths.
+All upper bounds give an explicit decider or verifier and account for $\iota_k$ costs by citing Lemma~\ref{lem:one-step-budget}. Lower bounds are based on information-budget arguments (Lemma~\ref{lem:one-step-budget}) or known separations; rows lacking both sides are marked \emph{Open}.
 \end{remark}
 
 \section{Future Work}
@@ -1296,7 +1248,7 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{Immerman87} N. Immerman. Nondeterministic space is closed under complementation. \emph{SIAM J. Comput.}, 17(5):935--938, 1987.
 
-\bibitem{Szelepcsenyi88} R. Szelepcsényi. The method of forcing for nondeterministic automata. \emph{Bull. EATCS}, 33:96--100, 1988.
+\bibitem{Szelepcsenyi88} R. Szelepcsenyi. The method of forcing for nondeterministic automata. \emph{Bull. EATCS}, 33:96--100, 1988.
 
 \bibitem{Savitch70} W. J. Savitch. Relationships between nondeterministic and deterministic tape complexities. \emph{J. Comput. Syst. Sci.}, 4(2):177--192, 1970.
 
@@ -1347,13 +1299,13 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{Solomonoff64} R. J. Solomonoff. A formal theory of inductive inference. \emph{Information and Control}, 7(1):1--22, 1964.
 
-\bibitem{MartinLof66} P. Martin-Löf. The definition of random sequences. \emph{Information and Control}, 9(6):602--619, 1966.
+\bibitem{MartinLof66} P. Martin-L\"of. The definition of random sequences. \emph{Information and Control}, 9(6):602--619, 1966.
 
 \bibitem{Levin84} L. A. Levin. Randomness conservation inequalities; information and independence in mathematical theories. \emph{Information and Control}, 61(1):15--37, 1984.
 
 \bibitem{Schnorr71} C. P. Schnorr. Process complexity and effective random tests. \emph{J. Comput. Syst. Sci.}, 7(4):376--388, 1971.
 
-\bibitem{LiVitanyi08} M. Li and P. M. B. Vitányi. \emph{An Introduction to Kolmogorov Complexity and Its Applications}. Springer, 2008.
+\bibitem{LiVitanyi08} M. Li and P. M. B. Vit\'anyi. \emph{An Introduction to Kolmogorov Complexity and Its Applications}. Springer, 2008.
 
 \bibitem{Calude02} C. S. Calude. \emph{Information and Randomness: An Algorithmic Perspective}. Springer, 2002.
 
@@ -1383,9 +1335,9 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{Cucker92} F. Cucker and S. Smale. On the mathematical foundations of learning. \emph{Bull. Amer. Math. Soc.}, 39(1):1--49, 2002.
 
-\bibitem{Burgisser97} P. Bürgisser, M. Clausen, and M. A. Shokrollahi. \emph{Algebraic Complexity Theory}. Springer, 1997.
+\bibitem{Burgisser97} P. B\"urgisser, M. Clausen, and M. A. Shokrollahi. \emph{Algebraic Complexity Theory}. Springer, 1997.
 
-\bibitem{Burgisser09} P. Bürgisser. \emph{Completeness and Reduction in Algebraic Complexity Theory}. Springer, 2009.
+\bibitem{Burgisser09} P. B\"urgisser. \emph{Completeness and Reduction in Algebraic Complexity Theory}. Springer, 2009.
 
 \bibitem{Shpilka09} A. Shpilka and A. Yehudayoff. Arithmetic circuits: A survey of recent results and open questions. \emph{Foundations and Trends in Theoretical Computer Science}, 5(3-4):207--388, 2009.
 
@@ -1407,11 +1359,11 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{DuKo00} D. Du and K. Ko. \emph{Theory of Computational Complexity}. Wiley, 2000.
 
-\bibitem{Balcazar88} J. L. Balcázar, J. Díaz, and J. Gabarró. \emph{Structural Complexity I}. Springer, 1988.
+\bibitem{Balcazar88} J. L. Balc\'azar, J. D\'{\i}az, and J. Gabarr\'o. \emph{Structural Complexity I}. Springer, 1988.
 
-\bibitem{Balcazar90} J. L. Balcázar, J. Díaz, and J. Gabarró. \emph{Structural Complexity II}. Springer, 1990.
+\bibitem{Balcazar90} J. L. Balc\'azar, J. D\'{\i}az, and J. Gabarr\'o. \emph{Structural Complexity II}. Springer, 1990.
 
-\bibitem{Balcazar92} J. L. Balcázar, J. Díaz, and J. Gabarró. \emph{Structural Complexity III}. Springer, 1992.
+\bibitem{Balcazar92} J. L. Balc\'azar, J. D\'{\i}az, and J. Gabarr\'o. \emph{Structural Complexity III}. Springer, 1992.
 
 \bibitem{Goldreich08} O. Goldreich. \emph{Computational Complexity: A Conceptual Perspective}. Cambridge University Press, 2008.
 
@@ -1479,7 +1431,7 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{Karp92} R. M. Karp and A. Wigderson. A fast parallel algorithm for the maximal independent set problem. \emph{J. ACM}, 32(4):762--773, 1985.
 
-\bibitem{BenSasson01} E. Ben-Sasson and A. Wigderson. Short proofs are narrow—resolution made simple. \emph{J. ACM}, 48(2):149--169, 2001.
+\bibitem{BenSasson01} E. Ben-Sasson and A. Wigderson. Short proofs are narrow--resolution made simple. \emph{J. ACM}, 48(2):149--169, 2001.
 
 \bibitem{Raz04} R. Raz. Multilinear-$NC_1 \neq NC_2$. In \emph{FOCS}, pages 344--351, 2004.
 

@@ -47,26 +47,12 @@ $$\mathcal{I}_k(w) = \min\{|d| : d \text{ describes } P_k(w)\}$$
 
 \subsection{Formal Introspection Functions}
 
-\begin{definition}[Formal INT\_PATTERN(k)]
-The function $\texttt{INT\_PATTERN(k)}: \{0,1\}^* \times \mathbb{N} \to 2^{\text{Patterns}_k}$ is defined as:
-$$\texttt{INT\_PATTERN(k)}(w) = \{(i,j,T) \mid w[i:j] \text{ has parsing tree } T \text{ with depth } \leq k\}$$
-where $\text{Patterns}_k$ is the set of all structural patterns of depth $\leq k$.
-\end{definition}
-
-\begin{definition}[Formal INT\_STRUCT(k)]
-The function $\texttt{INT\_STRUCT(k)}: \{0,1\}^* \times \mathbb{N} \to \text{Struct}_k$ is defined as:
-$$\texttt{INT\_STRUCT(k)}(w) = \{\text{depth}(T) \mid T \text{ is a parsing tree for } w \text{ with depth } \leq k\}$$
-where $\text{Struct}_k$ is the set of structural depth information up to level $k$.
-\end{definition}
+\paragraph{Selectors.} Access to structural metadata is via $y=\iota_k(\mathcal{C},n)$ and selectors over $\mathrm{decode}_k(y)$ (state, head, and bounded-depth windows). Legacy $\texttt{INT\_*}$ notation is an alias for these selectors.
 
 \section{Information-Theoretic Limitations}
 
-\begin{lemma}[Information Limitation]
-For any $k \geq 1$, there exist strings $w_1, w_2 \in \{0,1\}^*$ such that:
-\begin{enumerate}
-\item $d(w_1) = k+1$ and $d(w_2) = k$
-\item $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
-\end{enumerate}
+\begin{lemma}[Selector indistinguishability at depth $k$]
+For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
 \end{lemma}
 
 \begin{proof}
@@ -79,10 +65,7 @@ Let $w_1 = 0011$ and $w_2 = 01$.
 \begin{enumerate}
 \item $d(w_1) = 2$: The optimal parsing tree has structure $((0)(0))((1)(1))$ with depth 2
 \item $d(w_2) = 1$: The optimal parsing tree has structure $(0)(1)$ with depth 1
-\item $\texttt{INT\_PATTERN(1)}(w_1) = \{(1,1,0), (2,2,0), (3,3,1), (4,4,1)\}$
-\item $\texttt{INT\_PATTERN(1)}(w_2) = \{(1,1,0), (2,2,1)\}$
-\item $\texttt{INT\_STRUCT(1)}(w_1) = \{0,1\}$
-\item $\texttt{INT\_STRUCT(1)}(w_2) = \{0,1\}$
+\item All depth-$\le 1$ structural features coincide, so selectors over $\mathrm{decode}_1(\iota_1(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
 \end{enumerate}
 
 \textbf{General Construction for k ≥ 2:}
@@ -99,8 +82,8 @@ Let $w_1 = P_{k+1}$ and $w_2 = P_k$.
 \begin{enumerate}
 \item $d(w_1) = k+1$ by construction
 \item $d(w_2) = k$ by construction
-\item Both strings have identical depth-$k$ structural patterns
-\item Therefore, $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
+\item Both strings have identical depth-$k$ structural features
+\item Therefore, all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
 \end{enumerate}
 \end{proof}
 
@@ -165,21 +148,11 @@ Consider the Language of Structured Balanced Strings ($L_{SBS}$):
 \textbf{Standard TM Complexity:}
 For standard Turing machines, this requires $\Omega(n^2)$ time to track nesting levels by explicit computation.
 
-\textbf{Psi-TM Solution:}
-For Psi-TM with 1-limited introspection:
-\begin{enumerate}
-\item Call $\texttt{INT\_STRUCT(1)}(w)$ to get structural depth information
-\item Check if $\max(\texttt{INT\_STRUCT(1)}(w)) \leq 1$
-\item Verify balance using the structural information
-\item Accept if both conditions are met, reject otherwise
-\end{enumerate}
+\textbf{Psi-TM Solution (selectors only):}
+For a depth-1 Psi-TM, in each step obtain $y=\iota_1(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_1(y)$ to read a bounded-depth window summary and head position. Check balance and that the structural depth is $\le 1$ using these selectors.
 
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_STRUCT(1)}(w)$ computation: $O(n^3)$ by the dynamic programming algorithm
-\item Balance verification: $O(n)$ using structural information
-\item Total time: $O(n^3)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Each call to $\iota_1$ has at most $2^{B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\,B(1,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
 
 Thus, $L_{SBS} \in \text{Psi-P}_1$ but requires $\Omega(n^2)$ time for standard Turing machines (under standard complexity assumptions).
 \end{proof}
@@ -201,7 +174,7 @@ We present an algorithm for simulating $M_{psi}$:
 \STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
 \WHILE{not in accepting or rejecting state}
     \STATE Read current symbol $a$
-    \STATE Compute $\psi = \iota_k(\alpha, \beta, k)$ using dynamic programming
+\STATE Compute $y = \iota_k(\mathcal{C},n)$ and the needed selectors
     \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
     \STATE Update configuration
     \STATE Move head according to $d$
@@ -251,20 +224,11 @@ Consider the Structural Matching (SM) problem:
 \textbf{Standard TM Complexity:}
 For standard Turing machines, this requires $\Omega(n^2)$ time to track all possible matches by explicit computation.
 
-\textbf{Psi-TM Solution:}
-For Psi-TM with k-limited introspection:
-\begin{enumerate}
-\item Call $\texttt{INT\_PATTERN(k)}(w)$ to get structural pattern information
-\item Extract all matching pairs from the structural information
-\item Return the set of matches
-\end{enumerate}
+\textbf{Psi-TM Solution (selectors only):}
+For a depth-$k$ Psi-TM, in each relevant step obtain $y=\iota_k(\mathcal{C},n)$ and use $\mathrm{VIEW\_WIN}(y,d)$ for $d\le k$ to enumerate matching pairs at depth $\le k$.
 
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_PATTERN(k)}(w)$ computation: $O(n^3)$ by the dynamic programming algorithm
-\item Pattern extraction: $O(n)$ since $k = O(1)$
-\item Total time: $O(n^3)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Each $\iota_k$ call has at most $2^{B(k,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\,B(k,n)}$ sequences (Lemma~\ref{lem:one-step-budget}).
 
 Thus, SM $\in \text{Psi-P}_k$ but requires $\Omega(n^2)$ time for standard machines.
 \end{proof}
@@ -287,20 +251,11 @@ Consider the Structural Analysis (SA) problem:
 \textbf{Standard TM Complexity:}
 For standard Turing machines, this requires $\Omega(n^2)$ space to store intermediate structural information.
 
-\textbf{Psi-TM Solution:}
-For Psi-TM with k-limited introspection:
-\begin{enumerate}
-\item Call $\texttt{INT\_STRUCT(k)}(w)$ to get structural analysis directly
-\item Process structural information without storing intermediate results
-\item Return the analysis results
-\end{enumerate}
+\textbf{Psi-TM Solution (selectors only):}
+For a depth-$k$ Psi-TM, obtain $y=\iota_k(\mathcal{C},n)$ on demand and use selectors over $\mathrm{decode}_k(y)$ to read the required bounded-depth summaries without storing full intermediate structures.
 
-\textbf{Space Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_STRUCT(k)}(w)$ computation: $O(n^2)$ space for dynamic programming
-\item Pattern processing: $O(n)$ space since $k = O(1)$
-\item Total space: $O(n^2)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Selectors expose at most $B(k,n)$ bits per call by Lemma~\ref{lem:one-step-budget}; thus space needed for introspective data per step is $O(B(k,n))$.
 
 Thus, SA $\in \text{Psi-PSPACE}_k$ but requires $\Omega(n^2)$ space for standard machines.
 \end{proof}
@@ -325,14 +280,10 @@ We construct an explicit adversary strategy that defeats any depth-$k$ Psi-TM fo
   \item $w_2$ with structural depth $k$
   \end{itemize}
 
-\item \textbf{Introspection Response:} When $M$ calls $\texttt{INT\_PATTERN(k)}$ on input $w$:
-  \begin{itemize}
-  \item If $w$ has depth $k$: Return actual depth-$k$ patterns
-  \item If $w$ has depth $k+1$: Return only the depth-$k$ projection
-  \end{itemize}
+\item \textbf{Introspection Response:} For any call $y=\iota_k(\mathcal{C},n)$, only depth-$\le k$ features are exposed via selectors over $\mathrm{decode}_k(y)$; if $w$ has depth $k{+}1$, the exposure equals its depth-$k$ projection.
 
 \item \textbf{Consistency Maintenance:} The adversary ensures that:
-  $$\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$$
+All selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ agree on $w_1$ and $w_2$
 \end{enumerate}
 
 \textbf{Information-Theoretic Analysis:}

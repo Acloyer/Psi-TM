@@ -84,19 +84,10 @@ Consider the language $L_{rel} = \{w \in \{0,1\}^* \mid \text{structural depth }
 For any oracle $A$, standard Turing machines cannot solve $L_{rel}$ in polynomial time because the problem relativizes.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $k = 1$ can solve $L_{rel}$:
-\begin{enumerate}
-\item Call $\texttt{INT\_STRUCT(1)}(w)$ to get structural depth information
-\item Check if $\max(\texttt{INT\_STRUCT(1)}(w)) = 1$
-\item Accept if true, reject otherwise
-\end{enumerate}
+A Psi-TM with introspection depth $k = 1$ uses one call $y=\iota_1(\mathcal{C},n)$ and selectors over $\mathrm{decode}_1(y)$ to extract the needed bounded-depth summary, respecting the per-step budget $B(1,n)$ (Lemma~\ref{lem:one-step-budget}).
 
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_STRUCT(1)}(w)$ computation: $O(n^3)$ by dynamic programming
-\item Depth checking: $O(n)$ since $k = 1$
-\item Total time: $O(n^3)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Each call to $\iota_1$ has at most $2^{B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\,B(1,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
 
 This establishes that introspection depth $k = 1$ is both necessary and sufficient to bypass the relativization barrier.
 \end{proof}
@@ -123,19 +114,10 @@ Consider the language $L_{nat} = \{w \in \{0,1\}^* \mid w \text{ has depth-2 str
 Standard Turing machines cannot solve $L_{nat}$ efficiently because the problem is protected by the natural proofs barrier.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $k = 2$ can solve $L_{nat}$:
-\begin{enumerate}
-\item Call $\texttt{INT\_PATTERN(2)}(w)$ to get depth-2 structural patterns
-\item Analyze the patterns to check natural proof properties
-\item Accept if the patterns satisfy the properties, reject otherwise
-\end{enumerate}
+A Psi-TM with introspection depth $k = 2$ performs calls to $\iota_2(\mathcal{C},n)$ and uses selectors over $\mathrm{decode}_2(y)$ to obtain depth-2 summaries; per call outcomes are bounded by $2^{B(2,n)}$ (Lemma~\ref{lem:one-step-budget}).
 
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_PATTERN(2)}(w)$ computation: $O(n^3)$ by dynamic programming
-\item Pattern analysis: $O(n^2)$ since we need to examine depth-2 structures
-\item Total time: $O(n^3)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Each call to $\iota_2$ has at most $2^{B(2,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\,B(2,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
 
 This establishes that introspection depth $k = 2$ is both necessary and sufficient to bypass the natural proofs barrier.
 \end{proof}
@@ -162,19 +144,10 @@ Consider the language $L_{proof} = \{w \in \{0,1\}^* \mid w \text{ encodes a val
 Standard Turing machines cannot efficiently verify proofs in $L_{proof}$ because the problem is protected by the proof complexity barrier.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $k = 2$ can solve $L_{proof}$:
-\begin{enumerate}
-\item Call $\texttt{INT\_PATTERN(2)}(w)$ to get depth-2 structural patterns
-\item Verify proof validity using the structural information
-\item Accept if the proof is valid, reject otherwise
-\end{enumerate}
+A Psi-TM with introspection depth $k = 2$ uses selectors over $\mathrm{decode}_2(\iota_2(\mathcal{C},n))$ to extract bounded-depth summaries for verification, with per-step outcomes bounded by $2^{B(2,n)}$ (Lemma~\ref{lem:one-step-budget}).
 
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_PATTERN(2)}(w)$ computation: $O(n^3)$ by dynamic programming
-\item Proof verification: $O(n^2)$ using depth-2 structural analysis
-\item Total time: $O(n^3)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Each call to $\iota_2$ has at most $2^{B(2,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\,B(2,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
 
 This establishes that introspection depth $k = 2$ is both necessary and sufficient to bypass the proof complexity barrier.
 \end{proof}
@@ -201,19 +174,10 @@ Consider the language $L_{alg} = \{w \in \{0,1\}^* \mid w \text{ encodes an alge
 Standard Turing machines cannot efficiently solve $L_{alg}$ because the problem is protected by the algebraization barrier.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $k = 3$ can solve $L_{alg}$:
-\begin{enumerate}
-\item Call $\texttt{INT\_PATTERN(3)}(w)$ to get depth-3 structural patterns
-\item Analyze algebraic properties using the structural information
-\item Accept if the algebraic properties are satisfied, reject otherwise
-\end{enumerate}
+A Psi-TM with introspection depth $k = 3$ uses selectors over $\mathrm{decode}_3(\iota_3(\mathcal{C},n))$; per-step outcomes are bounded by $2^{B(3,n)}$ (Lemma~\ref{lem:one-step-budget}).
 
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_PATTERN(3)}(w)$ computation: $O(n^3)$ by dynamic programming
-\item Algebraic analysis: $O(n^3)$ using depth-3 structural analysis
-\item Total time: $O(n^3)$
-\end{enumerate}
+\textbf{Budget accounting:}
+Each call to $\iota_3$ has at most $2^{B(3,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\,B(3,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
 
 This establishes that introspection depth $k = 3$ is both necessary and sufficient to bypass the algebraization barrier.
 \end{proof}
@@ -260,7 +224,7 @@ For any Psi-TM $M$ with introspection depth $k = 2$, we construct an adversary t
 
 \begin{enumerate}
 \item The adversary generates inputs with depth-3 algebraic structures
-\item When $M$ calls $\texttt{INT\_PATTERN(2)}$, the adversary returns only depth-2 projections
+\item For any call $y=\iota_2(\mathcal{C},n)$, the adversary ensures selectors over $\mathrm{decode}_2(y)$ reveal only depth-2 projections
 \item The machine cannot distinguish between valid and invalid algebraic structures
 \item Therefore, $M$ must err on some inputs
 \end{enumerate}

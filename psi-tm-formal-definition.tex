@@ -149,23 +149,8 @@ where:
 
 \subsection{Formal Introspection Functions}
 
-\begin{definition}[Formal INT\_PATTERN(k)]
-The function $\texttt{INT\_PATTERN(k)}: \Gamma^* \times \mathbb{N} \to 2^{\text{Patterns}_k}$ is defined as:
-$$\texttt{INT\_PATTERN(k)}(w) = \{(i,j,T) \mid w[i:j] \text{ has parsing tree } T \text{ with depth } \leq k\}$$
-where $\text{Patterns}_k$ is the set of all structural patterns of depth $\leq k$.
-\end{definition}
-
-\begin{definition}[Formal INT\_STRUCT(k)]
-The function $\texttt{INT\_STRUCT(k)}: \Gamma^* \times \mathbb{N} \to \text{Struct}_k$ is defined as:
-$$\texttt{INT\_STRUCT(k)}(w) = \{\text{depth}(T) \mid T \text{ is a parsing tree for } w \text{ with depth } \leq k\}$$
-where $\text{Struct}_k$ is the set of structural depth information up to level $k$.
-\end{definition}
-
-\begin{definition}[Introspective Function]
-The function $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ defines introspective metadata:
-$$\iota_k(\alpha, \beta, k) = (\texttt{INT\_PATTERN(k)}(\alpha), \texttt{INT\_PATTERN(k)}(\beta), \texttt{INT\_STRUCT(k)}(\alpha \cdot \beta))$$
-where $k$ is the limitation on introspection depth, and $\psi$ contains only structural information of depth at most $k$.
-\end{definition}
+\paragraph{Selectors as views over $\iota_k$.}
+All introspective access is via $y=\iota_k(\mathcal{C},n)$ and selectors $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, and $\mathrm{VIEW\_WIN}(y,d)$ applied to $\mathrm{decode}_k(y)$. Any legacy $\texttt{INT\_*}$ notation is an alias for a selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$.
 
 \subsection{Transition Function}
 
@@ -184,54 +169,17 @@ where:
 \subsection{Introspection Constraints}
 
 \begin{definition}[k-Limited Introspection]
-Introspection is called k-limited if for any $\alpha, \beta \in \Gamma^*$:
-$$|\iota_k(\alpha, \beta, k)| \leq f(k) \cdot (|\alpha| + |\beta|)$$
-where $f: \mathbb{N} \to \mathbb{N}$ is a polynomial function, and $\iota_k$ cannot access the complete tape content, only structural patterns of depth $k$.
+For a configuration $\mathcal{C}$ on an input of length $n$, a single introspection call yields the codeword $y=\iota_k(\mathcal{C},n)$. Its length is bounded by $B(k,n)$ and $\mathrm{decode}_k(y)$ exposes only depth-$\le k$ tags (Lemma~\ref{lem:one-step-budget}).
 \end{definition}
 
 \section{Information-Theoretic Limitations}
 
-\begin{lemma}[Information Limitation]
-For any $k \geq 1$, there exist strings $w_1, w_2 \in \{0,1\}^*$ such that:
-\begin{enumerate}
-\item $d(w_1) = k+1$ and $d(w_2) = k$
-\item $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
-\end{enumerate}
+\begin{lemma}[Selector indistinguishability at depth $k$]
+For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
 \end{lemma}
 
 \begin{proof}
-We construct explicit examples for each $k \geq 1$.
-
-\textbf{Construction for k = 1:}
-Let $w_1 = 0011$ and $w_2 = 01$.
-
-\textbf{Analysis:}
-\begin{enumerate}
-\item $d(w_1) = 2$: The optimal parsing tree has structure $((0)(0))((1)(1))$ with depth 2
-\item $d(w_2) = 1$: The optimal parsing tree has structure $(0)(1)$ with depth 1
-\item $\texttt{INT\_PATTERN(1)}(w_1) = \{(1,1,0), (2,2,0), (3,3,1), (4,4,1)\}$
-\item $\texttt{INT\_PATTERN(1)}(w_2) = \{(1,1,0), (2,2,1)\}$
-\item $\texttt{INT\_STRUCT(1)}(w_1) = \{0,1\}$
-\item $\texttt{INT\_STRUCT(1)}(w_2) = \{0,1\}$
-\end{enumerate}
-
-\textbf{General Construction for k ≥ 2:}
-Let $P_k$ be the pattern of depth $k$ constructed recursively:
-\begin{itemize}
-\item $P_0 = 0$
-\item $P_1 = 00$
-\item $P_k = P_{k-1} \circ P_{k-1}$ where $\circ$ represents structural composition
-\end{itemize}
-
-Let $w_1 = P_{k+1}$ and $w_2 = P_k$.
-
-\textbf{Verification:}
-\begin{enumerate}
-\item $d(w_1) = k+1$ by construction
-\item $d(w_2) = k$ by construction
-\item Both strings have identical depth-$k$ structural patterns
-\item Therefore, $\iota_k(w_1, \varepsilon, k) = \iota_k(w_2, \varepsilon, k)$
-\end{enumerate}
+Immediate from Lemma~\ref{lem:selector-indistinguishability}. \qed
 \end{proof}
 
 \section{Basic Properties of Psi-TM}
@@ -249,7 +197,7 @@ We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept},
 
 \begin{enumerate}
 \item $Q_{psi} = Q \cup Q_{psi}$, where $Q_{psi} = \emptyset$ initially
-\item $\iota_k(\alpha, \beta, k) = \emptyset$ for all $\alpha, \beta, k$ (empty introspection)
+\item No introspection is used (no calls to $\iota_k$)
 \item $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$
 \end{enumerate}
 
@@ -311,7 +259,7 @@ We show that $M_{psi}$ can be simulated by a standard Turing machine $M$ with po
 \begin{enumerate}
 \item State of $M$ encodes: $(q, \alpha, \beta, \psi)$
 \item Size of $\psi$ is bounded by $f(k) \cdot n = O(n)$ for constant $k$
-\item Each introspection call $\iota_k(\alpha, \beta, k)$ is computed explicitly in $O(n^3)$ time
+\item Each introspection call $y=\iota_k(\mathcal{C},n)$ is computed explicitly in $O(n^3)$ time
 \item Each step of $M_{psi}$ is simulated in $O(n^3)$ steps of $M$
 \item Total simulation time: $O(T(n) \cdot n^3)$, where $T(n)$ is the running time of $M_{psi}$
 \end{enumerate}
