@@ -34,7 +34,7 @@ Arizona State University\\
 \maketitle
 
 \begin{abstract}
-We establish a strict hierarchy of Psi-TM models parameterized by introspection depth $k$. Our main result proves that for each $k \geq 1$, there exists a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$. This demonstrates that increasing introspection depth provides strictly more computational power, establishing the hierarchy $\text{Psi-TM}_1 \subsetneq \text{Psi-TM}_2 \subsetneq \text{Psi-TM}_3 \subsetneq \cdots \subsetneq \text{SA-TM}$. We further analyze the collapse threshold and provide explicit constructions for separating languages at each level.
+We establish an oracle-relative strict hierarchy of Psi-TM models parameterized by introspection depth $k$. For each $k \geq 1$, there exists an oracle and a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$ relative to that oracle. This indicates that increasing introspection depth provides strictly more computational power in the oracle setting. Non-oracle strictness remains open. We provide explicit language constructions and adversary arguments in the oracle model, and discuss conservative implications for the unrelativized setting.
 \end{abstract}
 
 \section{Introduction and Motivation}
@@ -60,14 +60,14 @@ This question has profound implications for understanding the relationship betwe
 
 \subsection{Introspection Depth Hierarchy}
 
-\begin{definition}[Psi-TM_k Model]
+\begin{definition}[Psi-TM$_k$ Model]
 For each $k \geq 1$, a Psi-TM with introspection depth $k$ is a 7-tuple:
 $$M_\Psi^k = (Q, \Sigma, \Gamma, \delta, q_0, F, \iota_k)$$
 where:
 \begin{itemize}
 \item $(Q, \Sigma, \Gamma, \delta, q_0, F)$ is a deterministic Turing machine
-\item $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ is k-limited introspection
-\item $\Psi_k$ denotes structural metadata of depth exactly $k$
+\item $\iota_k: \mathrm{Config}\times \mathbb{N} \to \{0,1\}^{\le B(k,n)}$ is the $k$-limited introspection operator
+\item $\Psi_k$ denotes the range of the canonical code $C_k$ over admissible atoms of depth $\le k$
 \item $k$ is a constant independent of input size
 \end{itemize}
 \end{definition}

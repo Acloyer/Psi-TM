@@ -47,7 +47,7 @@ $$\mathcal{I}_k(w) = \min\{|d| : d \text{ describes } P_k(w)\}$$
 
 \subsection{Formal Introspection Functions}
 
-\paragraph{Selectors.} Access to structural metadata is via $y=\iota_k(\mathcal{C},n)$ and selectors over $\mathrm{decode}_k(y)$ (state, head, and bounded-depth windows). Legacy $\texttt{INT\_*}$ notation is an alias for these selectors.
+\paragraph{Selectors.} Access to structural metadata is via $y=\iota_k(\mathcal{C},n)$ and selectors over $\mathrm{decode}_k(y)$ (state, head, and bounded-depth windows). Legacy $\texttt{INT\_*}$ names are aliases to these selectors; no raw $\texttt{INT\_*}$ access is permitted.
 
 \section{Information-Theoretic Limitations}
 
@@ -206,9 +206,9 @@ Since both machines have k-limited introspection, the simulation preserves the i
 
 \section{Complexity Barriers}
 
-\subsection{Bypassing Time Barriers}
+\subsection{Time bounds (conservative)}
 
-\begin{theorem}[Bypassing Time Barriers]
+\begin{theorem}[Conservative time statements]
 There exist problems $L$ such that:
 \begin{enumerate}
 \item $L \in \text{DTIME}(n^2)$ for standard Turing machines
@@ -233,9 +233,9 @@ Each $\iota_k$ call has at most $2^{B(k,n)}$ outcomes; over $t=\mathrm{poly}(n)$
 Thus, SM $\in \text{Psi-P}_k$ but requires $\Omega(n^2)$ time for standard machines.
 \end{proof}
 
-\subsection{Bypassing Space Barriers}
+\subsection{Space bounds (conservative)}
 
-\begin{theorem}[Bypassing Space Barriers]
+\begin{theorem}[Conservative space statements]
 There exist problems $L$ such that:
 \begin{enumerate}
 \item $L \in \text{DSPACE}(n^2)$ for standard Turing machines

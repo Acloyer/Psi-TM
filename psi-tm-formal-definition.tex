@@ -29,7 +29,7 @@ Minimal Introspective Computational Model}
 
 \section{Introduction}
 
-In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a strict continuation of the Structurally-Aware Turing Machines (SA-TM) concept. The Psi-TM model is characterized by minimal introspection while preserving the ability to partially bypass complexity barriers.
+In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a continuation of the Structurally-Aware Turing Machines (SA-TM) concept with minimal introspection. The Psi-TM model is characterized by selectors-only introspection semantics and explicit information budgets. Barrier statements are conservative: oracle-relative where proved, partial/conditional otherwise.
 
 \section{Formal Definition of Structural Depth}
 
@@ -208,13 +208,13 @@ $M_{psi}$ simulates $M$ step-by-step because introspection is not used in standa
 Any Psi-TM can be simulated by a standard Turing machine by explicitly encoding introspective metadata in the state. The size of $\psi$ is bounded by $f(k) \cdot n = O(n)$ for constant $k$, so the simulation requires polynomial overhead.
 \end{proof}
 
-\subsection{Bypassing Complexity Barriers}
+\subsection{Barrier status (conservative)}
 
-\begin{theorem}[Partial Barrier Bypass]
-There exist problems $L$ such that:
+\begin{theorem}[Conservative barrier statements]
+There exist oracle-relative separations and partial/conditional results consistent with the barrier status in Section~\ref{sec:barriers}:
 \begin{enumerate}
-\item $L \in \text{PSPACE}$ for standard Turing machines
-\item $L \in \text{Psi-P}_k$ for Psi-TM with suitable introspection
+\item Oracle-relative: $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ for a suitable oracle $O_\Psi$ (Theorem~\ref{thm:diagonal})
+\item Partial/conditional: statements for natural proofs and proof complexity; algebraization open/conservative
 \end{enumerate}
 \end{theorem}
 
@@ -227,13 +227,8 @@ Given a string $w \in \{0,1\}^*$, determine if $d(w) \leq k$.
 \textbf{Standard TM Complexity:}
 For standard Turing machines, this problem requires $\Omega(n^k)$ time, as it is necessary to track $k$ levels of nesting by explicit computation.
 
-\textbf{Psi-TM Solution:}
-For Psi-TM with k-limited introspection:
-\begin{enumerate}
-\item Call $\texttt{INT\_STRUCT(k)}(w)$ to get structural depth information
-\item Check if $\max(\texttt{INT\_STRUCT(k)}(w)) \leq k$
-\item Accept if true, reject otherwise
-\end{enumerate}
+\textbf{Psi-TM Solution (selectors-only):}
+For Psi-TM with k-limited introspection, obtain $y=\iota_k(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_k(y)$ to read bounded-depth summaries; all accesses obey the budget in Lemma~\ref{lem:one-step-budget}.
 
 \textbf{Time Analysis:}
 \begin{enumerate}

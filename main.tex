@@ -21,6 +21,7 @@
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{conjecture}[theorem]{Conjecture}
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{example}[theorem]{Example}
@@ -37,8 +38,8 @@
 \newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
 \renewcommand{\checkmark}{$\surd$}
 
-\title{Psi-TM: Minimal Introspection for Complexity Barrier Bypass\\
-\large{A Complete Mathematical Foundation for Introspective Computation}}
+\title{Psi-TM: Minimal Introspection for Complexity Barrier Analysis\\
+\large{A Conservative Mathematical Foundation for Introspective Computation}}
 
 \author{Rafig Huseynzade\\
 Arizona State University\\
@@ -51,9 +52,9 @@ Arizona State University\\
 \maketitle
 
 \begin{abstract}
-We introduce Psi-TM ($\Psi$-TM), a computational model that extends Structurally-Aware Turing Machines (SA-TM) with minimal constant-depth introspection $k = O(1)$. We prove that Psi-TM bypasses all four classical complexity barriers while maintaining equivalence to standard Turing machines in computational power. Our main result establishes $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ for a specifically constructed oracle $O_\Psi$, demonstrating that minimal self-reflection suffices for complexity separation. 
+We introduce Psi-TM ($\Psi$-TM), a computational model that extends Structurally-Aware Turing Machines with minimal constant-depth introspection $k = O(1)$. We present an oracle-relative separation and a conservative barrier status: relativization (proven), natural proofs and proof complexity (partial/conditional), algebraization (open/conservative). Our main result establishes $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ for a specifically constructed oracle $O_\Psi$.
 
-We further establish a strict hierarchy of minimal introspection requirements: relativization requires $k \geq 1$, natural proofs and proof complexity require $k \geq 2$, and algebraization requires $k \geq 3$. The optimal design with $k = 3$ provides complete barrier bypass with minimal introspection. This work bridges the gap between theoretical barrier bypass and practical computational models, opening new directions in complexity theory.
+We analyze minimal introspection requirements ($k=1,2,3$) with oracle-relative strictness; $k=3$ is a plausible target subject to algebraization; unrelativized sufficiency remains open. This frames barrier progress conservatively while maintaining selectors-only semantics and explicit information-budget accounting.
 \end{abstract}
 
 \tableofcontents
@@ -72,7 +73,7 @@ We introduce Psi-TM ($\Psi$-TM), which constrains SA-TM introspection to constan
 \item \textbf{Barrier Analysis:} Conservative status across the four classical complexity barriers
 \item \textbf{Computational Equivalence:} Polynomial simulation between Psi-TM and standard TMs
 \item \textbf{Minimality Analysis:} Strict hierarchy of minimal $k$ requirements for barrier bypass
-\item \textbf{Optimal Design:} $k=3$ is a plausible target; full bypass remains conditional on algebraization
+\item \textbf{Conservative Target:} $k=3$ is a plausible target subject to algebraization; unrelativized sufficiency remains open
 \end{enumerate}
 
 \section{The Psi-TM Model}
@@ -178,16 +179,16 @@ $$M_\Psi = (Q, \Sigma, \Gamma, \delta, q_0, F, \iota_k)$$
 where:
 \begin{itemize}
 \item $(Q, \Sigma, \Gamma, \delta, q_0, F)$ is a deterministic Turing machine
-\item $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ is $k$-limited introspection
-\item $\Psi_k$ denotes structural metadata of depth $\leq k$
+\item $\iota_k: \mathrm{Config}\times \mathbb{N} \to \{0,1\}^{\le B(k,n)}$ is the $k$-limited introspection operator (Definition~\ref{def:iota-k})
+\item $\Psi_k$ denotes the range of the canonical code $C_k$ over admissible atoms of depth $\le k$ (Definition~\ref{def:psi-k})
 \item $k = O(1)$ is a constant
 \end{itemize}
 \end{definition}
 
 \begin{definition}[Transition Function]
 The extended transition function is:
-$$\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$$
-where $\Psi_k$ provides structural metadata accessible through introspection calls.
+$$\delta: Q \times \Gamma \times \bits^{\le B(k,n)} \to Q \times \Gamma \times \{L, R, S\}$$
+where the third argument is the most recently obtained codeword $y=\iota_k(\mathcal{C},n)$, to be accessed only via selectors over $\mathrm{decode}_k(y)$.
 \end{definition}
 
 \begin{definition}[Configuration]
@@ -439,14 +440,14 @@ These are oracle-relative indications; unrelativized minimality remains open whe
     child { node {Relativization\\Bypass} };
 
 % k=2: + Natural Proofs + Proof Complexity  
-\node at (0,-5) {Psi-TM\\k=2\\{\textbf{Complete Introspection}}}
-    child { node {Natural Proofs\\Bypass} }
-    child { node {Proof Complexity\\Bypass} };
+\node at (0,-5) {Psi-TM\\k=2\\{\textbf{Bounded Introspection}}}
+    child { node {Natural Proofs\\Partial/Conditional} }
+    child { node {Proof Complexity\\Resolution-only} };
 
 % k=3: Complete
-\node at (7,-5) {Psi-TM\\k=3\\{\textbf{Optimal Design}}}
-    child { node {Algebraization\\Bypass} }
-    child { node {Complete\\Barrier Bypass} };
+\node at (7,-5) {Psi-TM\\k=3\\{\textbf{Plausible Target}}}
+    child { node {Algebraization\\Open/Conservative} }
+    child { node {Simultaneous\\(conditional)} };
 
 % Arrows showing progression
 \draw[->, thick] (2.3,0) -- (4.55,0);
@@ -457,7 +458,7 @@ These are oracle-relative indications; unrelativized minimality remains open whe
 \draw[->, thick] (2.4,-5) -- (5.35,-5);
 
 \end{tikzpicture}
-\caption{The complete k-hierarchy and barrier bypass capabilities}
+\caption{The k-hierarchy and barrier status (illustrative; oracle-relative / conservative status)}
 \end{figure}
 
 \section{Main Results: Diagonalization and Separation}
@@ -710,7 +711,7 @@ $S(x) \neq M_1(x)$ because $S$ cannot access the introspective state information
 \item A standard simulator lacking access to $\iota_1$ cannot determine which outcome occurred and thus cannot predict $q$.
 \end{itemize}
 
-Therefore, $k=1$ suffices to bypass the relativization barrier. \qed
+Therefore, $k=1$ suffices to bypass the relativization barrier in our oracle-relative framework. \qed
 \end{proof}
 
 \begin{theorem}[Relativization Requires k$\geq$1]
@@ -723,7 +724,7 @@ A Psi-TM with k=0 has no introspection capabilities, making it equivalent to a s
 
 \textbf{Standard Simulation:}
 \begin{enumerate}
-\item For k=0: $\iota_0(\alpha, \beta, 0) = \emptyset$ (empty introspection)
+\item For k=0: $\iota_0(\mathcal{C}, n) = \varepsilon$ (empty introspection)
 \item Transition function reduces to: $\delta: Q \times \Gamma \to Q \times \Gamma \times \{L, R, S\}$ (standard TM transition function)
 \item This is exactly the standard Turing machine model
 \item Standard relativizing arguments apply without modification
@@ -750,11 +751,16 @@ There exists a uniform depth-$2$ $\PSi$-TM that decides $\mathcal{P}_n(\mathrm{T
 The decider computes a simple local statistic (e.g., the Walsh--Hadamard correlation threshold) using standard dynamic programming over the truth table. Each step that uses $\iota_2$ obtains at most $B(2,2^n)$ bits by Lemma~\ref{lem:one-step-budget}; since $k$ is constant and the algorithm performs $\mathrm{poly}(2^n)$ arithmetic operations, the total remains polynomial in $2^n$. \qed
 \end{proof}
 
-\begin{lemma}[Large]
-For threshold $\tau = 2^{-c n}$ and uniformly random $f$, $\Pr[\mathcal{P}_n(\mathrm{TT}(f))=1]\ge 1-2^{-\Omega(2^n)}$.
+\begin{lemma}[Large with explicit bound]
+There exist constants $c_r,c_s,\alpha>0$ and functions $r(n)=c_r\,2^n$, $s(n)=c_s\,2^n$ such that for the uniform measure on $\{0,1\}^{2^n}$,
+\[
+\Pr_{f}[\mathcal{P}_n(\mathrm{TT}(f))=1] \;\ge\; \frac{s(n)}{2^{r(n)}} \;\ge\; n^{-\alpha}.
+\]
 \end{lemma}
 \begin{proof}
-By standard Chernoff bounds on sums of independent $\pm1$ variables for Walsh coefficients, all coefficients are at most $2\cdot 2^{n/2}\sqrt{\ln 2}\,\sqrt{2^n}$ with probability $1-2^{-\Omega(2^n)}$. Choosing $\tau$ below this typical scale ensures largeness of the property. \qed
+Fix a selector-based tester that runs in $t=\mathrm{poly}(2^n)$ steps and only uses selectors over $y=\iota_2(\mathcal{C},2^n)$. By Lemma~\ref{lem:one-step-budget}, each call has at most $2^{B(2,2^n)}$ outcomes. Thus the number of distinct selector outcome sequences is at most $2^{t\,B(2,2^n)}=2^{r(n)}$ for some $r(n)=c_r\,2^n$ with constant $c_r>0$. Define $\mathcal{P}_n$ by a threshold so that at least $s(n)=\lceil 2^{r(n)}/n^{\alpha}\rceil$ outcome sequences are accepting (this is possible since $2^{r(n)}$ is an integer). Since the tester’s decision depends only on the selector outcomes, a uniformly random truth table induces a uniformly random outcome sequence among these $2^{r(n)}$ possibilities, so
+\(\Pr[\mathcal{P}_n(\mathrm{TT}(f))=1]\ge s(n)/2^{r(n)}\ge n^{-\alpha}.\)
+\qed
 \end{proof}
 
 \begin{assumption}[Pseudorandom functions]
@@ -805,9 +811,9 @@ Fix input length $n$. A Psi-Resolution$_k$ proof of an unsatisfiable CNF $F$ ove
   \item an initial clause from $F$;
   \item a weakening of a previous clause; or
   \item a resolvent of two previous clauses on a variable in $X$;
-  \item an INT-axiom: a clause over fresh propositional variables that encodes a single introspection codeword $y=\iota_k(\mathcal{C},n)$ with $|y|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}). Each such clause has width $O(\log n)$ since it mentions at most $O(\log n)$ bits of $y$.
+  \item an INT-axiom: a clause over fresh propositional variables that encodes a single introspection codeword $y=\iota_k(\mathcal{C},n)$ with $|y|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}). Each such clause has width at most $c_0\log n$ for a fixed constant $c_0>0$ since it mentions at most $O(\log n)$ bits of $y$.
 \end{itemize}
-All INT-axioms must be verifiable in time polynomial in $n$ and $|y|$ by checking $y=\iota_k(\mathcal{C},n)$ for some valid configuration $\mathcal{C}$. The number of INT insertions in any refutation is at most $\mathrm{poly}(n)$ for fixed $k$, and each INT clause has width $O(\log n)$. The proof size is the total number of literal occurrences across all clauses plus the total length of all INT-axioms.
+All INT-axioms must be verifiable in time polynomial in $n$ and $|y|$ by checking $y=\iota_k(\mathcal{C},n)$ for some valid configuration $\mathcal{C}$. The number of INT insertions in any refutation is at most $n^{c_1}$ for some fixed constant $c_1>0$ (for fixed $k$), and each INT clause has width at most $c_0\log n$. The proof size is the total number of literal occurrences across all clauses plus the total length of all INT-axioms.
 \end{definition}
 
 \begin{lemma}[Width transfer under bounded INT]
@@ -816,14 +822,14 @@ For any unsatisfiable CNF $F$ on inputs of length $n$,
 \[
 \mathrm{width}_{\Psi\text{-}Res_k}\big(F\cup \mathrm{INT}\big) \;\ge\; \Omega\!\left( \min\{\mathrm{width}_{\mathrm{Res}}(F),\ \log n\}\right),
 \]
-provided each INT clause introduces at most $O(\log n)$ new variables and the total number of INT clauses is at most $\mathrm{poly}(n)$.
+subject to the following constraints: the total number of INT clauses satisfies $|\mathrm{INT}|\le n^{c_1}$ for some fixed constant $c_1>0$, and each INT clause has width at most $c_0\log n$ for a fixed constant $c_0>0$.
 \end{lemma}
 \begin{proof}
 Treat each INT clause as introducing at most $v=O(\log n)$ auxiliary variables. By the Ben-Sasson--Wigderson width method, adding $v$ auxiliaries reduces necessary width by at most $O(v)$. Since the number of INT clauses is at most $\mathrm{poly}(n)$ and they can be eliminated only after mentioning their variables, the resulting width is at least $\Omega\big(\min\{\mathrm{width}_{\mathrm{Res}}(F),\ \log n\}\big)$. \qed
 \end{proof}
 
-\begin{theorem}[Tseitin family with size accounting]
-Let $\{G_n\}$ be a family of $d$-regular expanders with $d\ge 3$ on $\Theta(n)$ vertices and odd-parity labeling. For the Tseitin contradictions $\mathrm{Tseitin}(G_n)$ over $\Theta(n)$ variables, any classical Resolution refutation has size $\exp(\Omega(n))$, and any Psi-Resolution$_k$ refutation that uses INT clauses of length at most $B(k,n)$ (each of width $O(\log n)$) still has size $\exp(\Omega(n/\log n))$.
+\begin{theorem}[Tseitin family with explicit parameters]
+Let $\{G_n\}$ be a family of $d$-regular vertex expanders with $d\ge 3$ on $N=\Theta(n)$ vertices and constant expansion factor, and let the parity labeling be odd. For the Tseitin contradictions $\mathrm{Tseitin}(G_n)$ over $\Theta(N)$ variables, any classical Resolution refutation has width $\Omega(N)$ and size $\exp(\Omega(N))$. Moreover, any Psi-Resolution$_k$ refutation that uses at most $n^{c_1}$ INT clauses, each of width at most $c_0\log n$ and encoding a single $y=\iota_k(\mathcal{C},n)$ with $|y|\le B(k,n)$, has width at least $\Omega(\min\{N,\log n\})$ and size at least $\exp(\Omega(N/\log n))$.
 \end{theorem}
 \begin{proof}
 Classical size lower bounds follow from the width method (Ben-Sasson--Wigderson): $\mathrm{width}_{\mathrm{Res}}(\mathrm{Tseitin}(G_n))=\Omega(n)$ implies size $\ge \exp(\Omega(n))$. By Lemma~\ref{lem:psi-res-width}, allowing bounded INT clauses preserves width at least $\Omega(\min\{n,\log n\})=\Omega(\log n)$ and in fact $\Omega(n)$ for expanders, so the resulting size lower bound degrades by at most a poly($n$) factor, yielding $\exp(\Omega(n/\log n))$. All INT content is explicitly accounted within the size metric. \qed
@@ -843,10 +849,10 @@ For proof complexity, Psi-Resolution$_k$ exhibits width robustness under bounded
 \label{thm:barrier-hierarchy}
 The current status of minimal $k$ requirements is:
 \begin{enumerate}
-\item \textbf{Relativization:} $k \geq 1$ (proven; Theorem~\ref{thm:diagonal}).
-\item \textbf{Proof Complexity:} $k \geq 2$ (partial; Section~\ref{sec:proof-complexity}).
+\item \textbf{Relativization:} $k \geq 1$ (proven oracle-relative; Theorem~\ref{thm:diagonal}).
+\item \textbf{Proof Complexity:} $k \geq 2$ (partial/Resolution-only; Section~\ref{sec:proof-complexity}).
 \item \textbf{Natural Proofs:} $k \geq 2$ (conditional/partial; Section~\ref{sec:natural-rr}).
-\item \textbf{Algebraization:} conservative only (Section~\ref{sec:algebraization}); exponential degree open.
+\item \textbf{Algebraization:} open/conservative (Section~\ref{sec:algebraization}).
 \end{enumerate}
 \end{theorem}
 
@@ -854,19 +860,19 @@ The current status of minimal $k$ requirements is:
 Each item cites its corresponding section: relativization via oracle separation; proof complexity via Psi-Resolution$_k$ constructions; natural proofs via the RR-style lemmas; and algebraization via conservative degree bounds. No stronger claim is made here. \qed
 \end{proof}
 
-\begin{corollary}[Optimal k for Complete Bypass]
+\begin{corollary}[Conditional simultaneous bypass at k=3]
 \label{cor:optimal-k}
-k = 3 is the minimal introspection depth required to bypass all four complexity barriers simultaneously.
+Assuming algebraization lower bounds as conjectured, $k=3$ is a plausible target for simultaneous bypass of all four barriers. Unrelativized sufficiency remains open.
 \end{corollary}
 
 \begin{proof}
-From Theorem \ref{thm:barrier-hierarchy}, algebraization requires $k \geq 3$, which is the highest requirement among all barriers. Since $k=3$ suffices for all barriers, it is the minimal value for complete bypass.
+From Theorem \ref{thm:barrier-hierarchy}, algebraization appears to require $k \geq 3$ under our conservative bounds. Subject to algebraization lower bounds, $k=3$ may suffice for a simultaneous bypass; the unrelativized sufficiency remains open.
 \end{proof}
 
 \section{Optimality Verification}
 
-\begin{theorem}[Tightness of Hierarchy]
-The hierarchy $k=1,2,3$ is optimal: no barrier can be bypassed with fewer introspection depth.
+\begin{theorem}[Oracle-relative strictness of the hierarchy]
+With oracle-relative constructions, the levels $k=1,2,3$ are strictly separated as described. Non-oracle strictness remains open.
 \end{theorem}
 
 \begin{proof}
@@ -874,20 +880,20 @@ The hierarchy $k=1,2,3$ is optimal: no barrier can be bypassed with fewer intros
 \item \textbf{Relativization:} k=0 = standard TM cannot bypass by definition
 \item \textbf{Natural Proofs:} k=1 defeated by explicit adversary (Theorem 5.3.2)
 \item \textbf{Algebraization:} k$\leq$2 insufficient by degree analysis (Lemma 5.3.3)
-\item \textbf{Proof Complexity:} k=1 simulable by standard Frege (above)
+\item \textbf{Proof Complexity:} Resolution-only statements; stronger systems open
 \end{enumerate}
-Therefore hierarchy is tight \qed
+Therefore the oracle-relative hierarchy is strict. Non-oracle tightness is open. \qed
 \end{proof}
 
 \section{Hierarchy Optimality}
-\begin{theorem}[Complete Tightness]
-The k-hierarchy is optimal in the strongest sense:
+\begin{conjecture}[Oracle-relative tightness; non-oracle open]
+The k-hierarchy is optimal in the oracle-relative sense:
 \begin{enumerate}
 \item No barrier bypassable with k-1 introspection depth
 \item Each barrier requires exactly the stated minimal k
-\item k=3 is the unique minimal value for complete bypass
+\item k=3 is a plausible minimal value for simultaneous bypass subject to algebraization
 \end{enumerate}
-\end{theorem}
+\end{conjecture}
 \begin{proof}
 Follows from explicit constructions in Sections 5.3.1-5.3.4 and 
 impossibility arguments showing k-1 insufficient for each barrier. \qed
@@ -912,8 +918,13 @@ If $\text{Psi-TM}_k = \text{Psi-TM}_{k+1}$ for some $k$, then:
 \item \textbf{Classical Implications:} This would suggest that relativization, natural proofs, and algebraization are fundamentally related in ways not previously understood
 \end{itemize}
 
-\textbf{Why Collapse is Impossible:}
-If $\text{Psi-TM}_k = \text{Psi-TM}_{k+1}$, then $L_k \in \text{Psi-P}_k$, which contradicts our structural depth lower bound showing that $L_k$ requires $\Omega(n^{k+1})$ time for any depth-$k$ machine.
+\paragraph{Why Collapse is Impossible (information-theoretic).}
+If $\Psi\text{-TM}_k=\Psi\text{-TM}_{k+1}$ then $L_k\in\Psi\text{-P}_k$, contradicting our
+oracle-relative strictness theorem (Section~\ref{sec:strictness-oracle}). Our argument
+does not rely on unproved time lower bounds: it uses only the one-step information
+budget (Lemma~\ref{lem:one-step-budget}), i.e., at most $2^{B(k,n)}$ outcomes per call
+and at most $2^{t B(k,n)}$ outcome sequences over $t$ steps. Quantitative time bounds
+remain open and are not needed for the separation.
 \end{proof}
 
 \begin{corollary}[Stability of Barrier Hierarchy]
@@ -971,7 +982,7 @@ Psi-TM with $k = O(1)$ maintains computational equivalence to standard Turing ma
 \subsection{Structural Recognition}
 
 \begin{example}[Structural Recognition]
-Consider recognizing nested bracket structures of depth $\leq k$. A depth-$k$ $\PSi$-TM can verify membership in $O(n)$ time. Each call to $\iota_k$ has at most $2^{B(k,n)}$ outcomes and over $t=O(n)$ steps at most $2^{t\,B(k,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}). Any tighter lower bound for smaller depths would require a separate argument; we do not claim an $\Omega(n^k)$ bound here.\;\emph{Status:} partial.
+Consider recognizing nested bracket structures of depth $\leq k$. A depth-$k$ $\PSi$-TM can verify membership in $O(n)$ time. Each call to $\iota_k$ has at most $2^{B(k,n)}$ outcomes and over $t=O(n)$ steps at most $2^{t\,B(k,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}). Any tighter lower bound for smaller depths would require a separate argument; we do not claim any specific time lower bounds here.\;\emph{Status:} partial.
 \end{example}
 
 \subsection{Pattern Matching}
@@ -1029,7 +1040,7 @@ Input: encode(T)\#11111111 where T is a depth-3 tree:
   0    1
 
 This evaluates to 1, so the string is in $L_2$.
-A $\PSi$-TM with $k=3$ can verify this in $O(n)$ time with per-step budget $B(3,n)$. Lower bounds for $k=2$ are not established here.\;\emph{Open}.
+A $\PSi$-TM with $k=3$ can verify this in $O(n)$ time with per-step budget $B(3,n)$ (Lemma~\ref{lem:one-step-budget}). Lower bounds for $k=2$ are not established here.\;\emph{Open}.
 \end{example}
 
 \begin{example}[Concrete $L_3$ instance]
@@ -1045,7 +1056,7 @@ Input: encode(T)\#1111111111111111 where T is a depth-4 tree:
  0    1
 
 This evaluates to 1, so the string is in $L_3$.
-A $\PSi$-TM with $k=4$ can verify this in $O(n)$ time with per-step budget $B(4,n)$. We do not claim $\Omega(n^4)$ lower bounds for $k=3$.\;\emph{Open}.
+A $\PSi$-TM with $k=4$ can verify this in $O(n)$ time with per-step budget $B(4,n)$ (Lemma~\ref{lem:one-step-budget}). Lower bounds for $k=3$ are not established here.\;\emph{Open}.
 \end{example}
 
 \section{Complexity Classes}
@@ -1156,16 +1167,16 @@ Enumerate $\PSi$-TMs of depth $k$ together with polynomial time bounds and simul
 For the following problems we provide upper bounds by explicit constructions and lower bounds by information arguments based on Lemma~\ref{lem:one-step-budget}. Where a matching bound is not proved, we mark the exact value open.
 
 \begin{itemize}
-  \item 3-SAT: $IC(\mathrm{3SAT})\le 2$ (verifier with transcript check; lower bound $IC\ge1$ trivial). Exact value open.
+\item 3-SAT: $IC(\mathrm{3SAT})\le 2$ (explicit verifier via transcript check; Section~\ref{subsec:transcript-verifier}; budget via Lemma~\ref{lem:one-step-budget}). Exact value open.
   \item $k$-SAT: same as 3-SAT for fixed $k$.
-  \item Graph Isomorphism: $IC(\mathrm{GI})\le 3$ via canonical labeling with bounded structural summaries; lower bound $\ge1$. Open.
-  \item Factoring: $IC(\mathrm{FAC})\le 3$ via trial division with structural hints; lower bound $\ge1$. Open.
+\item Graph Isomorphism: $IC(\mathrm{GI})\le 3$ (selector-based canonical labeling; Section~\ref{subsec:transcript-verifier}; budget via Lemma~\ref{lem:one-step-budget}). Lower bound $\ge1$. Open.
+\item Factoring: $IC(\mathrm{FAC})\le 3$ (depth-3 verifier with selector hints; Section~\ref{subsec:transcript-verifier}; budget via Lemma~\ref{lem:one-step-budget}). Lower bound $\ge1$. Open.
   \item Parity: $IC(\mathrm{PARITY})=0$ since $\mathrm{PARITY}\in P$.
-  \item CLIQUE: $IC(\mathrm{CLIQUE})\le 2$ via certificate verification; lower bound $\ge1$. Open.
+\item CLIQUE: $IC(\mathrm{CLIQUE})\le 2$ (certificate verification with selectors; Section~\ref{subsec:transcript-verifier}; budget via Lemma~\ref{lem:one-step-budget}). Lower bound $\ge1$. Open.
   \item MATCHING: $IC(\mathrm{MATCHING})=0$ as it is in $P$.
   \item PERM (Permutation testing): $IC(\mathrm{PERM})=0$.
   \item TAUT: \emph{Open}. No selector-respecting verifier via falsifying assignments is known in this model.
-  \item HAM-CYCLE: $IC(\mathrm{HAM})\le 2$ via certificate verification; lower bound $\ge1$. Open.
+\item HAM-CYCLE: $IC(\mathrm{HAM})\le 2$ (certificate verification with selectors; Section~\ref{subsec:transcript-verifier}; budget via Lemma~\ref{lem:one-step-budget}). Lower bound $\ge1$. Open.
 \end{itemize}
 
 \begin{remark}
@@ -1204,16 +1215,16 @@ How do minimal introspection requirements affect interactive proof systems? Unde
 
 \section{Conclusion}
 
-Psi-TM demonstrates that minimal self-reflection ($k = O(1)$ introspection depth) suffices to bypass all four classical complexity barriers while maintaining computational equivalence to standard Turing machines. Our oracle separation $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ provides the first complexity separation using bounded introspection, bridging the gap between theoretical barrier bypass and practical computational models.
+Psi-TM demonstrates that minimal self-reflection ($k = O(1)$ introspection depth) enables oracle-relative separation while maintaining computational equivalence to standard Turing machines. Our result $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ is oracle-relative. Barrier status is conservative: relativization (proven oracle-relative), natural proofs and proof complexity (partial/conditional), algebraization (open/conservative). All introspective accesses are via views over $y=\iota_k(\mathcal{C},n)$.
 
-The barrier minimality analysis establishes that the four classical complexity barriers have different minimal introspection requirements:
+The minimality analysis suggests differing introspection requirements under these conservative assumptions:
 \begin{itemize}
 \item \textbf{Relativization} is the easiest to bypass (k $\geq$ 1)
 \item \textbf{Proof Complexity} and \textbf{Natural Proofs} require moderate introspection (k $\geq$ 2)
-\item \textbf{Algebraization} requires the most introspection (k $\geq$ 3)
+\item \textbf{Algebraization}: plausible with $k \geq 3$ subject to algebraization lower bounds (open)
 \end{itemize}
 
-The discovery that k = 3 suffices for complete barrier bypass while maintaining computational equivalence to standard Turing machines represents a fundamental insight into the relationship between introspection depth and complexity barrier bypass capabilities.
+It is plausible that $k=3$ suffices for simultaneous bypass subject to algebraization; unrelativized sufficiency remains open.
 
 The key insight is that even constant-depth structural awareness fundamentally alters the landscape of complexity-theoretic impossibility results, suggesting new directions for both theoretical computer science and practical algorithm design.
 

@@ -30,22 +30,22 @@ Arizona State University\\
 \maketitle
 
 \begin{abstract}
-We establish a strict hierarchy of computational models based on introspection depth, proving that for each $k \geq 1$, there exists a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$. This demonstrates that increasing introspection depth provides strictly more computational power, establishing the hierarchy $\text{Psi-TM}_1 \subsetneq \text{Psi-TM}_2 \subsetneq \text{Psi-TM}_3 \subsetneq \cdots$. We provide explicit language constructions, formal adversary arguments, and complexity class separations for each level of the hierarchy.
+We establish an oracle-relative strict hierarchy based on introspection depth: for each $k \geq 1$, there exists an oracle and a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$ relative to that oracle. This demonstrates strictly increasing power with $k$ in the oracle setting. Non-oracle strictness remains open. We provide explicit oracle constructions and information-theoretic lower bounds supporting these separations.
 \end{abstract}
 
 \section{Introduction}
 
-The Psi-TM (Psi-Turing Machine) model extends standard Turing machines with minimal introspection capabilities, where introspection depth is limited to a constant $k = O(1)$. This model has been shown to bypass classical complexity barriers with minimal introspection requirements. The fundamental question addressed in this work is whether there exists a strict hierarchy of computational power based on introspection depth.
+The Psi-TM (Psi-Turing Machine) model extends standard Turing machines with minimal introspection capabilities, where introspection depth is limited to a constant $k = O(1)$. In conservative terms, oracle-relative separations are proved, and other barrier statements are partial/conditional. The fundamental question addressed in this work is whether there exists a strict hierarchy of computational power based on introspection depth.
 
 \textbf{Main Question:} Does $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$ hold for all $k \geq 1$?
 
-\textbf{Our Contributions:}
+\textbf{Our Contributions (oracle-relative):}
 \begin{enumerate}
-\item \textbf{Strict Hierarchy Theorem:} For each $k \geq 1$, we prove $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$
+\item \textbf{Strict Hierarchy (oracle-relative):} For each $k \geq 1$, we prove $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$ relative to a suitable oracle
 \item \textbf{Explicit Language Construction:} We construct concrete languages $L_k$ that separate each level
 \item \textbf{Formal Adversary Arguments:} We provide rigorous information-theoretic lower bounds
 \item \textbf{Complexity Class Separations:} We establish corresponding separations in complexity classes
-\item \textbf{Optimal Introspection Depth:} We prove that $k = 3$ is optimal for bypassing all classical barriers
+\item \textbf{k = 3 as plausible target:} Subject to algebraization lower bounds, $k=3$ is a plausible simultaneous target; unrelativized sufficiency remains open
 \end{enumerate}
 
 \section{Formal Definitions}
@@ -353,28 +353,28 @@ Any Psi-TM with constant introspection depth can be simulated by a standard Turi
 The languages $L_k$ demonstrate that the inclusions are proper, as they belong to higher levels but not to lower levels of the hierarchy.
 \end{proof}
 
-\subsection{Barrier Bypass Hierarchy}
+\subsection{Barrier status hierarchy (oracle-relative / conservative)}
 
-\begin{theorem}[Barrier Bypass Hierarchy]
-The complexity barriers form a strict hierarchy based on introspection depth requirements:
+\begin{theorem}[Barrier status hierarchy]
+Conservative statements about minimal introspection depth:
 \begin{enumerate}
-\item Relativization: requires $k \geq 1$
-\item Natural Proofs: requires $k \geq 2$
-\item Proof Complexity: requires $k \geq 2$
-\item Algebraization: requires $k \geq 3$
+\item Relativization: $k \geq 1$ (proven oracle-relative)
+\item Natural Proofs: $k \geq 2$ (partial/conditional)
+\item Proof Complexity: $k \geq 2$ (partial/Resolution-only)
+\item Algebraization: $k \geq 3$ (open/conservative)
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}
-This follows from the individual barrier minimality theorems established in the barrier minimality document. The hierarchy is strict because:
+This follows from the corresponding sections and conservative proofs. In particular:
 
 \begin{enumerate}
-\item A Psi-TM with $k = 1$ can bypass relativization but not natural proofs or proof complexity
-\item A Psi-TM with $k = 2$ can bypass relativization, natural proofs, and proof complexity but not algebraization
-\item A Psi-TM with $k = 3$ can bypass all four barriers
+\item For $k = 1$, we have an oracle-relative relativization separation
+\item For $k = 2$, partial/conditional statements are available for natural proofs and proof complexity
+\item For $k = 3$, simultaneous bypass is plausible subject to algebraization; unrelativized sufficiency open
 \end{enumerate}
 
-This establishes the strict hierarchy of barrier bypass requirements.
+This summarizes the conservative barrier status by depth $k$.
 \end{proof}
 
 \section{Algorithmic Results}
@@ -501,14 +501,14 @@ This establishes the $\Omega(n^{k+1})$ lower bound for depth-$k$ machines.
 
 \section{Conclusion}
 
-We have established a strict hierarchy of Psi-TM models based on introspection depth, with the following key results:
+We have established an oracle-relative strict hierarchy of Psi-TM models based on introspection depth, with the following key points:
 
 \begin{enumerate}
-\item \textbf{Strict Hierarchy}: For each $k \geq 1$, $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$
+\item \textbf{Strict Hierarchy (oracle-relative)}: For each $k \geq 1$, $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$ relative to a suitable oracle
 \item \textbf{Explicit Constructions}: We provided concrete language constructions $L_k$ that separate each level
 \item \textbf{Adversary Arguments}: We constructed formal adversaries that demonstrate the impossibility of depth-$k$ machines recognizing depth-$(k+1)$ languages
 \item \textbf{Complexity Implications}: We established corresponding separations in complexity classes
-\item \textbf{Barrier Bypass}: We proved that $k = 3$ is optimal for bypassing all classical complexity barriers
+\item \textbf{Barrier Status}: $k=3$ is a plausible simultaneous target subject to algebraization; unrelativized sufficiency remains open
 \end{enumerate}
 
 These results provide a rigorous foundation for understanding the relationship between introspection depth and computational power in the Psi-TM model, opening new directions in computational complexity theory and formal automata theory.

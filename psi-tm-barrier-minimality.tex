@@ -19,7 +19,7 @@
 \newtheorem{claim}{Claim}
 
 \title{Barrier Minimality in Psi-TM:\\
-Minimal Introspection Requirements for Complexity Barrier Bypass}
+Minimal Introspection Requirements (oracle-relative / conservative)}
 \author{Mathematical Foundation}
 \date{\today}
 
@@ -29,7 +29,7 @@ Minimal Introspection Requirements for Complexity Barrier Bypass}
 
 \section{Introduction}
 
-This work establishes the minimal introspection requirements for bypassing the four classical complexity barriers: relativization, natural proofs, proof complexity, and algebraization. We prove that each barrier requires a specific minimum introspection depth in the Psi-TM model.
+This work studies minimal introspection requirements across the four classical complexity barriers: relativization, natural proofs, proof complexity, and algebraization. Proven results are oracle-relative; other statements are partial/conditional. We indicate plausible targets where justified and mark unrelativized sufficiency as open.
 
 \section{Formal Definitions}
 
@@ -56,10 +56,10 @@ A proof system has polynomial-size proofs for a language $L$ if there exists a p
 A complexity class separation algebrizes if it holds relative to any low-degree extension of the oracle.
 \end{definition}
 
-\subsection{Psi-TM Barrier Bypass}
+\subsection{Psi-TM barrier status}
 
-\begin{definition}[Barrier Bypass]
-A Psi-TM with introspection depth $k$ bypasses a complexity barrier if it can solve problems that are provably impossible for standard Turing machines due to that barrier.
+\begin{definition}[Barrier status (conservative)]
+Psi-TM with introspection depth $k$ is said to make progress against a barrier if there is an oracle-relative separation or a partial/conditional statement consistent with selectors-only semantics and the information budget (Lemma~\ref{lem:one-step-budget}).
 \end{definition}
 
 \section{Relativization Barrier: k ≥ 1}
