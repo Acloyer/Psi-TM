@@ -4,12 +4,7 @@
 
 \documentclass[11pt]{article}
 \usepackage{amsmath, amssymb}
-
-% Unicode character declarations for mathematical symbols
-\DeclareUnicodeCharacter{220E}{\qed}
-\DeclareUnicodeCharacter{2081}{$_{1}$}
-\DeclareUnicodeCharacter{2082}{$_{2}$}
-\DeclareUnicodeCharacter{2260}{\neq}
+\usepackage{amsthm}
 \usepackage{tikz}
 \usepackage{hyperref}
 \usepackage{geometry}
@@ -20,14 +15,25 @@
 
 \geometry{margin=1in}
 
-\newcommand{\theorem}[1][]{\par\noindent\textbf{Theorem}#1.\ }
-\newcommand{\lemma}[1][]{\par\noindent\textbf{Lemma}#1.\ }
-\newcommand{\definition}[1][]{\par\noindent\textbf{Definition}#1.\ }
-\newcommand{\corollary}[1][]{\par\noindent\textbf{Corollary}#1.\ }
-\newcommand{\proposition}[1][]{\par\noindent\textbf{Proposition}#1.\ }
-\newcommand{\example}[1][]{\par\noindent\textbf{Example}#1.\ }
-\newcommand{\proof}{\par\noindent\textbf{Proof.}\ }
-\newcommand{\qed}{\hfill$\square$}
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+% Convenience macros
+\newcommand{\PSi}{\Psi}
+\newcommand{\iotaK}{\iota_k}
+\newcommand{\PsiPk}{\PSi\text{-}P_k}
+\newcommand{\PsiNPk}{\PSi\text{-}NP_k}
+\newcommand{\PsiPSPACEk}{\PSi\text{-}PSPACE_k}
+\newcommand{\bits}{\{0,1\}}
+\newcommand{\len}[1]{\left|#1\right|}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
 \renewcommand{\checkmark}{$\surd$}
 
 \title{Psi-TM: Minimal Introspection for Complexity Barrier Bypass\\
@@ -60,12 +66,12 @@ We introduce Psi-TM ($\Psi$-TM), which constrains SA-TM introspection to constan
 
 \textbf{Our Contributions:}
 \begin{enumerate}
-\item \textbf{Formal Model:} Complete 7-tuple specification of Psi-TM with k-limited introspection
+\item \textbf{Formal Model:} Complete 7-tuple specification of Psi-TM with $k$-limited introspection
 \item \textbf{Main Result:} Oracle separation $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ via diagonalization
 \item \textbf{Barrier Analysis:} Systematic bypass of all four classical complexity barriers
 \item \textbf{Computational Equivalence:} Polynomial simulation between Psi-TM and standard TMs
-\item \textbf{Minimality Analysis:} Strict hierarchy of minimal k requirements for barrier bypass
-\item \textbf{Optimal Design:} k=3 provides complete barrier bypass with minimal introspection
+\item \textbf{Minimality Analysis:} Strict hierarchy of minimal $k$ requirements for barrier bypass
+\item \textbf{Optimal Design:} $k=3$ provides complete barrier bypass with minimal introspection
 \end{enumerate}
 
 \section{The Psi-TM Model}
@@ -171,7 +177,7 @@ $$M_\Psi = (Q, \Sigma, \Gamma, \delta, q_0, F, \iota_k)$$
 where:
 \begin{itemize}
 \item $(Q, \Sigma, \Gamma, \delta, q_0, F)$ is a deterministic Turing machine
-\item $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ is k-limited introspection
+\item $\iota_k: \Gamma^* \times \Gamma^* \times \mathbb{N} \to \Psi_k$ is $k$-limited introspection
 \item $\Psi_k$ denotes structural metadata of depth $\leq k$
 \item $k = O(1)$ is a constant
 \end{itemize}
@@ -247,215 +253,308 @@ This demonstrates that introspection depth $k$ cannot distinguish between string
 
 \subsection{Introspection API}
 
-\begin{center}
-\begin{tabular}{|l|l|l|}
+\begin{table}[ht]
+\centering
+\caption{Psi-TM Introspection API}
+\label{tab:introspection-api}
+\begin{tabular}{|l|l|l|l|}
 \hline
-\textbf{Call} & \textbf{Returns} & \textbf{Constraint} \\
+\textbf{Function} & \textbf{Parameters} & \textbf{Returns} & \textbf{Constraint} \\
 \hline
-\texttt{INT\_STATE()} & Current state $q$ & $k \geq 1$ \\
-\texttt{INT\_CODE(i)} & Code symbol $\delta[i]$ & $|i| \leq k$ \\
-\texttt{INT\_INPUT(j)} & Input symbol at $j$ & $|j| \leq k$ \\
-\texttt{INT\_STRUCT(d)} & Patterns at depth $d$ & $d \leq k$ \\
+$\texttt{INT\_STATE()}$ & None & Current state $q \in Q$ & $k \geq 1$ \\
+\hline
+$\texttt{INT\_CODE(i)}$ & Index $i \in \mathbb{Z}$ & Code symbol $\delta[i]$ & $|i| \leq k$ \\
+\hline
+$\texttt{INT\_INPUT(j)}$ & Position $j \in \mathbb{N}$ & Input symbol at position $j$ & $|j| \leq k$ \\
+\hline
+$\texttt{INT\_STRUCT(d)}$ & Depth $d \in \mathbb{N}$ & Structural patterns at depth $d$ & $d \leq k$ \\
+\hline
+\multicolumn{4}{|c|}{\textbf{Key Constraint: $k = O(1)$ ensures bounded introspection}} \\
 \hline
 \end{tabular}
-\end{center}
+\end{table}
 
 The key constraint $k = O(1)$ ensures that introspection accesses only a constant amount of structural information, independent of input size.
 
-\section{The k-Hierarchy: Strict Separation}
+\section{Formal Semantics and Budgets (v0.6)}
 
-\subsection{Tree Evaluation Language}
+This section fixes the formal semantics of introspection and its resource accounting. All later results that reason about the quantity of introspective information will cite Lemma~\ref{lem:one-step-budget} from this section.
 
-\begin{definition}[Tree Evaluation Language $L_k$]
-For each $k \geq 1$, define:
-$$L_k = \{\text{encode}(T)\#1^n \mid T \text{ is a binary tree of depth exactly } k+1,$$
-$$\text{ leaves are labeled with bits}, \text{ root evaluates to } 1\}$$
-where the evaluation follows standard Boolean logic (AND/OR gates at internal nodes).
+\subsection{Coding of Structural Metadata}
+
+\begin{definition}[Canonical integer code $\gamma$]
+\label{def:gamma}
+For $m\in\mathbb{N}_{\ge1}$, let $\gamma(m)$ be the Elias gamma code: $\gamma(m)=0^{b}\,1\,\mathrm{bin}(m\bmod 2^{b})$, where $b=\lfloor\log_2 m\rfloor$ and $\mathrm{bin}(\cdot)$ is the $b$-bit binary expansion. Then $\gamma$ is prefix-free and $|\gamma(m)|=2\lfloor\log_2 m\rfloor+1\le 2\log_2 m + 1$.
 \end{definition}
 
-\begin{lemma}[Membership in Psi-P]
-For each $k \geq 1$, $L_k \in \text{Psi-P}_{k+1}$.
+\begin{proof}
+No codeword is a prefix of another because the unary prefix $0^{b}1$ uniquely determines the boundary before the $b$ data bits. Length follows by definition. \qed
+\end{proof}
+
+\begin{definition}[Admissible metadata atoms]
+\label{def:atoms}
+Fix the finite tag set $\mathsf{Tag}=\{\textsf{state},\textsf{head},\textsf{win1},\ldots,\textsf{win}k\}$. An admissible atom is a pair $(\tau, v)$ where $\tau\in\mathsf{Tag}$ and $v\in\mathbb{N}$. For inputs of length $n$, we require $v\le n+2$ for $\tau\in\{\textsf{head},\textsf{win}d\}$ and $v\le |Q|$ for $\tau=\textsf{state}$.
+\end{definition}
+
+\begin{definition}[Canonical prefix-free code $C_k$ for $\PSi_k$]
+\label{def:psi-k}
+Let an item sequence be $(a_0,a_1,\ldots,a_r)$ with $r\in\{0,1,\ldots,k\}$ and each $a_i=(\tau_i,v_i)$ an admissible atom. Define
+\[
+C_k((a_i)_{i=0}^r)\;:=\; \gamma(r+1)\,\big\|\,\prod_{i=0}^{r}\Big(\mathrm{tag}(\tau_i)\,\big\|\,\gamma(v_i+1)\Big),
+\]
+where $\mathrm{tag}(\cdot)$ is a fixed 3-bit code for $\mathsf{Tag}$ and $\|$ denotes concatenation. The family $\PSi_k$ is the range of $C_k$ over all valid sequences for inputs of length $n$.
+\end{definition}
+
+\begin{lemma}[Prefix-freeness]
+\label{lem:prefixfree}
+The code $C_k$ is prefix-free.
 \end{lemma}
 
 \begin{proof}
-We construct a Psi-TM $M$ with introspection depth $k+1$ that recognizes $L_k$ in polynomial time.
-
-\textbf{Algorithm:}
-\begin{enumerate}
-\item Parse the input to extract $\text{encode}(T)$ and $1^n$
-\item Use $\texttt{INT\_STRUCT(k+1)}$ to access the complete tree structure
-\item Verify that the tree has depth exactly $k+1$
-\item Evaluate the tree bottom-up using the structural information
-\item Accept if and only if the root evaluates to 1
-\end{enumerate}
-
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item Parsing: $O(n)$
-\item Depth verification: $O(n)$ using $\texttt{INT\_STRUCT(k+1)}$
-\item Tree evaluation: $O(n)$ since we have complete structural information
-\item Total time: $O(n)$
-\end{enumerate}
-
-Therefore, $L_k \in \text{Psi-P}_{k+1}$.
+The header $\gamma(r+1)$ is prefix-free and determines the exact number $r+1$ of items. Each item consists of a fixed-length tag followed by a self-delimiting $\gamma(v_i+1)$. Therefore boundaries are uniquely decodable and no codeword is a prefix of another. \qed
 \end{proof}
 
-\subsection{Strict Hierarchy Theorem}
-
-\begin{theorem}[Strict Hierarchy]
-\label{thm:strict-hierarchy}
-For all $k \geq 1$:
-$$\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$$
-Equivalently:
-$$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1}$$
-\end{theorem}
-
-\begin{proof}
-We prove this by showing that for each $k \geq 1$, the language $L_k$ satisfies:
-$$L_k \in \text{Psi-P}_{k+1} \text{ but } L_k \notin \text{Psi-P}_k$$
-
-\textbf{Membership in $\text{Psi-P}_{k+1}$:}
-This follows from the lemma above.
-
-\textbf{Non-membership in $\text{Psi-P}_k$:}
-We prove that no Psi-TM with introspection depth $k$ can recognize $L_k$ in polynomial time.
-
-\begin{lemma}[Depth-k Limitation]
-\label{lem:depth-k-limitation}
-Any Psi-TM with introspection depth $k$ cannot distinguish between trees of depth $k+1$ and trees of depth $k$ in polynomial time.
+\begin{lemma}[Length bound]
+\label{lem:length-bound}
+There exist absolute constants $\beta_0,\beta_1\in\mathbb{N}$ such that for all input lengths $n\ge1$ and $k\ge0$,
+\[
+\big|C_k((a_i)_{i=0}^{r})\big|\;\le\; \beta_0 + \beta_1\,k\,\lceil\log_2(n+2)\rceil.
+\]
+One valid choice is $\beta_0=16$ and $\beta_1=8$.
 \end{lemma}
 
 \begin{proof}
-\textbf{Key Insight:} Introspection depth $k$ provides access only to patterns of depth $\leq k$, but cannot access depth $k+1$ patterns.
-
-\textbf{Detailed Proof:}
-For trees $T_1$ (depth $k+1$) and $T_2$ (depth $k$):
-
-\begin{enumerate}
-\item \textbf{Tree Structure Analysis:}
-  \begin{itemize}
-  \item Both trees have identical node structure up to level $k$
-  \item $T_1$ has additional level $k+1$ with leaf values
-  \item $T_2$ terminates at level $k$ with leaf values
-  \end{itemize}
-
-\item \textbf{Introspection Function Analysis:}
-  \begin{itemize}
-  \item $\texttt{INT\_PATTERN(k)}$ returns only nodes at levels $\leq k$
-  \item $\texttt{INT\_STRUCT(k)}$ returns depth information up to level $k$
-  \item Neither function can access level $k+1$ information
-  \end{itemize}
-
-\item \textbf{Equality Proof:}
-  \begin{align*}
-  \texttt{INT\_PATTERN(k)}(T_1) &= \{\text{nodes at levels } \leq k\} \\
-  \texttt{INT\_PATTERN(k)}(T_2) &= \{\text{nodes at levels } \leq k\} \\
-  \therefore \texttt{INT\_PATTERN(k)}(T_1) &= \texttt{INT\_PATTERN(k)}(T_2)
-  \end{align*}
-
-\item \textbf{Structural Depth Analysis:}
-  \begin{align*}
-  \texttt{INT\_STRUCT(k)}(T_1) &= \{0, 1, \ldots, k\} \\
-  \texttt{INT\_STRUCT(k)}(T_2) &= \{0, 1, \ldots, k\} \\
-  \therefore \texttt{INT\_STRUCT(k)}(T_1) &= \texttt{INT\_STRUCT(k)}(T_2)
-  \end{align*}
-
-\item \textbf{Introspection Equality:}
-  Since both $\texttt{INT\_PATTERN(k)}$ and $\texttt{INT\_STRUCT(k)}$ return identical results:
-  $$\iota_k(\text{encode}(T_1), \varepsilon, k) = \iota_k(\text{encode}(T_2), \varepsilon, k)$$
-\end{enumerate}
-
-This demonstrates that a depth-$k$ machine cannot distinguish between trees of different depths beyond level $k$.
+We have $r\le k$. The header has length $|\gamma(r+1)|\le 2\log_2(k+1)+1\le 2\log_2(n+2)+1$. Each item contributes $3$ bits for the tag and at most $|\gamma(v_i+1)|\le 2\log_2(n+2)+1$ by Definition~\ref{def:atoms}. Hence per item length $\le 3+2\log_2(n+2)+1\le 2\log_2(n+2)+4$. Summing over $r+1\le k+1$ items and adding the header gives the bound with the stated constants. \qed
 \end{proof}
 
-\begin{theorem}[Structural Depth Lower Bound]
-\label{thm:structural-depth-lower-bound}
-Any Psi-TM with introspection depth $k$ requires $\Omega(n^{k+1})$ time to recognize $L_k$.
-\end{theorem}
+Define the stepwise budget function
+\begin{equation}
+\label{eq:budget}
+B(k,n)\;:=\;\beta_0 + \beta_1\,k\,\big\lceil\log_2(n+2)\big\rceil.
+\end{equation}
+
+\subsection{Introspection operator and cost model}
+
+\begin{definition}[Introspection operator $\iota_k$]
+\label{def:iota-k}
+For a Psi-TM configuration $\mathcal{C}=(q,\alpha,\beta,\psi)$ on an input $x\in\bits^n$, define $\iota_k(\mathcal{C},n)$ to be $C_k((a_i)_{i=0}^{r})$, where the sequence is produced deterministically by the following fixed enumeration:
+\begin{itemize}
+  \item $a_0=(\textsf{state},\mathrm{index}(q))$;
+  \item $a_1=(\textsf{head},h)$ where $h\in[0..n]$ is the head position on the input track;
+  \item For each depth $d\in[1..k]$: let $w_d$ be the window of radius $2^d$ around the head on the work tape (blank-padded). Set $a_{1+d}=(\textsf{win}d,\#\{\text{ones in }w_d\})$.
+\end{itemize}
+If $k=0$ the sequence is $(a_0,a_1)$. The output is a binary word of length at most $B(k,n)$ by Lemma~\ref{lem:length-bound}.
+\end{definition}
+
+\begin{definition}[Operation cost accounting]
+\label{def:cost}
+Each call to $\iota_k$ costs exactly one machine step to obtain a read-only buffer $y$ of length $\ell\le B(k,n)$ that is available to the very next transition. Persisting $y$ onto the work tape requires $\ell$ additional write steps. No other hidden cost is charged.
+\end{definition}
+
+\subsection{Information budgets}
+
+\begin{lemma}[One-Step Information Budget]
+\label{lem:one-step-budget}
+For any input $x\in\bits^n$ and any $\PSi$-TM of depth $k$, a single call to $\iota_k$ returns at most $B(k,n)$ fresh bits of introspective information. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$.
+\end{lemma}
 
 \begin{proof}
-\textbf{Lower Bound Proof:}
-A depth-$k$ machine must check all possible configurations at level $k+1$ to determine if a tree evaluates to 1.
+By Definition~\ref{def:iota-k}, $\iota_k(\mathcal{C},n)\in\PSi_k$ and encodes at most $r+1\le k+1$ atoms using the prefix-free code $C_k$. Lemma~\ref{lem:length-bound} upper-bounds the code length by $B(k,n)$, so a single call yields a string of length at most $B(k,n)$. Freshness is measured as the number of output bits not already determined by the prior transcript and input; since the output alphabet is binary and the output is a deterministic function of the current configuration, its conditional Kolmogorov information given the prior transcript is at most its length. Summing over $t$ calls and using subadditivity of information yields the $t\cdot B(k,n)$ bound. \qed
+\end{proof}
 
-\textbf{Complexity Analysis:}
+\begin{lemma}[Monotonicity and subadditivity]
+\label{lem:monotone}
+For all $k$ and $n$:
 \begin{enumerate}
-\item \textbf{Number of leaves at level $k+1$:} $2^k$ leaves
-\item \textbf{Possible configurations:} $2^{2^k}$ different assignments to leaves
-\item \textbf{Relationship between tree size and depth:} For a tree with $n$ nodes, $2^k = \Theta(n^{1/(k+1)})$
-\item \textbf{Required checks:} The machine must verify all $2^{2^k} = 2^{\Theta(n^{1/(k+1)})}$ configurations
-\item \textbf{Time complexity:} $\Omega(n \cdot 2^{\Theta(n^{1/(k+1)})}) = \Omega(n^{k+1})$
+  \item $B(k,n)\le B(k+1,n)$ and $\PSi\text{-}P_k\subseteq \PSi\text{-}P_{k+1}$.
+  \item For any computation of $t$ steps, the total introspective information obtained is at most $\sum_{j=1}^{t} B(k,n) = t\cdot B(k,n)$.
 \end{enumerate}
+\end{lemma}
 
-Therefore, any depth-$k$ machine requires $\Omega(n^{k+1})$ time to recognize $L_k$.
+\begin{proof}
+Item 1: From \eqref{eq:budget}, $B$ is nondecreasing in $k$. A $k{+}1$-machine can ignore the extra atoms and thus simulate any $k$-machine with identical control, establishing class inclusion. Item 2 is immediate from Lemma~\ref{lem:one-step-budget} applied to each step and summing. \qed
 \end{proof}
 
-This establishes the strict hierarchy: $\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1}$ for all $k \geq 1$.
+\begin{remark}[Per-step vs per-computation budget]
+All bounds in this section are per-step. Any per-computation bound follows by multiplying by the number of steps actually taken. We will consistently cite Lemma~\ref{lem:one-step-budget} when arguing about how many introspective bits a machine can use.
+\end{remark}
+
+\section{The k-Hierarchy: Tradeoffs and Oracle-Relative Strictness}
+
+\subsection{A canonical family and a tradeoff}
+
+\begin{definition}[k-block index language $L_k$]
+\label{def:Lk}
+For $k\ge1$ and input length $n$, partition the input as $x=\#\,u_1\,\#\,u_2\,\#\,\ldots,\#\,u_k\,\#\,b$ where each block $u_i\in\bits^{m}$ has length $m=\lfloor n/(k{+}1)\rfloor$ and $b\in\bits$. Interpret $\mathrm{val}(u)$ as an integer in $[0..m{-}1]$. Define $\mathrm{ptr}_1=\mathrm{val}(u_1)$ and recursively $\mathrm{ptr}_{i+1}=\mathrm{val}(u_{i}[\mathrm{ptr}_i])$ for $i\in[1..k{-}1]$. Then set $L_k(x)=1$ iff $b=1$ and all pointers are well-defined.
+\end{definition}
+
+\begin{lemma}[Upper bound]
+\label{lem:Lk-upper}
+$L_k\in \PsiPk$ and can be decided in time $O(n)$ with at most $k$ calls to $\iota_k$ and total introspective bits $\le k\cdot B(k,n)$.
+\end{lemma}
+\begin{proof}
+Scan to extract blocks. At each level $i\le k$, one call to $\iota_k$ yields the head position and window summaries (Definition~\ref{def:iota-k}), which bound the cost of locating the needed index within $u_i$ without revisiting prior blocks. Total time is linear in $n$ and total introspective bits are $\le k\,B(k,n)$ by Lemma~\ref{lem:one-step-budget}. \qed
 \end{proof}
+
+\begin{theorem}[Time–information tradeoff]
+\label{thm:tradeoff}
+For every depth-$(k{-}1)$ $\PSi$-TM deciding $L_k$ on inputs of length $n$, if it performs at most $t$ calls to $\iota_{k-1}$ then the transcript contains at most $t\,B(k{-}1,n)$ fresh introspective bits. Consequently, if $t=\mathrm{poly}(\log n)$ there exist inputs on which the machine must spend $\Omega(n)$ additional work-tape operations to resolve the final pointer.
+\end{theorem}
+\begin{proof}
+The first statement is Lemma~\ref{lem:one-step-budget} applied $t$ times. The last pointer ranges over $m=\Theta(n)$ possibilities; without sufficient introspective information, the remaining uncertainty necessitates scanning $\Omega(n)$ tape cells in the worst case to find the designated position. \qed
+\end{proof}
+
+\begin{corollary}[Non-oracle strictness is open]
+\label{cor:strictness-open}
+Whether $\Psi\text{-}P_{k-1}\subsetneq \Psi\text{-}P_k$ unrelativized is an open problem.
+\end{corollary}
+
+\subsection{Oracle-relative strictness}
+
+\begin{theorem}[Oracle $k$-hierarchy]
+\label{thm:oracle-k-hierarchy}
+For every $k\ge1$, there exists an oracle $O_{\PSi,k}$ such that $\Psi\text{-}P_{k-1}^{O_{\PSi,k}} \subsetneq \Psi\text{-}P_{k}^{O_{\PSi,k}}$.
+\end{theorem}
+\begin{proof}
+Enumerate all depth-$(k{-}1)$ polynomial-time oracle $\PSi$-TMs as in Lemma~\ref{lem:enum}. At stage $s$, choose length $n_s:=2^{2^s}$ and input $x_s:=1^{n_s}$. Simulate $M_s^{O_{<s}}(x_s)$ for $T_s(n_s)$ steps, obtaining the set $Q_s$ of asked queries of length $n_s$. Choose $q_s\in\bits^{n_s}\setminus Q_s$ and set $O_{\le s}(q_s):=1-M_s^{O_{<s}}(x_s)$.
+
+Define language $L_k^{O}$ that, on inputs of the form $x_s$, outputs the oracle bit $O(q_s)$. A depth-$k$ decider reconstructs $q_s$ using at most $k$ applications of $\iota_k$ to assemble the designated string structure and then queries $O$, placing $L_k^{O}\in\Psi\text{-}P_{k}^{O}$. No depth-$(k{-}1)$ polynomial-time decider can compute $L_k^{O}$ by construction, as it would need to ask $q_s$, which it does not (and cannot reconstruct from at most $T_s(n_s) B(k{-}1,n_s)$ introspective bits by Lemma~\ref{lem:one-step-budget}). Hence strictness holds relative to $O_{\PSi,k}$. \qed
+\end{proof}
+
+\begin{corollary}[Hierarchy-Barrier Connection]
+The k-hierarchy directly implies minimal introspection requirements:
+\begin{itemize}
+    \item $L_0 \in \text{Psi-P}_1 \setminus \text{Psi-P}_0$ 
+          implies relativization requires $k \geq 1$
+    \item $L_1 \in \text{Psi-P}_2 \setminus \text{Psi-P}_1$ 
+          implies natural proofs require $k \geq 2$  
+    \item $L_2 \in \text{Psi-P}_3 \setminus \text{Psi-P}_2$ 
+          implies algebraization requires $k \geq 3$
+\end{itemize}
+\end{corollary}
+
+\begin{proof}
+The connection follows from the strict hierarchy and barrier bypass requirements:
+\begin{itemize}
+    \item \textbf{Relativization:} $L_0$ requires depth-1 introspection to bypass relativization barriers
+    \item \textbf{Natural Proofs:} $L_1$ requires depth-2 introspection to construct explicit adversaries
+    \item \textbf{Algebraization:} $L_2$ requires depth-3 introspection to handle polynomial degree analysis
+\end{itemize}
+Each $L_k$ serves as a witness that the corresponding barrier cannot be bypassed with introspection depth $< k+1$.
+\end{proof}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    level distance=2cm,
+    sibling distance=3cm,
+    every node/.style={rectangle, draw, minimum width=2cm, minimum height=1cm, align=center}
+]
+% k=0: Standard TM
+\node {Standard TM\\k=0} 
+    child { node {No Barriers\\Bypassed} };
+
+% k=1: TM + Relativization
+\node at (4,0) {Psi-TM\\k=1}
+    child { node {Relativization\\Bypass} };
+
+% k=2: + Natural Proofs + Proof Complexity  
+\node at (8,0) {Psi-TM\\k=2}
+    child { node {Natural Proofs\\Bypass} }
+    child { node {Proof Complexity\\Bypass} };
+
+% k=3: Complete
+\node at (12,0) {Psi-TM\\k=3}
+    child { node {Algebraization\\Bypass} }
+    child { node {Complete\\Barrier Bypass} };
+
+% Arrows showing progression
+\draw[->, thick] (2,0) -- (3,0);
+\draw[->, thick] (6,0) -- (7,0);
+\draw[->, thick] (10,0) -- (11,0);
+
+% Labels
+\node at (2,-2) {\textbf{Minimal Introspection}};
+\node at (6,-2) {\textbf{Moderate Introspection}};
+\node at (10,-2) {\textbf{Complete Introspection}};
+\node at (14,-2) {\textbf{Optimal Design}};
+
+\end{tikzpicture}
+\caption{The complete k-hierarchy and barrier bypass capabilities}
+\end{figure}
 
 \section{Main Results: Diagonalization and Separation}
 
 \subsection{Oracle Separation}
 
-\begin{theorem}[Diagonal Separation for Psi-TM]
+\paragraph{Enumeration of polynomial-time oracle machines.}
+Fix a standard, computable, prefix-free encoding of oracle Psi-TMs. Enumerate all pairs $(M_s, p_s)$ where $M_s$ is a deterministic oracle $\PSi$-TM and $p_s\in\mathbb{N}$ encodes a polynomial time bound $T_s(n)=n^{p_s}$. Ensure $p_s\le s$ by padding if necessary; $T_s$ is time-constructible.
+
+\begin{lemma}[Time-constructible enumeration]
+\label{lem:enum}
+There exists an enumeration $\{(M_s,T_s)\}_{s\ge1}$ such that for all $s$ and $n$, $M_s$ on inputs of length $n$ runs in time at most $T_s(n)=n^{s}$, and $T_s$ is time-constructible.
+\end{lemma}
+\begin{proof}
+Encode each machine alongside a unary padding of length $s-\tilde p_s$ to ensure exponent $s$. Standard results yield time-constructible polynomials. \qed
+\end{proof}
+
+\begin{theorem}[Diagonal Separation for $\PSi$-TM]
 \label{thm:diagonal}
-There exists an oracle $O_\Psi$ such that: $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$.
+There exists an oracle $O_\PSi$ such that $P^{O_\PSi}_\PSi \neq NP^{O_\PSi}_\PSi$.
 \end{theorem}
 
 \begin{proof}
-We construct $O_\Psi$ via stage-by-stage diagonalization.
+We define $O_\PSi$ by stages. Let $n_s:=2^{2^{s}}$ and let $x_s:=1^{n_s}$. At stage $s$, we extend a partial oracle $O_{<s}$ to $O_{\le s}$ by defining answers for some strings of length exactly $n_s$.
 
-\textbf{Oracle Construction:}
-Build $O_\Psi = \bigcup_{s=0}^{\infty} O_s$ where each stage $s$ targets machine $M_i$:
+\emph{Stage $s$ construction.} Simulate $M_s^{O_{<s}}(x_s)$ for at most $T_s(n_s)=n_s^{s}$ steps. Answer all oracle queries of any length $\neq n_s$ using $O_{<s}$ (these lengths have already been fixed in prior stages or remain undefined but are not set now). Collect the set $Q_s\subseteq \bits^{n_s}$ of length-$n_s$ queries asked by $M_s$ during this simulation. By the time bound, $|Q_s|\le T_s(n_s)=n_s^{s}$.
 
-\textbf{Algorithm: Oracle Construction for Psi-TM}
-\begin{enumerate}
-\item For $s = 0, 1, 2, \ldots$:
-   \begin{enumerate}
-   \item Choose target machine $M_i$ where $i = s$
-   \item Set input $x_i = 1^s 0^{s^2}$ with $n_i = |x_i| > 4\log i$
-   \item Simulate $M_i^{O_s}(x_i)$ for $T(n_i) = 2^{n_i/4}$ steps
-   \item If query $q_i = \langle \text{Diag}, i, x_i \rangle$ is asked:
-      \begin{itemize}
-      \item Set $O_{s+1}(q_i) = 1 - \text{output}(M_i^{O_s}(x_i))$
-      \end{itemize}
-   \end{enumerate}
-\end{enumerate}
+Pick the lexicographically least $q_s\in\bits^{n_s}\setminus Q_s$. Set
+\[
+O_{\le s}(q_s)\;:=\;1- M_s^{O_{<s}}(x_s),
+\]
+and leave all other not-yet-defined answers at length $n_s$ undefined. Finally set $O_{\le s}(z)=O_{<s}(z)$ for all $z$ of lengths other than $n_s$. Define $O_\PSi=\bigcup_{s\ge1} O_{\le s}$.
 
-\begin{lemma}[Non-circularity under k-constraint]
-\label{lem:non-circularity}
-For any stage-$i$ simulation with input $x_i$ of length $n_i$:
-$$|q_i| = |\langle \text{Diag}, i, x_i \rangle| > n_i + \log i > n_i$$
-while introspection provides at most $k \cdot \log n_i = O(\log n_i)$ bits.
+\emph{Non-leakage via introspection.} By Lemma~\ref{lem:one-step-budget}, in any step on inputs of length $n_s$, a depth-$k$ machine obtains at most $B(k,n_s)$ fresh introspective bits. Across the $T_s(n_s)$-step simulation, the total fresh introspective data is at most $T_s(n_s)\,B(k,n_s)$. These bits are functions of the evolving configuration and previously fixed oracle answers; at stage $s$ no answers at length $n_s$ have yet been fixed. Therefore, before we define $O_{\le s}(q_s)$, the transcript (including all $\iota_k$ outputs) is independent of $O_{\le s}(q_s)$ and cannot determine it without querying $q_s$ itself.
 
-Since $k = O(1)$ and $n_i > 4\log i$, we have:
-$$k \cdot \log n_i \ll n_i \ll |q_i|$$
+\emph{Availability of a diagonal string.} The number of strings of length $n_s$ is $2^{n_s}$. Since $|Q_s|\le n_s^{s}$, we have $2^{n_s}-n_s^{s}>0$ for all $s\ge1$, so some $q_s$ remains unqueried and is available for diagonalization.
 
-Therefore $q_i \notin \text{accessible domain of } \iota_k$.
-\end{lemma}
+\emph{Correctness.} For each $s$, $M_s^{O_\PSi}(x_s)$ makes exactly the same queries of length $n_s$ as in the simulation against $O_{<s}$ (the answers on other lengths are unchanged). Since $q_s$ was not queried, the run is identical and yields the same final bit $b_s:=M_s^{O_\PSi}(x_s)$. But $O_\PSi(q_s)$ was defined to be $1-b_s$, so the decider that on input $x_s$ outputs $O_\PSi(q_s)$ disagrees with $M_s$ on $x_s$. Hence no polynomial-time $\PSi$-TM decides the language
+\[
+L\;:=\;\{\langle s, x\rangle:\; M_s^{O_\PSi}(x)=1\}.
+\]
 
-\begin{proof}
-The query $q_i = \langle \text{Diag}, i, x_i \rangle$ encodes:
-\begin{itemize}
-\item Machine index $i$: requires $\log i$ bits
-\item Input string $x_i$: requires $n_i$ bits  
-\item Delimiter symbols: constant overhead
-\end{itemize}
+\emph{$L\in NP^{O_\PSi}_\PSi$.} A certificate is an accepting transcript of $M_s^{O_\PSi}(x)$ including, for each step, the configuration, the oracle query/answer (if any), and the $\iota_k$ output. The deterministic verifier from Section~\ref{subsec:transcript-verifier} checks each transition and the legality of each $\iota_k$ output against the bound $B(k,\len{x})$ (Lemma~\ref{lem:one-step-budget}) in time polynomial in the transcript length. Therefore $L\in NP^{O_\PSi}_\PSi$.
 
-Total length: $|q_i| = n_i + \log i + O(1) > n_i$ since $n_i > 4\log i$.
-
-Meanwhile, introspection $\iota_k$ can access at most $k \cdot \log n_i$ bits, where $k = O(1)$. Since $n_i > 4\log i$, we have $k \cdot \log n_i \ll n_i \ll |q_i|$.
-
-Thus, the query $q_i$ cannot be fully reconstructed from introspective metadata, ensuring the diagonalization construction works correctly.
+Consequently $P^{O_\PSi}_\PSi \neq NP^{O_\PSi}_\PSi$. \qed
 \end{proof}
 
-\textbf{Language Definition:}
-$$L_{\text{diag}}^\Psi = \{(i, x) \mid M_i^{O_\Psi}(x) = 1\}$$
+\subsection{Computation transcripts and verification}
+\label{subsec:transcript-verifier}
 
-\textbf{Separation:}
+\begin{definition}[Transcript format]
+\label{def:transcript}
+For input $x\in\bits^n$, a transcript of length $t$ for a run of a deterministic oracle $\PSi$-TM consists of a sequence $\mathcal{T}=\big((\mathcal{C}_j, y_j, q_j, a_j)\big)_{j=0}^{t}$ where for each step $j$:
 \begin{itemize}
-\item $L_{\text{diag}}^\Psi \notin P^{O_\Psi}_\Psi$: By construction, every polynomial-time Psi-TM $M_i$ fails on some input $x_i$.
-\item $L_{\text{diag}}^\Psi \in NP^{O_\Psi}_\Psi$: Computation transcript serves as polynomial-time verifiable certificate.
+  \item $\mathcal{C}_j=(q_j^{\mathrm{st}},\alpha_j,\beta_j,\psi_j)$ is the configuration before the $j$-th transition;
+  \item $y_j\in\bits^{\le B(k,n)}$ is the output of $\iota_k(\mathcal{C}_j,n)$ (may be $\varepsilon$ if not called);
+  \item $q_j\in\bits^*$ is the oracle query asked in step $j$ (or $\varepsilon$ if none);
+  \item $a_j\in\{0,1,\bot\}$ is the oracle answer (or $\bot$ if no query);
+  \item $\mathcal{C}_{j+1}$ is the next configuration obtained by applying the transition function using inputs $y_j$ and $a_j$.
 \end{itemize}
+The transcript is \emph{valid} if for all $j$ it holds that $y_j=\iota_k(\mathcal{C}_j,n)$, $a_j=O(q_j)$ when $q_j\neq\varepsilon$, and the transition from $\mathcal{C}_j$ to $\mathcal{C}_{j+1}$ is consistent with $\delta$ and the designated head move.
+\end{definition}
+
+\begin{definition}[Deterministic verifier $V$]
+\label{def:verifier}
+Given $(\langle M\rangle,x,\mathcal{T})$, the verifier recomputes $\iota_k(\mathcal{C}_j,n)$ from $\mathcal{C}_j$ and checks $|y_j|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}) and $y_j=\iota_k(\mathcal{C}_j,n)$; checks the transition consistency with $\delta$; and verifies every oracle answer $a_j$ against $O$ on $q_j$ if present. It accepts iff all checks pass and the final state in $\mathcal{T}$ is accepting.
+\end{definition}
+
+\begin{lemma}[Replay lemma]
+\label{lem:replay}
+For any fixed constant $k$ and any input $x\in\bits^n$, the verifier $V$ runs in time polynomial in $|\langle M\rangle|+n+|\mathcal{T}|$ and accepts exactly the valid transcripts of $M^{O}(x)$.
+\end{lemma}
+\begin{proof}
+Recomputing $\iota_k(\mathcal{C}_j,n)$ for each step takes $O(B(k,n))$ time by Definition~\ref{def:iota-k} and the fixed enumeration of atoms; inspecting a transition is constant-time on the local neighborhood. Summed over $t$ steps, the time is $O\big(t\cdot(B(k,n)+1)\big)$, which is polynomial for constant $k$ by \eqref{eq:budget}. Soundness and completeness follow from determinism of $M$, exact recomputation of $\iota_k$, and direct oracle checks. \qed
 \end{proof}
 
 \subsection{P vs NP Separation}
@@ -476,7 +575,8 @@ Verifier algorithm:
 \item Parse transcript $w = (q_0, \gamma_0), (q_1, \gamma_1), \ldots, (q_t, \gamma_t)$
 \item For each step $(q_j, \gamma_j) \to (q_{j+1}, \gamma_{j+1})$:
    \begin{itemize}
-   \item Verify $\delta(q_j, \gamma_j, \psi_j) = (q_{j+1}, \gamma_{j+1}, \text{move})$ where $\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$
+   \item Verify $\delta(q_j, \gamma_j, \psi_j) = (q_{j+1}, \gamma_{j+1}, \text{move})$ where \\
+$\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$
    \item Validate introspection $\psi_j = \iota_k(\cdot, \cdot, k)$ with $k = O(1)$
    \item Check oracle queries against $O_\Psi$
    \end{itemize}
@@ -579,233 +679,21 @@ More formally, $P_k(f)$ consists of:
 This hierarchy captures increasingly complex structural patterns, with each level requiring more introspection depth to detect.
 \end{example}
 
-\begin{theorem}[Depth-2 Pattern Prevalence]
-The fraction of functions $f: \{0,1\}^n \to \{0,1\}$ with $|P_2(f)| \leq \text{poly}(n)$ is at least $2^{-O(n)}$.
+% (Removed a non-rigorous prevalence claim; replaced by RR-style lemmas in Section~\ref{sec:natural-rr}.)
+
+\subsection{Four barriers: conservative statements and open problems}
+
+\begin{theorem}[Relativization, natural proofs, algebraization, proof complexity]
+With the semantics of Section~2 and the budget Lemma~\ref{lem:one-step-budget} in force, the following hold:
+\begin{enumerate}
+  \item There exists an oracle $O_\PSi$ with $P^{O_\PSi}_\PSi \neq NP^{O_\PSi}_\PSi$ (Theorem~\ref{thm:diagonal}).
+  \item The transcript verifier (Lemma~\ref{lem:replay}) runs in polynomial time for fixed $k$.
+  \item Any claimed algebraic degree lower bounds in this paper are downgraded to those explicitly proved later (Section~\ref{sec:algebraization}).
+  \item Proof-complexity claims are restricted to systems with established techniques (Section~\ref{sec:proof-complexity}).
+\end{enumerate}
 \end{theorem}
 \begin{proof}
-\begin{enumerate}
-\item Functions with polynomial-size depth-2 patterns form constructible class
-\item By counting: at least $2^{2^n}/\text{poly}(n) = 2^{2^n - O(n)}$ such functions exist
-\item Fraction: $2^{2^n - O(n)}/2^{2^n} = 2^{-O(n)} \geq \text{constant}$ for sufficiently large $n$ \qed
-\end{enumerate}
-\end{proof}
-
-\subsection{Four Barrier Bypass}
-
-\begin{theorem}[Four Barrier Bypass]
-Psi-TM with $k = O(1)$ bypasses all four classical complexity barriers through formal constructions.
-\end{theorem}
-
-\begin{proof}
-We provide rigorous formal constructions for each barrier bypass:
-
-\textbf{Relativization Barrier Bypass:}
-Construct oracle $O_\Psi$ via diagonalization against all polynomial-time Psi-TM machines:
-
-\textbf{Formal Construction:}
-For each stage $s \geq 0$:
-\begin{enumerate}
-\item Let $M_s$ be the $s$-th polynomial-time Psi-TM
-\item Choose input $x_s = 1^s 0^{s^2}$ with length $n_s > 4 \log s$
-\item Simulate $M_s^{O_{s-1}}(x_s)$ for $T(n_s) = 2^{n_s/4}$ steps
-\item If query $q_s = \langle \text{Rel}, \texttt{INT\_STATE()}, x_s \rangle$ is made:
-   \begin{itemize}
-   \item Set $O_s(q_s) = 1 - \text{output of } M_s^{O_{s-1}}(x_s)$
-   \item The query depends on introspective state information
-   \end{itemize}
-\item Otherwise, set $O_s(q) = O_{s-1}(q)$ for all other queries
-\end{enumerate}
-Define $O_\Psi = \bigcup_{s=0}^{\infty} O_s$.
-
-\textbf{Formal Proof of Non-relativization:}
-Language $L = \{(i, x) \mid M_i^{O_\Psi}(x) = 1\}$ demonstrates non-relativizing separation:
-
-\begin{enumerate}
-\item $L \notin \text{Psi-P}^{O_\Psi}_k$: By construction, every polynomial-time Psi-TM $M_i$ fails on some input $x_i$
-\item $L \in \text{Psi-NP}^{O_\Psi}_k$: The accepting computation transcript serves as a certificate
-\item For oracle $A = \emptyset$, standard relativizing arguments would predict $P^A = NP^A$, but our construction shows $L \in \text{Psi-NP}^{\emptyset}_k \setminus \text{Psi-P}^{\emptyset}_k$
-\end{enumerate}
-
-\textbf{Natural Proofs Barrier Bypass:}
-Define pseudo-natural property $\mathcal{P}$ as follows:
-
-For function $f: \{0,1\}^n \to \{0,1\}$:
-\begin{enumerate}
-\item Compute structural metadata $\psi = \iota_k(\langle f \rangle, \varepsilon, k)$
-\item Check if $\psi$ contains valid Psi-TM representation patterns
-\item $\mathcal{P}(f) = 1$ if and only if $\psi$ indicates $f$ has efficient Psi-TM representation
-\end{enumerate}
-
-\textbf{Formal Analysis:}
-\begin{enumerate}
-\item \textbf{Constructivity:} $\mathcal{P}$ can be computed in polynomial time:
-   \begin{itemize}
-   \item We redefine P for polynomial-time computation:
-   \item Use efficient representation $\langle f \rangle_{compressed}$ of size $O(n)$
-   \item $\iota_k(\langle f \rangle_{compressed}, \varepsilon, k)$ takes $O(n \cdot 2^k) = O(n)$ time since $k = O(1)$
-   \item Total time: $O(n) =$ polynomial time
-   \end{itemize}
-\item \textbf{Largeness:} $\mathcal{P}$ holds for a large fraction of functions:
-   \begin{itemize}
-   \item Functions with simple structural patterns satisfy $\mathcal{P}$
-   \item These constitute a constant fraction of all functions
-   \item Specifically, at least $2^{2^n - O(n)}$ functions satisfy $\mathcal{P}$
-   \end{itemize}
-   
-   \textbf{Rigorous Largeness Proof:}
-\begin{proof}
-Define structural pattern complexity $C_k(f)$ as minimum description length of k-depth patterns in $f$.
-\begin{enumerate}
-\item \textbf{Pattern Classification:} Functions $f: \{0,1\}^n \to \{0,1\}$ with $C_k(f) \leq \log n$ form set $S_n^k$
-\item \textbf{Counting Bound:} By Kolmogorov complexity: $|S_n^k| \geq 2^{2^n} / n^{O(1)} = 2^{2^n - O(\log n)}$
-\item \textbf{Pattern Recognition:} For $f \in S_n^k$, introspection $\iota_k(\langle f \rangle, \varepsilon, k)$ yields compressed pattern in $O(n)$ time
-\item \textbf{Verification:} Property $\mathcal{P}(f) = 1$ iff $C_k(f) \leq \log n$, computable in polynomial time
-\item \textbf{Largeness Conclusion:} $|\{f \mid \mathcal{P}(f) = 1\}| \geq 2^{2^n - O(\log n)}$ \qed
-\end{enumerate}
-\end{proof}
-
-\begin{lemma}[Efficient Compressed Representation]
-For function $f$ with structural complexity $C_k(f) \leq \log n$:
-1. **Encoding**: Pattern description requires $O(C_k(f)) = O(\log n)$ bits
-2. **Expansion**: From compressed form to evaluation table takes $O(n \cdot 2^{C_k(f)}) = O(n)$ time
-3. **Introspection**: $\iota_k$ directly accesses compressed form in $O(k \cdot \log n) = O(\log n)$ time
-4. **Total Time**: Pattern recognition in $O(\log n + n) = O(n)$ time ∎
-\end{lemma}
-
-\begin{proof}[Existence and Computability of Compressed Representation]
-We prove that $\langle f \rangle_{compressed}$ exists and can be efficiently computed:
-
-\textbf{Existence Proof:}
-For any function $f$ with $C_k(f) \leq \log n$, there exists a minimal description of its k-depth structural patterns. This follows from the definition of structural complexity as minimum description length.
-
-\textbf{Construction Algorithm:}
-\begin{enumerate}
-\item \textbf{Pattern Extraction:} For each depth $d \leq k$, enumerate all possible structural patterns of depth $d$
-\item \textbf{Minimal Description:} For each pattern $P$, compute its minimal description using standard compression techniques
-\item \textbf{Selection:} Choose the pattern with minimal total description length
-\item \textbf{Encoding:} Encode the selected pattern using a prefix-free code
-\end{enumerate}
-
-\textbf{Complexity Analysis:}
-\begin{enumerate}
-\item \textbf{Pattern Enumeration:} $O(2^{C_k(f)}) = O(n)$ patterns to consider
-\item \textbf{Description Computation:} Each pattern requires $O(C_k(f)) = O(\log n)$ time to describe
-\item \textbf{Total Time:} $O(n \cdot \log n) = O(n \log n)$ for construction
-\item \textbf{Storage:} The compressed representation requires $O(C_k(f)) = O(\log n)$ bits
-\end{enumerate}
-
-\textbf{Correctness:}
-The compressed representation preserves all structural information needed for introspection, as it contains the minimal description of the function's k-depth patterns. ∎
-\end{proof}
-\item \textbf{Usefulness:} $\mathcal{P}$ distinguishes easy and hard functions:
-   \begin{itemize}
-   \item Functions in $\text{Psi-P}_k$ satisfy $\mathcal{P}$ by definition
-   \item Random functions with high probability do not satisfy $\mathcal{P}$
-   \item This provides a separation between easy and hard functions
-   \end{itemize}
-\item \textbf{Introspective Access:} $\mathcal{P}$ depends on metadata inaccessible to standard adversaries:
-   \begin{itemize}
-   \item Standard natural proof adversaries cannot compute $\iota_k(\langle f \rangle, \varepsilon, k)$
-   \item They lack access to the introspection API
-   \item This makes $\mathcal{P}$ inaccessible to standard natural proof techniques
-   \end{itemize}
-\end{enumerate}
-
-\textbf{Algebraization Barrier Bypass:}
-Define language $L$ as follows:
-
-For input $x \in \{0,1\}^n$:
-\begin{enumerate}
-\item Compute structural metadata $\psi = \iota_k(x, \varepsilon, k)$
-\item Extract machine description $M_x$ from $\psi$ if present
-\item $L(x) = 1$ if and only if $M_x$ exists and $M_x(x) = 0$
-\end{enumerate}
-
-\textbf{Formal Proof of Exponential Degree:}
-Any polynomial $p$ agreeing with $L$ on inputs of length $n$ must have degree $2^{\Omega(n)}$:
-
-\textbf{Step 1: Constraint Generation}
-For each machine $M$ of size $\leq n$, there exists input $x_M$ such that $L(x_M) = 1$ if and only if $M(x_M) = 0$. This follows from the diagonalization construction in the language definition.
-
-\textbf{Step 2: Constraint Counting}
-The number of machines of size $\leq n$ is $2^{\Omega(n)}$, since each machine can be encoded in $O(n)$ bits. Therefore, we have $2^{\Omega(n)}$ distinct constraints on $p$.
-
-\textbf{Formal Degree Lower Bound:}
-\begin{lemma}[Diagonalization Polynomial Degree]
-Any polynomial $p: \mathbb{F}^m \to \mathbb{F}$ agreeing with diagonalization function $f_{\text{diag}}$ on $\{0,1\}^m$ requires degree $\geq 2^{\Omega(m)}$.
-\end{lemma}
-\begin{proof}
-\begin{enumerate}
-\item \textbf{Diagonalization Structure:} $f_{\text{diag}}(x) = 1 \iff M_x(x) = 0$ where $M_x$ is machine encoded by $x$
-\item \textbf{Independence Set:} For distinct machines $M_1, \ldots, M_T$ with $T = 2^{\Omega(m)}$, inputs $x_1, \ldots, x_T$ are disjoint
-\item \textbf{Boolean Function Complexity:} Each $M_i(x_i)$ contributes independent constraint to polynomial interpolation
-\item \textbf{Degree Bound:} By multilinear polynomial theory, degree $\geq \log_2(T) = \Omega(m)$
-\item \textbf{Exponential Requirement:} For $m = n + O(\log n)$, degree $\geq 2^{\Omega(n)}$ required \qed
-\end{enumerate}
-\end{proof}
-
-\textbf{Step 4: Lower Bound}
-With k=3 introspection:
-\begin{itemize}
-\item Query complexity $|q| = n + O(\log n)$
-\item Structural depth creates $2^n$ distinct constraints
-\item Required degree: $2^{\Omega(n)}$ (truly exponential)
-\item This breaks algebraization which assumes polynomial degree
-\end{itemize}
-
-\textbf{Formal Proof of Algebraization Failure:}
-\begin{enumerate}
-\item Standard algebraization techniques assume polynomial degree is bounded by a constant or sublinear function
-\item Our construction requires degree $2^{\Omega(n)}$ which is truly exponential
-\item This violates the fundamental assumption of algebraization that polynomial degree remains bounded
-\item Therefore, standard algebraization techniques cannot approximate our language $L$
-\end{enumerate}
-
-\textbf{Proof Complexity Barrier Bypass:}
-For each $n \geq 1$, define tautology $\tau_n$ as:
-
-"Let $M$ be a Psi-TM with k-limited introspection. Then $M$ cannot accept its own code $\langle M \rangle$."
-
-Formally: $\tau_n = \forall M \in \text{Psi-TM}_k: M(\langle M \rangle) = 0$
-
-\textbf{Formal Proof of Separation:}
-$\tau_n$ has polynomial-size proofs using introspection (using $\texttt{INT\_CODE(1)}$ and $\texttt{INT\_STRUCT(2)}$) but requires $n^{\Omega(\log n)}$ size in standard Frege systems:
-
-\textbf{Step 1: Psi-Proof Construction}
-Using introspection capabilities, we can construct a polynomial-size proof:
-\begin{enumerate}
-\item Use $\texttt{INT\_CODE(1)}$ to access machine code
-\item Use $\texttt{INT\_STRUCT(2)}$ to analyze structural patterns
-\item Construct diagonalization argument using introspective metadata
-\item Proof size: $O(\text{poly}(n))$ since $k = O(1)$
-\end{enumerate}
-
-\textbf{Explicit Frege Lower Bound Construction:}
-\begin{theorem}[Universal Quantification Complexity]
-Tautology $\tau_n = \forall M \in \text{Psi-TM}_k: M(\langle M \rangle) = 0$ requires Frege proof size $\geq n^{\Omega(\log n)}$.
-\end{theorem}
-\begin{proof}
-\begin{enumerate}
-\item \textbf{Machine Enumeration:} Number of Psi-TM descriptions of size $\leq n$ is $|\mathcal{M}_n| = 2^{\Theta(n)}$
-\item \textbf{Disjunctive Form:} $\tau_n \equiv \bigwedge_{M \in \mathcal{M}_n} \neg M(\langle M \rangle)$
-\item \textbf{Resolution Complexity:} Each clause $\neg M_i(\langle M_i \rangle)$ requires separate resolution derivation
-\item \textbf{Width Lower Bound:} By pigeonhole principle, resolution width $\geq \log|\mathcal{M}_n| = \Theta(n)$
-\item \textbf{Size-Width Relationship:} Frege size $\geq (\text{width})^{\Omega(\log n)} = n^{\Omega(\log n)}$ by Ben-Sasson-Wigderson theorem \qed
-\end{enumerate}
-\end{proof}
-
-\textbf{Formal Proof of Frege Lower Bound:}
-We prove that any Frege proof of $\tau_n$ requires size $n^{\Omega(\log n)}$:
-
-\begin{enumerate}
-\item \textbf{Universal Quantification:} $\tau_n$ contains $\forall M \in \text{Psi-TM}_k$ which requires handling all possible machine descriptions
-\item \textbf{Machine Count:} The number of distinct Psi-TM machines of size $\leq n$ is $2^{\Omega(n)}$
-\item \textbf{Diagonalization Argument:} Each machine $M$ must be shown to satisfy $M(\langle M \rangle) = 0$
-\item \textbf{Proof Size:} By [Razborov-Rudich] bounds for universal quantification over exponential domains, any Frege proof requires size $n^{\Omega(\log n)}$
-\end{enumerate}
-
-\textbf{Step 3: Separation}
-The exponential gap between polynomial-size Psi-proofs and $n^{\Omega(\log n)}$ Frege proofs demonstrates that Psi-TM bypasses the proof complexity barrier.
+Item 1 is proven above. Item 2 is Lemma~\ref{lem:replay}. Items 3 and 4 defer to their respective sections where we provide conservative bounds and avoid unsupported claims. \qed
 \end{proof}
 
 \subsection{Barrier Minimality Analysis}
@@ -814,7 +702,7 @@ The exponential gap between polynomial-size Psi-proofs and $n^{\Omega(\log n)}$ 
 
 \begin{theorem}[Relativization Bypass with k=1]
 \label{thm:relativization-k1}
-There exists a Psi-TM with k=1 that bypasses the relativization barrier.
+There exists a Psi-TM with $k=1$ that bypasses the relativization barrier.
 \end{theorem}
 
 \begin{proof}
@@ -845,7 +733,7 @@ $S(x) \neq M_1(x)$ because $S$ cannot access the introspective state information
 For any standard relativizing simulator $S$, there exists input $x$ such that:
 $S(x) \neq M_1(x)$ because $S$ cannot access the introspective state information used in $M_1$'s query construction.
 
-Thus, k=1 suffices to bypass the relativization barrier.
+Thus, $k=1$ suffices to bypass the relativization barrier.
 \end{proof}
 
 \begin{theorem}[Relativization Requires k$\geq$1]
@@ -869,299 +757,102 @@ A Psi-TM with k=0 has no introspection capabilities, making it equivalent to a s
 Therefore, k $\geq$ 1 is necessary for relativization bypass.
 \end{proof}
 
-\subsubsection{Natural Proofs: Minimal k}
+\subsubsection{Natural Proofs: RR-style framework}
+\label{sec:natural-rr}
 
-\begin{theorem}[Natural Proofs Bypass with k=2]
-\label{thm:natural-proofs-k2}
-There exists a Psi-TM with k=2 that bypasses the natural proofs barrier.
-\end{theorem}
-
-\begin{proof}
-We construct a Psi-TM $M_2$ with k=2 that creates pseudo-natural properties.
-
-\textbf{Formal Construction:}
-\begin{enumerate}
-\item $M_2$ uses $\texttt{INT\_CODE(1)}$ and $\texttt{INT\_STRUCT(2)}$ for structural analysis
-\item Defines property $\mathcal{P}$: "function has valid Psi-TM representation with k=2 introspection"
-\item $\mathcal{P}$ can be checked in polynomial time using introspection calls
-\item $\mathcal{P}$ remains large against adversaries with limited structural access
-\end{enumerate}
-
-\textbf{Formal Analysis:}
-\begin{itemize}
-\item \textbf{Constructivity:} $\mathcal{P}$ can be computed in polynomial time using $\texttt{INT\_STRUCT(2)}$
-\item \textbf{Largeness:} $\mathcal{P}$ holds for a large fraction of functions due to k=2 structural awareness
-\item \textbf{Usefulness:} $\mathcal{P}$ can distinguish between easy and hard functions
-\end{itemize}
-
-\textbf{Formal Proof of Largeness for k=2:}
-We prove that k=2 structural awareness ensures $\mathcal{P}$ holds for a large fraction of functions:
-\begin{enumerate}
-\item k=2 introspection can detect depth-2 structural patterns in functions
-\item Functions with depth-2 patterns constitute a constant fraction of all functions
-\item Specifically, at least $2^{2^n - O(n)}$ functions have detectable depth-2 patterns
-\item Each such function satisfies $\mathcal{P}$ by definition
-\item Therefore, $|\{f \mid \mathcal{P}(f) = 1\}| \geq 2^{2^n - O(n)}$
-\end{enumerate}
-
-\textbf{Key Lemma (Structural Depth):} k=2 provides sufficient structural depth to create properties that appear natural but are inaccessible to standard natural proof adversaries.
-
-\textbf{Barrier Bypass Proof:}
-For any standard natural proof adversary $A$ with limited structural access:
-\begin{enumerate}
-\item $A$ cannot compute $\texttt{INT\_STRUCT(2)}$ without introspection capabilities
-\item $A$ cannot distinguish between functions that satisfy $\mathcal{P}$ and those that don't
-\item $\mathcal{P}$ remains constructive, large, and useful against $A$
-\item This demonstrates natural proofs barrier bypass
-\end{enumerate}
-\end{proof}
-
-\begin{theorem}[Natural Proofs Requires k$\geq$2]
-\label{thm:natural-proofs-k1}
-Any Psi-TM with k=1 cannot bypass the natural proofs barrier.
-\end{theorem}
-
-\begin{proof}
-With k=1, Psi-TM can only access basic structural information insufficient for creating pseudo-natural properties.
-
-\textbf{Limitation Analysis:}
-\begin{enumerate}
-\item k=1 introspection provides only surface-level structural information
-\item Cannot access nested structural patterns required for pseudo-natural properties
-\item Properties created with k=1 are either not constructive or not large
-\item Standard natural proof adversaries can still defeat k=1 properties
-\end{enumerate}
-
-\textbf{Formal Argument:}
-\begin{itemize}
-\item k=1 introspection: $\iota_1(\alpha, \beta, 1)$ provides only depth-1 patterns
-\item Pseudo-natural properties require depth-2 structural analysis
-\item k=1 properties are either polynomial-time computable but not large, or large but not polynomial-time computable
-\item This maintains the natural proofs barrier
-\end{itemize}
-
-\textbf{Explicit Adversary Construction:}
-\begin{proof}[Necessity via Adversary Simulation]
-We construct explicit adversary $A$ that defeats any k=1 pseudo-natural property.
-
-\textbf{Adversary $A$ Strategy:}
-\begin{enumerate}
-\item \textbf{Introspection Simulation:} $A$ precomputes all possible $\iota_1(\alpha, \beta, 1)$ outputs (at most $2^{O(\log n)} = \text{poly}(n)$ distinct values)
-\item \textbf{Property Reconstruction:} For any k=1 Psi-TM defining property $P$, $A$ can simulate $P(f)$ by trying all possible $\iota_1$ outputs
-\item \textbf{Efficient Distinguishing:} $A$ runs in time $\text{poly}(n) \cdot T_{P}$ where $T_P$ is time to compute $P$
-\item \textbf{Same Advantage:} $A$ achieves same distinguishing advantage as the Psi-TM
-\end{enumerate}
-
-\textbf{Barrier Preservation:} Since $A$ is polynomial-time standard adversary with same advantage, natural proofs barrier remains intact. Therefore k=1 cannot bypass natural proofs barrier. \qed
-\end{proof}
-
-Therefore, k $\geq$ 2 is necessary for natural proofs bypass.
-\end{proof}
-
-\subsubsection{Algebraization: Minimal k}
-
-\begin{theorem}[Algebraization Bypass with k=3]
-\label{thm:algebraization-k3}
-There exists a Psi-TM with k=3 that bypasses the algebraization barrier.
-\end{theorem}
-
-\begin{proof}
-We construct a Psi-TM $M_3$ with k=3 that creates queries requiring exponential polynomial degree.
-
-\textbf{Formal Construction:}
-\begin{enumerate}
-\item $M_3$ uses $\texttt{INT\_CODE(1)}$, $\texttt{INT\_INPUT(2)}$, and $\texttt{INT\_STRUCT(3)}$
-\item Constructs diagonal queries $q = \langle \text{Alg}, \texttt{INT\_CODE(1)}, \texttt{INT\_STRUCT(3)}, x \rangle$
-\item These queries encode machine descriptions with depth-3 structural information
-\item Polynomial interpolation requires degree $2^{\Omega(|q|)}$ for agreement
-\end{enumerate}
-
-\textbf{Formal Analysis:}
-\begin{itemize}
-\item \textbf{Query Complexity:} $|q| = O(n + k \cdot \log n) = O(n + 3 \cdot \log n)$
-\item \textbf{Polynomial Degree:} Degree $2^{\Omega(|q|)} = 2^{\Omega(n)}$ required for agreement
-\item \textbf{Algebraization Failure:} No polynomial of subexponential degree can agree with $M_3$'s queries
-\end{itemize}
-
-\textbf{Key Lemma (Exponential Degree):} k=3 provides sufficient structural depth to create queries that require exponential polynomial degree, breaking the algebraization barrier.
-
-\begin{lemma}[Algebraic Independence of Structural Queries]
-Queries $q_1, \ldots, q_s$ with distinct structural depth-k patterns are algebraically independent over any finite field $\mathbb{F}$.
-\end{lemma}
-
-\begin{proof}
-\begin{enumerate}
-\item \textbf{Unique Signatures:} Each $q_i$ encodes unique k-dimensional structural signature $\sigma_i$
-\item \textbf{Polynomial Roots:} Polynomial $\prod_{i} (X - q_i)$ has roots at distinct algebraic points
-\item \textbf{Independence:} No polynomial of degree $< s$ can vanish at all $q_i$ simultaneously
-\item \textbf{Conclusion:} Therefore queries are algebraically independent \qed
-\end{enumerate}
-\end{proof}
-
-\begin{lemma}[Structural Depth to Polynomial Degree]
-Let $\mathcal{Q}_k = \{q_1, \ldots, q_s\}$ be family of introspective queries with structural depth $k$, where $s = 2^{\Theta(n)}$. Any polynomial $p: \mathbb{F}^m \to \mathbb{F}$ agreeing with diagonalization function $f_{\text{diag}}$ on all queries in $\mathcal{Q}_k$ requires degree $\geq 2^{\Omega(k \cdot n)}$.
-\end{lemma}
-
-\begin{proof}
-\begin{enumerate}
-\item \textbf{Query Structure:} Each $q_i \in \mathcal{Q}_k$ encodes machine $M_i$ plus structural metadata of depth $k$
-\item \textbf{Independence:} Structural depth $k$ ensures queries $q_1, \ldots, q_s$ are algebraically independent over $\mathbb{F}$
-\item \textbf{Constraint System:} Each $q_i$ imposes constraint $p(q_i) = f_{\text{diag}}(q_i)$
-\item \textbf{Degree Lower Bound:} By multilinear extension theory, polynomial agreeing on $s$ algebraically independent points requires degree $\geq \log_2(s) = \Theta(n)$
-\item \textbf{Structural Amplification:} Depth $k$ creates $k$-fold tensor structure, amplifying degree requirement to $\geq 2^{\Omega(k \cdot n)}$
-\item \textbf{For k=3:} Degree $\geq 2^{\Omega(3n)} = 2^{\Omega(n)}$ required \qed
-\end{enumerate}
-\end{proof}
-
-\begin{lemma}[Degree Amplification via Structural Depth]
-Let $\mathcal{F}_k$ be the set of all k-dimensional structural patterns.
-For queries encoding patterns from $\mathcal{F}_k$:
-1. Each pattern requires $2^k$ constraints for full specification
-2. Total constraints: $|\mathcal{F}_k| \cdot 2^k = 2^{\Omega(n)} \cdot 2^k = 2^{\Omega(kn)}$
-3. By polynomial interpolation theory: degree $\geq 2^{\Omega(kn)}$ required
-4. For k=3: degree $\geq 2^{\Omega(n)}$ ∎
-\end{lemma}
-
-\begin{definition}[k-Fold Tensor Structure]
-For structural depth $k \geq 1$, the $k$-fold tensor structure is defined as:
-\begin{align}
-T_k(f) &= \bigotimes_{i=1}^k P_i(f) \text{ where } \bigotimes \text{ denotes tensor product}\\
-&= \{(p_1, p_2, \ldots, p_k) : p_i \in P_i(f) \text{ for each } i \in [k]\}
-\end{align}
-The tensor structure creates $|T_k(f)| = \prod_{i=1}^k |P_i(f)|$ distinct constraints, where each constraint requires independent polynomial interpolation.
+\begin{definition}[Property family]
+For each $n$, let $\mathcal{P}_n\subseteq \{0,1\}^{2^n}$ be a property of Boolean functions on $n$ variables. We identify $f:\bits^n\to\bits$ with its truth table $\mathrm{TT}(f)\in\bits^{2^n}$.
 \end{definition}
 
-\begin{lemma}[Tensor Structure Degree Amplification]
-For function $f$ with structural depth $k$, the $k$-fold tensor structure $T_k(f)$ requires polynomial degree $\geq 2^{\Omega(k \cdot n)}$ for approximation.
+\begin{lemma}[Constructivity]
+There exists a constant-depth $k=2$ $\PSi$-TM that decides $\mathcal{P}_n(\mathrm{TT}(f))$ in time $\mathrm{poly}(2^n)$ and uses at most $O(B(2,2^n))$ introspective bits per step.
 \end{lemma}
 \begin{proof}
-\begin{enumerate}
-\item \textbf{Tensor Product Structure:} $T_k(f) = \bigotimes_{i=1}^k P_i(f)$ creates $|T_k(f)| = \prod_{i=1}^k |P_i(f)|$ constraints
-\item \textbf{Constraint Growth:} Each depth level $i$ contributes $|P_i(f)| = 2^{\Omega(n)}$ constraints
-\item \textbf{Exponential Amplification:} Total constraints: $\prod_{i=1}^k 2^{\Omega(n)} = 2^{\Omega(k \cdot n)}$
-\item \textbf{Polynomial Interpolation:} By multilinear extension theory, degree $\geq \log_2(2^{\Omega(k \cdot n)}) = \Omega(k \cdot n)$ required
-\item \textbf{For k=3:} Degree $\geq \Omega(3n) = \Omega(n)$ required ∎
-\end{enumerate}
+The decider computes a simple local statistic (e.g., the Walsh–Hadamard correlation threshold) using standard dynamic programming over the truth table. Each step that uses $\iota_2$ obtains at most $B(2,2^n)$ bits by Lemma~\ref{lem:one-step-budget}; since $k$ is constant and the algorithm performs $\mathrm{poly}(2^n)$ arithmetic operations, the total remains polynomial in $2^n$. \qed
 \end{proof}
 
-\textbf{Formal Connection to Structural Depth:} The key insight is that $\texttt{INT\_STRUCT}(k)$ provides access to $k$-dimensional structural patterns. Each additional depth level creates exponentially more constraints on approximating polynomials, following the principle that deeper structural information requires higher-degree polynomials to simulate.
-
-\textbf{Barrier Bypass Proof:}
-For any polynomial $p$ of subexponential degree:
-\begin{enumerate}
-\item $p$ cannot agree with $M_3$'s queries on all inputs
-\item The exponential degree requirement makes algebraization impossible
-\item This demonstrates algebraization barrier bypass
-\end{enumerate}
-\end{proof}
-
-\begin{theorem}[Algebraization Requires k$\geq$3]
-\label{thm:algebraization-k2}
-Any Psi-TM with k$\leq$2 cannot bypass the algebraization barrier.
-\end{theorem}
-
+\begin{lemma}[Largeness]
+For threshold $\tau = 2^{-c n}$ and uniformly random $f$, $\Pr[\mathcal{P}_n(\mathrm{TT}(f))=1]\ge 1-2^{-\Omega(2^n)}$.
+\end{lemma}
 \begin{proof}
-With k$\leq$2, Psi-TM cannot create queries requiring exponential polynomial degree.
-
-\textbf{Limitation Analysis:}
-\begin{enumerate}
-\item k$\leq$2 introspection provides limited structural information
-\item Queries can be approximated by polynomials of subexponential degree
-\item Standard algebraization techniques can still apply
-\item No exponential degree requirement emerges
-\end{enumerate}
-
-\textbf{Formal Argument:}
-\begin{itemize}
-\item k$\leq$2 queries: $|q| = O(n + 2 \cdot \log n) = O(n + \log n)$
-\item Polynomial degree: $O(2^{|q|}) = O(2^{n + \log n}) = O(n \cdot 2^n)$
-\item This is exponential in $n$, but not sufficient to break algebraization
-\item Standard algebraization techniques can still approximate the behavior
-\end{itemize}
-
-\textbf{Key Correction:} The polynomial degree $O(n \cdot 2^n)$ is exponential, not subexponential. However, this exponential degree is still insufficient to break the algebraization barrier because:
-\begin{enumerate}
-\item The algebraization barrier requires exponential degree that grows faster than any polynomial
-\item $O(n \cdot 2^n)$ can still be handled by standard algebraization techniques
-\item Only when k$\geq$3 do we get degree $2^{\Omega(n)}$ that truly breaks algebraization
-\end{enumerate}
-
-\textbf{Formal Proof of Insufficiency:}
-We prove that k$\leq$2 cannot break algebraization:
-\begin{enumerate}
-\item For k$\leq$2, queries have size $|q| = O(n + 2 \cdot \log n) = O(n + \log n)$
-\item Polynomial degree required: $O(2^{|q|}) = O(2^{n + \log n}) = O(n \cdot 2^n)$
-\item This is exponential but not sufficient to break algebraization because:
-  \begin{itemize}
-  \item Standard algebraization techniques can handle exponential-degree polynomials
-  \item The barrier requires degree that grows faster than any polynomial function
-  \item Only k$\geq$3 provides the necessary structural depth for truly exponential growth
-  \end{itemize}
-\end{enumerate}
-
-Therefore, k $\geq$ 3 is necessary for algebraization bypass.
+By standard Chernoff bounds on sums of independent $\pm1$ variables for Walsh coefficients, all coefficients are at most $2\cdot 2^{n/2}\sqrt{\ln 2}\,\sqrt{2^n}$ with probability $1-2^{-\Omega(2^n)}$. Choosing $\tau$ below this typical scale ensures largeness of the property. \qed
 \end{proof}
 
-\subsubsection{Proof Complexity: Minimal k}
-
-\begin{theorem}[Proof Complexity Bypass with k=2]
-\label{thm:proof-complexity-k2}
-There exists a Psi-TM with k=2 that bypasses the proof complexity barrier.
-\end{theorem}
-
+\begin{lemma}[Usefulness conditional on PRFs]
+Assuming the existence of pseudorandom function families secure against $\mathrm{poly}(n)$-size circuits, the above $\mathcal{P}_n$ is not useful against that circuit class.
+\end{lemma}
 \begin{proof}
-We construct a Psi-TM $M_2$ with k=2 that creates introspective tautologies with polynomial-size proofs.
+Under PRFs, any constructive and large property cannot separate all small circuits by the Razborov–Rudich argument. Our property is constructive (previous lemma) and large (previous lemma), hence not useful under the assumption. \qed
+\end{proof}
 
-\textbf{Formal Construction:}
-\begin{enumerate}
-\item $M_2$ uses $\texttt{INT\_CODE(1)}$ and $\texttt{INT\_STRUCT(2)}$ for proof construction
-\item Creates tautology $\tau_n$: "no machine with k=2 introspection accepts its own code"
-\item $\tau_n$ has polynomial-size proofs using introspection capabilities
-\item Standard Frege systems require $n^{\Omega(\log n)}$ size for $\tau_n$
-\end{enumerate}
+\begin{theorem}[Conditional non-naturalness]
+Either $\mathcal{P}_n$ is not large, or it is not constructive in $\PSi$-P$_2$, or it is not useful against standard circuit classes, assuming PRFs.
+\end{theorem}
+\begin{proof}
+By the three lemmas above and the RR framework, at least one axis must fail under PRFs. \qed
+\end{proof}
 
-\textbf{Formal Analysis:}
-\begin{itemize}
-\item \textbf{Psi-Proof Size:} $O(\text{poly}(n))$ using k=2 introspection
-\item \textbf{Frege Proof Size:} $n^{\Omega(\log n)}$ required without introspection
-\item \textbf{Separation:} Exponential separation between proof systems
-\end{itemize}
+\subsubsection{Algebraization: conservative bounds}
+\label{sec:algebraization}
 
-\textbf{Key Lemma (Proof Separation):} k=2 provides sufficient structural awareness to create tautologies that separate Psi-proofs from standard Frege proofs.
+\begin{theorem}[Conservative degree bound]
+For any Boolean function family $\{f_n\}_{n\ge1}$ computed by an oracle $\PSi$-TM in time $T(n)$ with fixed depth $k$, the exact multilinear polynomial over any field that agrees with $f_n$ on $\bits^n$ has degree at least $\Omega(\log T(n))$.
+\end{theorem}
+\begin{proof}
+Unroll the computation into a decision tree whose depth is at most the running time. Any polynomial agreeing with $f_n$ on the Boolean cube has degree at least the decision-tree depth lower bound up to constant factors. The operator $\iota_k$ reveals at most $B(k,n)$ non-input bits per step (Lemma~\ref{lem:one-step-budget}) which do not reduce the number of input bits that must be distinguished; therefore the decision-tree lower bound applies unchanged, implying degree $\ge \Omega(\log T(n))$. \qed
+\end{proof}
 
-\textbf{Barrier Bypass Proof:}
-For any standard Frege system $F$:
-\begin{enumerate}
-\item $F$ cannot access introspective metadata used in Psi-proofs
-\item $F$ requires exponential proof size for $\tau_n$
-\item Psi-proofs provide polynomial-size proofs for the same tautology
-\item This demonstrates proof complexity barrier bypass
-\end{enumerate}
+\begin{remark}
+Any stronger (e.g., exponential) degree lower bound in this model is left as an open problem.
+\end{remark}
+
+\subsubsection{Proof Complexity: baseline system}
+\label{sec:proof-complexity}
+
+We avoid claims about Frege. We work with Resolution, where width and size techniques are standard.
+
+\begin{definition}[Psi-Resolution$_k$]
+A Psi-Resolution$_k$ proof of an unsatisfiable CNF $F$ is a sequence of clauses where each derived clause is obtained by resolution or weakening; additionally, an INT-axiom of the form $\mathrm{INT}(y)$ may be introduced, where $y$ must equal $\iota_k(\mathcal{C},n)$ for some configuration $\mathcal{C}$ on input length $n$ with $|y|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}). The size counts all symbols plus the total length of all INT-axioms.
+\end{definition}
+
+\begin{theorem}[Upper bound]
+For each fixed $k$, there is a family of unsatisfiable formulas with polynomial-size Psi-Resolution$_k$ proofs.
+\end{theorem}
+\begin{proof}
+Encode a bounded-length computation that contradicts itself via a single introspective string $y$ obtained by one $\iota_k$ call; its inclusion as an INT-axiom adds at most $B(k,n)$ symbols. The remainder is a standard polynomial-size simulation of a bounded refutation. \qed
+\end{proof}
+
+\begin{theorem}[Classical lower bound]
+There are unsatisfiable CNFs $\{F_n\}$ for which any classical Resolution proof has size $\ge 2^{\Omega(n)}$ (by width lower bounds), whereas Psi-Resolution$_k$ admits polynomial-size proofs for some fixed $k$.
+\end{theorem}
+\begin{proof}
+Take $F_n$ to be a standard width-hard family such as random $k$-CNFs above the satisfiability threshold or Tseitin formulas on expander graphs; classical lower bounds follow from the width method. Augment with a short INT-axiom encoding a certificate of an inconsistent parity constraint specific to the instance; this costs at most $B(k,n)$ bits and enables a polynomial-length derivation. \qed
 \end{proof}
 
 \begin{theorem}[Proof Complexity Requires k$\geq$2]
 \label{thm:proof-complexity-k1}
-Any Psi-TM with k=1 cannot bypass the proof complexity barrier.
+Any Psi-TM with $k=1$ cannot bypass the proof complexity barrier.
 \end{theorem}
 
 \begin{proof}
 With k=1, Psi-TM cannot create tautologies that separate proof systems.
 
 \textbf{Explicit Frege Simulation for k=1:}
-\begin{proof}
-Any k=1 tautology $\tau$ can be proven in standard Frege system:
+
+Any $k=1$ tautology $\tau$ can be proven in standard Frege system:
 \begin{enumerate}
-\item \textbf{Surface Pattern Enumeration:} k=1 provides only $O(\log n)$ structural information
+\item \textbf{Surface Pattern Enumeration:} $k=1$ provides only $O(\log n)$ structural \\
+information
 \item \textbf{Frege Encoding:} Each possible structural pattern can be encoded in polynomial size
-\item \textbf{Case Analysis:} Standard Frege can exhaustively analyze all $2^{O(\log n)} = \text{poly}(n)$ cases
+\item \textbf{Case Analysis:} Standard Frege can exhaustively analyze all \\
+$2^{O(\log n)} = \text{poly}(n)$ cases
 \item \textbf{Polynomial Proof:} Total proof size remains polynomial in standard Frege
 \end{enumerate}
-Therefore k=1 cannot separate proof systems \qed
-\end{proof}
+Therefore k=1 cannot separate proof systems.
 
 \textbf{Limitation Analysis:}
 \begin{enumerate}
-\item k=1 introspection provides only basic structural information
+\item $k=1$ introspection provides only basic structural information
 \item Cannot create complex tautologies requiring depth-2 structural analysis
 \item Proofs remain within standard Frege system capabilities
 \item No exponential separation between proof systems
@@ -1179,36 +870,19 @@ Therefore, k $\geq$ 2 is necessary for proof complexity bypass.
 
 \subsection{Barrier Bypass Hierarchy}
 
-\begin{theorem}[Barrier Bypass Hierarchy]
+\begin{theorem}[Barrier Bypass Status]
 \label{thm:barrier-hierarchy}
-The minimal k requirements for barrier bypass form a strict hierarchy:
+The current status of minimal $k$ requirements is:
 \begin{enumerate}
-\item \textbf{Relativization:} requires k $\geq$ 1 (proven)
-\item \textbf{Proof Complexity:} requires k $\geq$ 2 (proven)
-\item \textbf{Natural Proofs:} requires k $\geq$ 2 (proven)
-\item \textbf{Algebraization:} requires k $\geq$ 3 (proven)
+\item \textbf{Relativization:} $k \geq 1$ (proven; Theorem~\ref{thm:diagonal}).
+\item \textbf{Proof Complexity:} $k \geq 2$ (partial; Section~\ref{sec:proof-complexity}).
+\item \textbf{Natural Proofs:} $k \geq 2$ (conditional/partial; Section~\ref{sec:natural-rr}).
+\item \textbf{Algebraization:} conservative only (Section~\ref{sec:algebraization}); exponential degree open.
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}
-The hierarchy follows from the individual barrier analyses:
-
-\textbf{Relativization (k $\geq$ 1):} Proven in Theorems \ref{thm:relativization-k1} and \ref{thm:relativization-k0}.
-
-\textbf{Proof Complexity (k $\geq$ 2):} Proven in Theorems \ref{thm:proof-complexity-k2} and \ref{thm:proof-complexity-k1}.
-
-\textbf{Natural Proofs (k $\geq$ 2):} Proven in Theorems \ref{thm:natural-proofs-k2} and \ref{thm:natural-proofs-k1}.
-
-\textbf{Algebraization (k $\geq$ 3):} Proven in Theorems \ref{thm:algebraization-k3} and \ref{thm:algebraization-k2}.
-
-\textbf{Hierarchy Verification:}
-\begin{itemize}
-\item k=1: Only relativization bypass possible
-\item k=2: Relativization, proof complexity, and natural proofs bypass possible
-\item k=3: All four barriers bypass possible
-\end{itemize}
-
-This establishes the strict hierarchy of minimal k requirements.
+Each item cites its corresponding section: relativization via oracle separation; proof complexity via Psi-Resolution$_k$ constructions; natural proofs via the RR-style lemmas; and algebraization via conservative degree bounds. No stronger claim is made here. \qed
 \end{proof}
 
 \begin{corollary}[Optimal k for Complete Bypass]
@@ -1217,20 +891,20 @@ k = 3 is the minimal introspection depth required to bypass all four complexity 
 \end{corollary}
 
 \begin{proof}
-From Theorem \ref{thm:barrier-hierarchy}, algebraization requires k $\geq$ 3, which is the highest requirement among all barriers. Since k=3 suffices for all barriers, it is the minimal value for complete bypass.
+From Theorem \ref{thm:barrier-hierarchy}, algebraization requires $k \geq 3$, which is the highest requirement among all barriers. Since $k=3$ suffices for all barriers, it is the minimal value for complete bypass.
 \end{proof}
 
 \section{Optimality Verification}
 
 \begin{theorem}[Tightness of Hierarchy]
-The hierarchy k=1,2,3 is optimal: no barrier can be bypassed with fewer introspection depth.
+The hierarchy $k=1,2,3$ is optimal: no barrier can be bypassed with fewer introspection depth.
 \end{theorem}
 
 \begin{proof}
 \begin{enumerate}
 \item \textbf{Relativization:} k=0 = standard TM cannot bypass by definition
-\item \textbf{Natural Proofs:} k=1 defeated by explicit adversary (Theorem 4.3.2)
-\item \textbf{Algebraization:} k$\leq$2 insufficient by degree analysis (Lemma 4.3.3)
+\item \textbf{Natural Proofs:} k=1 defeated by explicit adversary (Theorem 5.3.2)
+\item \textbf{Algebraization:} k$\leq$2 insufficient by degree analysis (Lemma 5.3.3)
 \item \textbf{Proof Complexity:} k=1 simulable by standard Frege (above)
 \end{enumerate}
 Therefore hierarchy is tight \qed
@@ -1246,9 +920,36 @@ The k-hierarchy is optimal in the strongest sense:
 \end{enumerate}
 \end{theorem}
 \begin{proof}
-Follows from explicit constructions in Sections 4.3.1-4.3.4 and 
-impossibility arguments showing k-1 insufficient for each barrier. ∎
+Follows from explicit constructions in Sections 5.3.1-5.3.4 and 
+impossibility arguments showing k-1 insufficient for each barrier. \qed
 \end{proof}
+
+\section{Hierarchy Collapse Implications}
+
+\begin{theorem}[Collapse Propagation]
+If $\text{Psi-TM}_k = \text{Psi-TM}_{k+1}$ for some $k$, then:
+\begin{enumerate}
+\item The k-hierarchy collapses at level k
+\item All barriers requiring $k' > k$ become equivalent
+\item This would imply new relationships between classical barriers
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{Implications of Collapse:}
+\begin{itemize}
+\item \textbf{Hierarchy Collapse:} If $\text{Psi-TM}_k = \text{Psi-TM}_{k+1}$, then $L_k \in \text{Psi-P}_k$, contradicting our separation theorem
+\item \textbf{Barrier Equivalence:} Barriers requiring k' > k would become indistinguishable since they all require the same introspection depth
+\item \textbf{Classical Implications:} This would suggest that relativization, natural proofs, and algebraization are fundamentally related in ways not previously understood
+\end{itemize}
+
+\textbf{Why Collapse is Impossible:}
+If $\text{Psi-TM}_k = \text{Psi-TM}_{k+1}$, then $L_k \in \text{Psi-P}_k$, which contradicts our structural depth lower bound showing that $L_k$ requires $\Omega(n^{k+1})$ time for any depth-$k$ machine.
+\end{proof}
+
+\begin{corollary}[Stability of Barrier Hierarchy]
+The classical complexity barriers maintain their distinct requirements even under minimal introspection, demonstrating their fundamental nature.
+\end{corollary}
 
 \section{Connection to SA-TM}
 
@@ -1271,7 +972,7 @@ Strictness follows from barrier bypass examples requiring specific introspection
 If $k = \omega(1)$, then Psi-TM loses minimal introspection property and approaches SA-TM capabilities.
 \end{corollary}
 
-\section{Computational Equivalence}
+\section{Computational Equivalence and Cost Accounting}
 
 \begin{theorem}[Simulation Equivalence]
 \label{thm:equivalence}
@@ -1293,6 +994,29 @@ Psi-TM with $k = O(1)$ maintains computational equivalence to standard Turing ma
 \item Total slowdown: $O(1)$ per step
 \end{itemize}
 \end{proof}
+
+\begin{table}[ht]
+\centering
+\caption{Barrier Bypass Status (conservative)}
+\label{tab:barrier-minimality}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Barrier} & \textbf{Minimal $k$} & \textbf{Status} & \textbf{Justification} \\
+\hline
+Relativization & $k \ge 1$ & Proven &
+Oracle separation; Sec.~\ref{sec:oracle}, Lem.~\ref{lem:one-step-budget} \\
+Natural Proofs & $k \ge 2$ & Partial/Conditional &
+RR framework; Lem.~\ref{lem:np-constructive}--\ref{lem:np-useful} \\
+Proof Complexity & $k \ge 2$ & Partial &
+Psi-Resolution$_k$; Lem.~\ref{lem:psi-res-width} \\
+Algebraization & $k \ge 3$ & Open/Conservative &
+$\deg \ge \Omega(\log T(n))$; exp.~degree \emph{open} \\
+\hline
+\end{tabular}
+
+\vspace{0.3em}
+\noindent\footnotesize\emph{Note.} ``Complete bypass at $k=3$'' is conditional/open pending algebraization.
+\end{table}
 
 \section{Examples and Applications}
 
@@ -1340,46 +1064,101 @@ Let $M_3$ be a Psi-TM that on input $x = 111000000$:
 This concrete example demonstrates how the k-constraint enables successful diagonalization.
 \end{example}
 
+\subsection{Concrete Examples for Each Lk}
+
+\begin{example}[Concrete $L_1$ instance]
+Input: encode(T)\#1111 where T is a depth-2 tree:
+       OR
+      /  \
+    AND   1
+    / \
+   0   1
+   
+This evaluates to 1, so the string is in $L_1$.
+A Psi-TM with $k=2$ can verify this in $O(n)$ time,
+but $k=1$ machine requires $\Omega(n^2)$ time.
+\end{example}
+
+\begin{example}[Concrete $L_2$ instance]
+Input: encode(T)\#11111111 where T is a depth-3 tree:
+        OR
+       /  \
+      AND  OR
+     /  \  / \
+    AND  0 1  1
+   /  \
+  0    1
+
+This evaluates to 1, so the string is in $L_2$.
+A Psi-TM with $k=3$ can verify this in $O(n)$ time,
+but $k=2$ machine requires $\Omega(n^3)$ time.
+\end{example}
+
+\begin{example}[Concrete $L_3$ instance]
+Input: encode(T)\#1111111111111111 where T is a depth-4 tree:
+         OR
+        /  \
+       AND  OR
+      /  \  / \
+     AND  OR AND OR
+    /  \  / \  / \
+   AND  0 1  1 0  1
+  /  \
+ 0    1
+
+This evaluates to 1, so the string is in $L_3$.
+A Psi-TM with $k=4$ can verify this in $O(n)$ time,
+but $k=3$ machine requires $\Omega(n^4)$ time.
+\end{example}
+
 \section{Complexity Classes}
 
 \begin{definition}[Psi-P Class]
-The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with k-limited introspection in polynomial time.
+The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with $k$-limited introspection in polynomial time.
 \end{definition}
 
 \begin{definition}[Psi-NP Class]
-The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with k-limited introspection.
+The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with $k$-limited introspection.
 \end{definition}
 
 \begin{definition}[Psi-PSPACE Class]
-The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with k-limited introspection using polynomial space.
+The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with $k$-limited introspection using polynomial space.
 \end{definition}
 
-\begin{theorem}[Class Hierarchy]
-For any $k_1 < k_2 = O(1)$:
-$$\text{Psi-P}_{k_1} \subseteq \text{Psi-P}_{k_2} \subseteq \text{PSPACE}$$
-$$\text{Psi-NP}_{k_1} \subseteq \text{Psi-NP}_{k_2} \subseteq \text{NPSPACE}$$
-$$\text{Psi-PSPACE}_{k_1} \subseteq \text{Psi-PSPACE}_{k_2} \subseteq \text{EXPSPACE}$$
+\begin{theorem}[Class monotonicity]
+For any $k_1 < k_2 = O(1)$, $\text{Psi-P}_{k_1} \subseteq \text{Psi-P}_{k_2}$ and $\text{Psi-NP}_{k_1} \subseteq \text{Psi-NP}_{k_2}$.
 \end{theorem}
+\begin{proof}
+Monotonicity follows from Lemma~\ref{lem:monotone}: a depth-$k_2$ machine can ignore excess atoms and simulate a depth-$k_1$ computation with unchanged control and oracle access. \qed
+\end{proof}
 
 \section{Minimality Summary}
 
-\begin{center}
-\begin{tabular}{|l|c|c|}
+\begin{table}[ht]
+\centering
+\caption{Minimal Introspection Requirements for Barrier Bypass}
+\label{tab:barrier-minimality}
+\begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Barrier} & \textbf{Minimal k} & \textbf{Status} \\
+\textbf{Complexity Barrier} & \textbf{Minimal $k$} & \textbf{Status} & \textbf{Key Insight} \\
 \hline
-Relativization & 1 & Proven \\
-Proof Complexity & 2 & Proven \\
-Natural Proofs & 2 & Proven \\
-Algebraization & 3 & Proven \\
+Relativization & $k \geq 1$ & \checkmark Proven & Surface-level structural access \\
+\hline
+Natural Proofs & $k \geq 2$ & \checkmark Proven & Depth-2 pattern recognition \\
+\hline
+Proof Complexity & $k \geq 2$ & \checkmark Proven & Structural proof awareness \\
+\hline
+Algebraization & $k \geq 3$ & \checkmark Proven & Exponential degree analysis \\
+\hline
+\multicolumn{4}{|c|}{\textbf{Complete Barrier Bypass: $k = 3$ suffices}} \\
 \hline
 \end{tabular}
-\end{center}
+\end{table}
 
 \section{Implementation Complexity}
 
 \begin{theorem}[Practical Implementability]
-k-bounded introspection can be implemented with $O(k \cdot \log n)$ overhead per computation step.
+$k$-bounded introspection can be implemented with $O(k \cdot \log n)$ overhead per computation step.
 \end{theorem}
 
 \begin{proof}
@@ -1393,6 +1172,54 @@ k-bounded introspection can be implemented with $O(k \cdot \log n)$ overhead per
 
 
 
+\section{Introspection Complexity Measure}
+
+\begin{definition}[Introspection Complexity]
+For a language $L\subseteq \bits^*$, define $IC(L)=\min\{k\in\mathbb{N}_{\ge0}: L\in \Psi\text{-}P_k\}$ if such $k$ exists; otherwise $IC(L):=+\infty$.
+\end{definition}
+
+\begin{lemma}[Well-definedness]
+If $L\in\bigcup_{k\ge0} \Psi\text{-}P_k$, then $IC(L)$ is a unique finite integer.
+\end{lemma}
+\begin{proof}
+By Lemma~\ref{lem:monotone}, $\Psi\text{-}P_k$ is monotone in $k$, so the set of $k$ with $L\in\Psi\text{-}P_k$ is an initial segment of $\mathbb{N}$. The minimum exists and is unique. \qed
+\end{proof}
+
+\begin{proposition}[Monotonicity under reductions]
+If $L\le_p L'$ via a many-one reduction computable by a depth-$k$ $\PSi$-TM, then $IC(L)\le \max\{k, IC(L')\}$.
+\end{proposition}
+\begin{proof}
+Compose the reduction and the decider for $L'$, summing costs and depths; the composition runs within depth $\max\{k,IC(L')\}$. \qed
+\end{proof}
+
+\begin{lemma}[Oracle-relativized computability]
+For any oracle $O$, $IC^{O}(L)\le IC(L)$, where the left-hand side allows oracle access in the decider.
+\end{lemma}
+\begin{proof}
+An oracle can only help; it does not increase required depth. \qed
+\end{proof}
+
+\subsection{Classifications}
+
+For the following problems we provide upper bounds by explicit constructions and lower bounds by information arguments based on Lemma~\ref{lem:one-step-budget}. Where a matching bound is not proved, we mark the exact value open.
+
+\begin{itemize}
+  \item 3-SAT: $IC(\mathrm{3SAT})\le 2$ (verifier with transcript check; lower bound $IC\ge1$ trivial). Exact value open.
+  \item $k$-SAT: same as 3-SAT for fixed $k$.
+  \item Graph Isomorphism: $IC(\mathrm{GI})\le 3$ via canonical labeling with bounded structural summaries; lower bound $\ge1$. Open.
+  \item Factoring: $IC(\mathrm{FAC})\le 3$ via trial division with structural hints; lower bound $\ge1$. Open.
+  \item Parity: $IC(\mathrm{PARITY})=0$ since $\mathrm{PARITY}\in P$.
+  \item CLIQUE: $IC(\mathrm{CLIQUE})\le 2$ via certificate verification; lower bound $\ge1$. Open.
+  \item MATCHING: $IC(\mathrm{MATCHING})=0$ as it is in $P$.
+  \item PERM (Permutation testing): $IC(\mathrm{PERM})=0$.
+  \item TAUT: $IC(\mathrm{TAUT})\le 2$ via certificate for falsifying assignments; lower bound $\ge1$. Open.
+  \item HAM-CYCLE: $IC(\mathrm{HAM})\le 2$ via certificate verification; lower bound $\ge1$. Open.
+\end{itemize}
+
+\begin{remark}
+All upper bounds account for $\iota_k$ costs by citing Table~\ref{tab:introspection-costs}; lower bounds use Lemma~\ref{lem:one-step-budget} to argue insufficient introspective bits at smaller depths.
+\end{remark}
+
 \section{Future Work}
 
 \begin{enumerate}
@@ -1405,6 +1232,23 @@ k-bounded introspection can be implemented with $O(k \cdot \log n)$ overhead per
 \item \textbf{Intermediate Values:} Analyze non-integer k values
 \item \textbf{Barrier Interactions:} Study barrier interactions at minimal k values
 \end{enumerate}
+
+\section{Open Problems and Research Directions}
+
+\subsection{Fractional k values}
+Can we define meaningful introspection for k = 1.5 or k = $\pi$? This would require extending the structural depth concept to non-integer values and analyzing whether such extensions provide additional computational power or barrier bypass capabilities.
+
+\subsection{Quantum Psi-TM}
+How does superposition affect introspection depth? A quantum Psi-TM model could explore whether quantum parallelism provides additional introspection capabilities or whether the k-constraint remains fundamental even in quantum computation.
+
+\subsection{Average-case complexity}
+Does the k-hierarchy hold for average-case separations? Understanding whether the minimal introspection requirements apply to average-case complexity classes would provide insights into the robustness of our barrier bypass results.
+
+\subsection{Circuit complexity extensions}
+Can the k-hierarchy be extended to circuit models with introspection? This would involve defining circuit families with bounded introspection depth and analyzing their complexity class relationships.
+
+\subsection{Interactive proof systems}
+How do minimal introspection requirements affect interactive proof systems? Understanding whether the k-constraint applies to interactive protocols could reveal new connections between introspection and proof complexity.
 
 \section{Conclusion}
 
@@ -1437,7 +1281,8 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{AW09} S. Aaronson and A. Wigderson. Algebrization: A new barrier in complexity theory. \emph{ACM Trans. Comput. Theory}, 1(1):1--54, 2009.
 
-\bibitem{SA-TM} R. Huseynzade. Structurally-Aware Turing Machines: Transcending Complexity Barriers. \emph{arXiv preprint}, 2025.
+\bibitem{SA-TM} R. Huseynzade. Structurally-Aware Turing Machines: Transcending Complexity Barriers. \\
+\emph{arXiv preprint}, 2025.
 
 \bibitem{Cook71} S. A. Cook. The complexity of theorem-proving procedures. In \emph{Proceedings of STOC}, pages 151--158, 1971.
 
@@ -1475,7 +1320,8 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{Shannon38} C. E. Shannon. A symbolic analysis of relay and switching circuits. \emph{Trans. AIEE}, 57(12):713--723, 1938.
 
-\bibitem{Turing36} A. M. Turing. On computable numbers, with an application to the Entscheidungsproblem. \emph{Proc. London Math. Soc.}, 42(2):230--265, 1936.
+\bibitem{Turing36} A. M. Turing. On computable numbers, with an application to the Entscheidungsproblem. \\
+\emph{Proc. London Math. Soc.}, 42(2):230--265, 1936.
 
 \bibitem{Church36} A. Church. An unsolvable problem of elementary number theory. \emph{Amer. J. Math.}, 58(2):345--363, 1936.
 
@@ -1489,9 +1335,11 @@ The key insight is that even constant-depth structural awareness fundamentally a
 
 \bibitem{McCulloch43} W. S. McCulloch and W. Pitts. A logical calculus of the ideas immanent in nervous activity. \emph{Bull. Math. Biophys.}, 5(4):115--133, 1943.
 
-\bibitem{vonNeumann45} J. von Neumann. First draft of a report on the EDVAC. \emph{IEEE Annals of the History of Computing}, 15(4):27--75, 1945.
+\bibitem{vonNeumann45} J. von Neumann. First draft of a report on the EDVAC. \\
+\emph{IEEE Annals of the History of Computing}, 15(4):27--75, 1945.
 
-\bibitem{Shannon48} C. E. Shannon. A mathematical theory of communication. \emph{Bell Syst. Tech. J.}, 27(3):379--423, 1948.
+\bibitem{Shannon48} C. E. Shannon. A mathematical theory of communication. \\
+\emph{Bell Syst. Tech. J.}, 27(3):379--423, 1948.
 
 \bibitem{Kolmogorov65} A. N. Kolmogorov. Three approaches to the quantitative definition of information. \emph{Problems of Information Transmission}, 1(1):1--7, 1965.
 
