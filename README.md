@@ -54,12 +54,6 @@ flowchart TD
   - `graphicx`, `float`, `subcaption`
   - `inputenc`, `fontenc`
 
-#### Installation
-```bash
-git clone https://github.com/<your-org-or-user>/Psi-TM.git
-cd Psi-TM
-```
-
 #### Quick Start
 - Using latexmk (recommended if available):
 ```bash
@@ -175,7 +169,7 @@ Plain:
 
 BibTeX:
 ```bibtex
-@unpublished{Huseynzade_PsiTM,
+@article{Huseynzade_PsiTM,
   author = {Rafig Huseynzade},
   title = {Psi-TM: Minimal Introspection for Complexity Barrier Analysis},
   note = {Unpublished manuscript},
