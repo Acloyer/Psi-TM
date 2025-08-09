@@ -1,31 +1,10 @@
-% Copyright (c) 2025 Rafig Huseynzade. All Rights Reserved.
-% Licensed under CC BY-NC-ND 4.0
-% Original work - do not copy without attribution
+% File content starts here - NO preamble
 
-\documentclass[11pt]{article}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{geometry}
-
-\geometry{margin=1in}
-
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{claim}{Claim}
-
-\title{Theoretical Results of the Psi-TM Model:\\
-Additional Proofs and Properties}
-\author{Mathematical Foundation}
-\date{\today}
-
-\begin{document}
-
-\maketitle
+% Local copy of the one-step information budget lemma for standalone compilation
+\begin{lemma}[One-Step Information Budget and Counting]
+\label{lem:one-step-budget-2}
+For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $k$, a single call to $\iota_k$ returns an output $y\in\{0,1\}^{\le B(k,n)}$ and hence at most $B(k,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{B(k,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t\,B(k,n)}$.
+\end{lemma}
 
 \section{Formal Definitions and Preliminaries}
 
@@ -68,7 +47,7 @@ Let $w_1 = 0011$ and $w_2 = 01$.
 \item All depth-$\le 1$ structural features coincide, so selectors over $\mathrm{decode}_1(\iota_1(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
 \end{enumerate}
 
-\textbf{General Construction for k ≥ 2:}
+\textbf{General Construction for k \ensuremath{\geq} 2:}
 Let $P_k$ be the pattern of depth $k$ constructed recursively:
 \begin{itemize}
 \item $P_0 = 0$
@@ -168,19 +147,22 @@ Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard
 \begin{proof}
 We present an algorithm for simulating $M_{psi}$:
 
-\begin{algorithm}
-\caption{Psi-TM Simulation}
-\begin{algorithmic}
-\STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
-\WHILE{not in accepting or rejecting state}
-    \STATE Read current symbol $a$
-\STATE Compute $y = \iota_k(\mathcal{C},n)$ and the needed selectors
-    \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
-    \STATE Update configuration
-    \STATE Move head according to $d$
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
+\begin{figure}[ht]
+\framebox[\textwidth]{\begin{minipage}{0.95\textwidth}
+\textbf{Algorithm:} Psi-TM Simulation
+\begin{enumerate}
+\item Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
+\item \textbf{while} not in accepting or rejecting state \textbf{do}
+  \begin{enumerate}
+  \item Read current symbol $a$
+  \item Compute $y = \iota_k(\mathcal{C},n)$ and the needed selectors
+  \item Apply transition $\delta(q, a, \psi) = (q', b, d)$
+  \item Update configuration
+  \item Move head according to $d$
+  \end{enumerate}
+\end{enumerate}
+\end{minipage}}
+\end{figure}
 
 Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
 \end{proof}
@@ -313,4 +295,4 @@ These results provide a rigorous foundation for understanding the computational 
 
 These results open new directions in computational complexity research and formal automata theory.
 
-\end{document} 
+% End of included content

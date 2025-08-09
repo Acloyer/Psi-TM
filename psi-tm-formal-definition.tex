@@ -1,31 +1,16 @@
-% Copyright (c) 2025 Rafig Huseynzade. All Rights Reserved.
-% Licensed under CC BY-NC-ND 4.0
-% Original work - do not copy without attribution
+% File content starts here - NO preamble
 
-\documentclass[11pt]{article}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{geometry}
+% Local copy of the one-step information budget lemma for standalone compilation
+\begin{lemma}[One-Step Information Budget and Counting]
+\label{lem:one-step-budget-1}
+For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $k$, a single call to $\iota_k$ returns an output $y\in\{0,1\}^{\le B(k,n)}$ and hence at most $B(k,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{B(k,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t\,B(k,n)}$.
+\end{lemma}
 
-\geometry{margin=1in}
-
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{claim}{Claim}
-
-\title{Formal Definition of the Psi-TM Model:\\
-Minimal Introspective Computational Model}
-\author{Mathematical Foundation}
-\date{\today}
-
-\begin{document}
-
-\maketitle
+% Local copy of selector indistinguishability lemma for standalone compilation
+\begin{lemma}[Selector indistinguishability at depth k]
+\label{lem:selector-indistinguishability-1}
+For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k+1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
+\end{lemma}
 
 \section{Introduction}
 
@@ -90,29 +75,7 @@ The structural depth function $d: \{0,1\}^* \to \mathbb{N}$ is well-defined and 
 \end{enumerate}
 
 \textbf{Computability:}
-We provide a dynamic programming algorithm:
-
-\begin{algorithm}
-\caption{Structural Depth Computation}
-\begin{algorithmic}
-\STATE \textbf{Input:} String $w = w_1w_2\ldots w_n$
-\STATE \textbf{Output:} Structural depth $d(w)$
-\STATE Initialize $dp[i][j] = 0$ for all $i \leq j$
-\FOR{$i = 1$ to $n$}
-    \STATE $dp[i][i] = 0$ \COMMENT{Base case: single symbols}
-\ENDFOR
-\FOR{$\text{len} = 2$ to $n$}
-    \FOR{$i = 1$ to $n-\text{len}+1$}
-        \STATE $j = i + \text{len} - 1$
-        \STATE $dp[i][j] = \infty$
-        \FOR{$k = i$ to $j-1$}
-            \STATE $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
-        \ENDFOR
-    \ENDFOR
-\ENDFOR
-\RETURN $dp[1][n]$
-\end{algorithmic}
-\end{algorithm}
+We provide a dynamic programming algorithm. The algorithm is presented below.
 
 \textbf{Correctness:}
 \begin{enumerate}
@@ -122,6 +85,34 @@ We provide a dynamic programming algorithm:
 \item Time complexity: $O(n^3)$ due to three nested loops
 \end{enumerate}
 \end{proof}
+
+\begin{figure}[ht]
+\framebox[\textwidth]{\begin{minipage}{0.95\textwidth}
+\textbf{Algorithm:} Structural Depth Computation
+\begin{enumerate}
+\item \textbf{Input:} String $w = w_1w_2\ldots w_n$
+\item \textbf{Output:} Structural depth $d(w)$
+\item Initialize $dp[i][j] = 0$ for all $i \leq j$
+\item \textbf{for} $i = 1$ to $n$ \textbf{do}
+  \begin{enumerate}
+  \item $dp[i][i] = 0$ \quad // Base case: single symbols
+  \end{enumerate}
+\item \textbf{for} $\text{len} = 2$ to $n$ \textbf{do}
+  \begin{enumerate}
+  \item \textbf{for} $i = 1$ to $n-\text{len}+1$ \textbf{do}
+    \begin{enumerate}
+    \item $j = i + \text{len} - 1$
+    \item $dp[i][j] = \infty$
+    \item \textbf{for} $k = i$ to $j-1$ \textbf{do}
+      \begin{enumerate}
+      \item $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+\item \textbf{return} $dp[1][n]$
+\end{enumerate}
+\end{minipage}}
+\end{figure}
 
 \section{Formal Definition of Psi-TM}
 
@@ -211,7 +202,7 @@ Any Psi-TM can be simulated by a standard Turing machine by explicitly encoding 
 \subsection{Barrier status (conservative)}
 
 \begin{theorem}[Conservative barrier statements]
-There exist oracle-relative separations and partial/conditional results consistent with the barrier status in Section~\ref{sec:barriers}:
+There exist oracle-relative separations and partial/conditional results consistent with the barrier status in the barrier analysis section:
 \begin{enumerate}
 \item Oracle-relative: $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ for a suitable oracle $O_\Psi$ (Theorem~\ref{thm:diagonal})
 \item Partial/conditional: statements for natural proofs and proof complexity; algebraization open/conservative
@@ -239,6 +230,12 @@ For Psi-TM with k-limited introspection, obtain $y=\iota_k(\mathcal{C},n)$ and u
 
 Thus, SPR $\in \text{Psi-P}_k$ for Psi-TM, but requires $\Omega(n^k)$ time for standard Turing machines (under standard complexity assumptions).
 \end{proof}
+
+% Local copy of the diagonal separation theorem for standalone compilation
+\begin{theorem}[Diagonal Separation for Psi-TM]
+\label{thm:diagonal-1}
+There exists an oracle $O_\Psi$ such that $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$.
+\end{theorem}
 
 \subsection{Minimality of Introspection}
 
@@ -318,4 +315,4 @@ The Psi-TM model represents a rigorous mathematical foundation for a minimal int
 
 This model opens new directions in computational complexity theory and formal automata theory.
 
-\end{document} 
+% End of included content

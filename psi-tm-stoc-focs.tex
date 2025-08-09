@@ -1,37 +1,4 @@
-% Copyright (c) 2025 Rafig Huseynzade. All Rights Reserved.
-% Licensed under CC BY-NC-ND 4.0
-% Original work - do not copy without attribution
-
-\documentclass[11pt]{article}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{geometry}
-
-\geometry{margin=1in}
-
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{claim}{Claim}
-
-\title{Strict Hierarchy of Introspective Computational Models:\\
-Psi-TM and the k-Depth Hierarchy}
-\author{Rafig Huseynzade\\
-Arizona State University\\
-\href{mailto:huseynzaderafig@gmail.com}{huseynzaderafig@gmail.com}}
-\date{\today}
-
-\begin{document}
-
-\maketitle
-
-\begin{abstract}
-We establish an oracle-relative strict hierarchy based on introspection depth: for each $k \geq 1$, there exists an oracle and a language $L_k$ such that $L_k \in \text{Psi-P}_{k+1}$ but $L_k \notin \text{Psi-P}_k$ relative to that oracle. This demonstrates strictly increasing power with $k$ in the oracle setting. Non-oracle strictness remains open. We provide explicit oracle constructions and information-theoretic lower bounds supporting these separations.
-\end{abstract}
+% File content starts here - NO preamble
 
 \section{Introduction}
 
@@ -86,27 +53,33 @@ The structural depth function $d: \{0,1\}^* \to \mathbb{N}$ is well-defined and 
 \textbf{Computability:}
 We provide a dynamic programming algorithm:
 
-\begin{algorithm}
-\caption{Structural Depth Computation}
-\begin{algorithmic}
-\STATE \textbf{Input:} String $w = w_1w_2\ldots w_n$
-\STATE \textbf{Output:} Structural depth $d(w)$
-\STATE Initialize $dp[i][j] = 0$ for all $i \leq j$
-\FOR{$i = 1$ to $n$}
-    \STATE $dp[i][i] = 0$ \COMMENT{Base case: single symbols}
-\ENDFOR
-\FOR{$\text{len} = 2$ to $n$}
-    \FOR{$i = 1$ to $n-\text{len}+1$}
-        \STATE $j = i + \text{len} - 1$
-        \STATE $dp[i][j] = \infty$
-        \FOR{$k = i$ to $j-1$}
-            \STATE $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
-        \ENDFOR
-    \ENDFOR
-\ENDFOR
-\RETURN $dp[1][n]$
-\end{algorithmic}
-\end{algorithm}
+\begin{figure}[ht]
+\framebox[\textwidth]{\begin{minipage}{0.95\textwidth}
+\textbf{Algorithm:} Structural Depth Computation
+\begin{enumerate}
+\item \textbf{Input:} String $w = w_1w_2\ldots w_n$
+\item \textbf{Output:} Structural depth $d(w)$
+\item Initialize $dp[i][j] = 0$ for all $i \leq j$
+\item \textbf{for} $i = 1$ to $n$ \textbf{do}
+  \begin{enumerate}
+  \item $dp[i][i] = 0$ \quad // Base case: single symbols
+  \end{enumerate}
+\item \textbf{for} $\text{len} = 2$ to $n$ \textbf{do}
+  \begin{enumerate}
+  \item \textbf{for} $i = 1$ to $n-\text{len}+1$ \textbf{do}
+    \begin{enumerate}
+    \item $j = i + \text{len} - 1$
+    \item $dp[i][j] = \infty$
+    \item \textbf{for} $k = i$ to $j-1$ \textbf{do}
+      \begin{enumerate}
+      \item $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+\item \textbf{return} $dp[1][n]$
+\end{enumerate}
+\end{minipage}}
+\end{figure}
 
 \textbf{Correctness:}
 \begin{enumerate}
@@ -119,7 +92,7 @@ We provide a dynamic programming algorithm:
 
 \subsection{Psi-TM Model}
 
-\begin{definition}[Psi-TM_k Model]
+\begin{definition}[Psi-TM k Model]
 For each $k \geq 1$, a Psi-TM with introspection depth $k$ is a 7-tuple:
 $$M_\Psi^k = (Q, \Sigma, \Gamma, \delta, q_0, F, \iota_k)$$
 where:
@@ -135,15 +108,15 @@ where:
 
 \subsection{Complexity Classes}
 
-\begin{definition}[Psi-P_k Class]
+\begin{definition}[Psi-P k Class]
 The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with introspection depth $k$ in polynomial time.
 \end{definition}
 
-\begin{definition}[Psi-NP_k Class]
+\begin{definition}[Psi-NP k Class]
 The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with introspection depth $k$.
 \end{definition}
 
-\begin{definition}[Psi-PSPACE_k Class]
+\begin{definition}[Psi-PSPACE k Class]
 The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with introspection depth $k$ using polynomial space.
 \end{definition}
 
@@ -160,7 +133,7 @@ A binary tree $T$ is encoded as a string $\text{encode}(T) \in \{0,1\}^*$ as fol
 \end{itemize}
 \end{definition}
 
-\begin{definition}[Tree Evaluation Language L_k]
+\begin{definition}[Tree Evaluation Language L k]
 For each $k \geq 1$, define:
 $$L_k = \{\text{encode}(T)\#1^n \mid T \text{ is a binary tree of depth exactly } k+1, \text{ leaves are labeled with bits}, \text{ root evaluates to } 1\}$$
 where the evaluation follows standard Boolean logic (AND/OR gates at internal nodes).
@@ -171,7 +144,7 @@ For each $k \geq 1$, $L_k \in \text{Psi-P}_{k+1}$.
 \end{claim}
 
 \begin{proof}
-We construct a Psi-TM $M$ with introspection depth $k+1$ that recognizes $L_k$ in polynomial time.
+We construct a Psi-TM $M$ with introspection depth $k+1$ that recognizes L k in polynomial time.
 
 \textbf{Algorithm:}
 \begin{enumerate}
@@ -196,7 +169,7 @@ Therefore, $L_k \in \text{Psi-P}_{k+1}$.
 \section{Main Result: Strict Hierarchy}
 
 \begin{theorem}[Strict Hierarchy]
-\label{thm:strict-hierarchy}
+\label{thm:strict-hierarchy-2}
 For all $k \geq 1$:
 $$\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$$
 Equivalently:
@@ -207,14 +180,14 @@ $$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1}$$
 We prove this by showing that for each $k \geq 1$, the language $L_k$ satisfies:
 $$L_k \in \text{Psi-P}_{k+1} \text{ but } L_k \notin \text{Psi-P}_k$$
 
-\textbf{Membership in Psi-P_{k+1}:}
+\textbf{Membership in Psi-P k+1:}
 This follows from the claim above.
 
-\textbf{Non-membership in Psi-P_k:}
-We prove that no Psi-TM with introspection depth $k$ can recognize $L_k$ in polynomial time.
+\textbf{Non-membership in Psi-P k:}
+We prove that no Psi-TM with introspection depth $k$ can recognize L k in polynomial time.
 
 \begin{lemma}[Depth-k Limitation]
-\label{lem:depth-k-limitation}
+\label{lem:depth-k-limitation-2}
 Any Psi-TM with introspection depth $k$ cannot distinguish between trees of depth $k+1$ and trees of depth $k$ in polynomial time.
 \end{lemma}
 
@@ -238,7 +211,7 @@ For trees $T_1$ (depth $k+1$) and $T_2$ (depth $k$):
 \item \textbf{Selector Equality:}
   Since depth-$\le k$ features coincide, all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ return identical values on $\text{encode}(T_1)$ and $\text{encode}(T_2)$
 
-\item \textbf{Depth-$k$ agreement:}
+\item \textbf{Depth-k agreement:}
   Both inputs share the same depth-$k$ features; therefore selectors agree at depth $k$.
 
 \item \textbf{Selector Equality:}
@@ -270,7 +243,7 @@ For any Psi-TM $M$ with introspection depth $k$, we construct an adversary $A$ t
 \end{proof}
 
 \textbf{Separation Proof:}
-By Lemma \ref{lem:depth-k-limitation}, any Psi-TM with introspection depth $k$ must either:
+By Lemma \ref{lem:depth-k-limitation-2}, any Psi-TM with introspection depth $k$ must either:
 \begin{enumerate}
 \item Accept some input $w_2 \notin L_k$ (false positive), or
 \item Reject some input $w_1 \in L_k$ (false negative)
@@ -290,7 +263,7 @@ This holds for all $k \geq 1$, establishing the strict hierarchy.
 \subsection{Formal Adversary Construction}
 
 \begin{theorem}[Adversary Lower Bound]
-\label{thm:adversary-lower-bound}
+\label{thm:adversary-lower-bound-2}
 For any Psi-TM $M$ with introspection depth $k$, there exists an adversary $A$ such that:
 $M$ cannot solve $L_k$ against $A$.
 \end{theorem}
@@ -386,24 +359,20 @@ Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard
 \end{theorem}
 
 \begin{proof}
-We present an algorithm for simulating $M_{psi}$:
-
-\begin{algorithm}
-\caption{Psi-TM Simulation}
-\begin{algorithmic}
-\STATE Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
-\WHILE{not in accepting or rejecting state}
-    \STATE Read current symbol $a$
-\STATE Compute $y = \iota_k(\mathcal{C},n)$ and the needed selectors
-    \STATE Apply transition $\delta(q, a, \psi) = (q', b, d)$
-    \STATE Update configuration
-    \STATE Move head according to $d$
-\ENDWHILE
-\end{algorithmic}
-\end{algorithm}
-
-Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
+The algorithm is presented below. Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
 \end{proof}
+
+\begin{quote}
+\textbf{Algorithm: Psi-TM Simulation}\\[0.5em]
+1. Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$\\
+2. \textbf{while} not in accepting or rejecting state \textbf{do}\\
+3. \quad Read current symbol $a$\\
+4. \quad Compute $y = \iota_k(\mathcal{C},n)$ and the needed selectors\\
+5. \quad Apply transition $\delta(q, a, \psi) = (q', b, d)$\\
+6. \quad Update configuration\\
+7. \quad Move head according to $d$\\
+8. \textbf{end while}
+\end{quote}
 
 \subsection{Universal Psi-TM}
 
@@ -429,7 +398,7 @@ Since both machines have k-limited introspection, the simulation preserves the i
 \subsection{Time Complexity Lower Bounds}
 
 \begin{theorem}[Structural Depth Lower Bound]
-\label{thm:structural-depth-lower-bound}
+\label{thm:structural-depth-lower-bound-2}
 For any language $L \in \text{Psi-P}_{k+1} \setminus \text{Psi-P}_k$, there exists a family of inputs $\{w_n\}_{n \geq 1}$ such that:
 \begin{enumerate}
 \item $w_n$ has length $n$
@@ -515,4 +484,4 @@ These results provide a rigorous foundation for understanding the relationship b
 
 The discovery that introspection depth creates a strict computational hierarchy has profound implications for understanding the relationship between self-reflection and computational capability. This work provides a foundation for future research in introspective computation and opens new directions in complexity theory.
 
-\end{document} 
+% End of included content

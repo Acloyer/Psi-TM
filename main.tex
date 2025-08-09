@@ -12,14 +12,21 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{subcaption}
+% \usepackage{algorithm} % removed for arXiv compatibility
+% \usepackage{algpseudocode} % removed for arXiv compatibility
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 
-\geometry{margin=1in}
+\geometry{margin=2.5cm}
+\setlength{\emergencystretch}{3em}
 
 % Theorem environments
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{plain}
+\newtheorem{claim}{Claim}
 \newtheorem{assumption}[theorem]{Assumption}
 \newtheorem{conjecture}[theorem]{Conjecture}
 \theoremstyle{definition}
@@ -60,8 +67,8 @@ We analyze minimal introspection requirements ($k=1,2,3$) with oracle-relative s
 \tableofcontents
 \newpage
 
-\input{psi-tm-barrier-minimality}
 \input{psi-tm-formal-definition}
+\input{psi-tm-barrier-minimality}
 \input{psi-tm-k-hierarchy}
 \input{psi-tm-stoc-focs}
 \input{psi-tm-theoretical-results}
@@ -203,7 +210,7 @@ $$\mathcal{C} = (q, \alpha, \beta, \psi)$$
 where $q \in Q$, $\alpha, \beta \in \Gamma^*$ represent tape content, and $\psi \in \Psi_k$ is the introspective state.
 \end{definition}
 
-\subsection{Introspection as views over $\iota_k$}
+\subsection{Introspection as views over iota k}
 
 \begin{definition}[Introspection codeword]
 For a configuration $\mathcal{C}=(q,\alpha,\beta,\psi)$ on input $x\in\bits^n$, a single introspection call returns the binary word
@@ -238,11 +245,11 @@ By the code design for $\mathcal{C}_k$ (Definition~\ref{def:iota-k} and Definiti
 are identical on $x$ and $x'$. Furthermore, the number of possible one-step outcomes is at most $2^{B(k,n)}$ and across $t$ steps at most $2^{t\,B(k,n)}$ (Lemma~\ref{lem:one-step-budget}), which does not allow revealing depth-$(k{+}1)$ features at depth $k$. Hence every selector returns identical outputs on $x$ and $x'$. \qed
 \end{proof}
 
-\subsection{Introspection selector API (views over $\iota_k$)}
+\subsection{Introspection selector API (views over iota k)}
 
 \begin{table}[ht]
 \centering
-\caption{Psi-TM introspection selectors as views over $\iota_k$}
+\caption{Psi-TM introspection selectors as views over iota k}
 \label{tab:introspection-api}
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -254,7 +261,7 @@ are identical on $x$ and $x'$. Furthermore, the number of possible one-step outc
 \hline
 \texttt{VIEW\_WIN}(y,d) & $y=\iota_k(\mathcal{C},n),\ d\in[1..k]$ & Window summary at depth $d$ & $d \le k$ \\
 \hline
-\multicolumn{4}{|c|}{\textbf{Key Constraint: $k = O(1)$ ensures bounded introspection}} \\
+\multicolumn{4}{|c|}{\textbf{Key Constraint: k = O(1) ensures bounded introspection}} \\
 \hline
 \end{tabular}
 \end{table}
@@ -267,7 +274,7 @@ This section fixes the formal semantics of introspection and its resource accoun
 
 \subsection{Coding of Structural Metadata}
 
-\begin{definition}[Canonical integer code $\gamma$]
+\begin{definition}[Canonical integer code gamma]
 \label{def:gamma}
 For $m\in\mathbb{N}_{\ge1}$, let $\gamma(m)$ be the Elias gamma code: $\gamma(m)=0^{b}\,1\,\mathrm{bin}(m\bmod 2^{b})$, where $b=\lfloor\log_2 m\rfloor$ and $\mathrm{bin}(\cdot)$ is the $b$-bit binary expansion. Then $\gamma$ is prefix-free and $|\gamma(m)|=2\lfloor\log_2 m\rfloor+1\le 2\log_2 m + 1$.
 \end{definition}
@@ -281,7 +288,7 @@ No codeword is a prefix of another because the unary prefix $0^{b}1$ uniquely de
 Fix the finite tag set $\mathsf{Tag}=\{\textsf{state},\textsf{head},\textsf{win1},\ldots,\textsf{win}k\}$. An admissible atom is a pair $(\tau, v)$ where $\tau\in\mathsf{Tag}$ and $v\in\mathbb{N}$. For inputs of length $n$, we require $v\le n+2$ for $\tau\in\{\textsf{head},\textsf{win}d\}$ and $v\le |Q|$ for $\tau=\textsf{state}$.
 \end{definition}
 
-\begin{definition}[Canonical prefix-free code $C_k$ for $\PSi_k$]
+\begin{definition}[Canonical prefix-free code C k for Psi k]
 \label{def:psi-k}
 Let an item sequence be $(a_0,a_1,\ldots,a_r)$ with $r\in\{0,1,\ldots,k\}$ and each $a_i=(\tau_i,v_i)$ an admissible atom. Define
 \[
@@ -320,7 +327,7 @@ B(k,n)\;:=\;\beta_0 + \beta_1\,k\,\big\lceil\log_2(n+2)\big\rceil.
 
 \subsection{Introspection operator and cost model}
 
-\begin{definition}[Introspection operator $\iota_k$]
+\begin{definition}[Introspection operator iota k]
 \label{def:iota-k}
 For a Psi-TM configuration $\mathcal{C}=(q,\alpha,\beta,\psi)$ on an input $x\in\bits^n$, define $\iota_k(\mathcal{C},n)$ to be $C_k((a_i)_{i=0}^{r})$, where the sequence is produced deterministically by the following fixed enumeration:
 \begin{itemize}
@@ -370,7 +377,7 @@ All bounds in this section are per-step. Any per-computation bound follows by mu
 
 \subsection{A canonical family and a tradeoff}
 
-\begin{definition}[k-block index language $L_k$]
+\begin{definition}[k-block index language L k]
 \label{def:Lk}
 For $k\ge1$ and input length $n$, partition the input as $x=\#\,u_1\,\#\,u_2\,\#\,\ldots,\#\,u_k\,\#\,b$ where each block $u_i\in\bits^{m}$ has length $m=\lfloor n/(k{+}1)\rfloor$ and $b\in\bits$. Interpret $\mathrm{val}(u)$ as an integer in $[0..m{-}1]$. Define $\mathrm{ptr}_1=\mathrm{val}(u_1)$ and recursively $\mathrm{ptr}_{i+1}=\mathrm{val}(u_{i}[\mathrm{ptr}_i])$ for $i\in[1..k{-}1]$. Then set $L_k(x)=1$ iff $b=1$ and all pointers are well-defined.
 \end{definition}
@@ -397,8 +404,9 @@ Whether $\Psi\text{-}P_{k-1}\subsetneq \Psi\text{-}P_k$ unrelativized is an open
 \end{corollary}
 
 \subsection{Oracle-relative strictness}
+\label{sec:oracle-strictness}
 
-\begin{theorem}[Oracle $k$-hierarchy]
+\begin{theorem}[Oracle k-hierarchy]
 \label{thm:oracle-k-hierarchy}
 For every $k\ge1$, there exists an oracle $O_{\PSi,k}$ such that $\Psi\text{-}P_{k-1}^{O_{\PSi,k}} \subsetneq \Psi\text{-}P_{k}^{O_{\PSi,k}}$.
 \end{theorem}
@@ -482,7 +490,7 @@ There exists an enumeration $\{(M_s,T_s)\}_{s\ge1}$ such that for all $s$ and $n
 Encode each machine alongside a unary padding of length $s-\tilde p_s$ to ensure exponent $s$. Standard results yield time-constructible polynomials. \qed
 \end{proof}
 
-\begin{theorem}[Diagonal Separation for $\PSi$-TM]
+\begin{theorem}[Diagonal Separation for Psi-TM]
 \label{thm:diagonal}
 There exists an oracle $O_\PSi$ such that $P^{O_\PSi}_\PSi \neq NP^{O_\PSi}_\PSi$.
 \end{theorem}
@@ -528,7 +536,7 @@ For input $x\in\bits^n$, a transcript of length $t$ for a run of a deterministic
 The transcript is \emph{valid} if for all $j$ it holds that $y_j=\iota_k(\mathcal{C}_j,n)$, $a_j=O(q_j)$ when $q_j\neq\varepsilon$, and the transition from $\mathcal{C}_j$ to $\mathcal{C}_{j+1}$ is consistent with $\delta$ and the designated head move.
 \end{definition}
 
-\begin{definition}[Deterministic verifier $V$]
+\begin{definition}[Deterministic verifier V]
 \label{def:verifier}
 Given $(\langle M\rangle,x,\mathcal{T})$, the verifier recomputes $\iota_k(\mathcal{C}_j,n)$ from $\mathcal{C}_j$ and checks $|y_j|\le B(k,n)$ (Lemma~\ref{lem:one-step-budget}) and $y_j=\iota_k(\mathcal{C}_j,n)$; checks the transition consistency with $\delta$; and verifies every oracle answer $a_j$ against $O$ on $q_j$ if present. It accepts iff all checks pass and the final state in $\mathcal{T}$ is accepting.
 \end{definition}
@@ -543,7 +551,7 @@ Recomputing $\iota_k(\mathcal{C}_j,n)$ for each step takes $O(B(k,n))$ time by D
 
 \subsection{Oracle-Relative P vs NP Separation}
 
-\begin{theorem}[Oracle-Relative separation $P^{O_\Psi}_\Psi \ne NP^{O_\Psi}_\Psi$]
+\begin{theorem}[Oracle-Relative separation P Psi not equal NP Psi]
 \label{thm:separation}
 There exists a language $L$ and oracle $O_\Psi$ such that
 \[
@@ -552,41 +560,16 @@ L \in NP^{O_\Psi}_\Psi \quad\text{and}\quad L \notin P^{O_\Psi}_\Psi.
 \end{theorem}
 
 \begin{proof}
-Using $O_\Psi$ from Theorem~\ref{thm:diagonal} (constructed by stages with lengths $n_s=2^{2^s}$), define
-$$L = \{\langle i, x, w \rangle \mid w \text{ is valid transcript of } M_i^{O_\Psi}(x) = 1\}$$
+Using $O_\Psi$ from the diagonal separation theorem (constructed by stages with lengths $n_s=2^{2^s}$), define
+$$L = \{\langle i, x, w \rangle \mid w \text{ is valid transcript of } M_i^{O_\Psi}(x) = 1\}.$$
 
-\textbf{Membership in $NP^{O_\Psi}_\Psi$:}
-Verifier algorithm:
-\begin{enumerate}
-\item Parse transcript $w = (q_0, \gamma_0), (q_1, \gamma_1), \ldots, (q_t, \gamma_t)$
-\item For each step $(q_j, \gamma_j) \to (q_{j+1}, \gamma_{j+1})$:
-   \begin{itemize}
-   \item Verify $\delta(q_j, \gamma_j, \psi_j) = (q_{j+1}, \gamma_{j+1}, \text{move})$ where \\
-$\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$
-\item Validate introspection $\psi_j = \iota_k(\mathcal{C}_j, n)$ with $k = O(1)$ and $|\psi_j|\le B(k,\len{x})$ (Lemma~\ref{lem:one-step-budget})
-   \item Check oracle queries against $O_\Psi$
-   \end{itemize}
-\item Accept if all steps valid and final state $\in F$
-\end{enumerate}
-Time complexity: $O(\mathrm{poly}(|w|))$ by Lemma~\ref{lem:replay} and Lemma~\ref{lem:one-step-budget}.
+\textbf{Membership in NP Oracle Psi:}
+A deterministic verifier parses the transcript $w$, checks each step's transition consistency via $\delta$, validates introspection outputs $\psi_j=\iota_k(\mathcal{C}_j,n)$ with $|\psi_j|\le B(k,\len{x})$ (Lemma~\ref{lem:one-step-budget}), and verifies oracle answers against $O_\Psi$. This runs in time $O(\mathrm{poly}(|w|))$ by Lemma~\ref{lem:replay} and Lemma~\ref{lem:one-step-budget}.
 
-\noindent\textbf{Selectors and budget.} Each oracle query and any introspective dependency is constructed as $q_j = f(\mathrm{decode}_k(\iota_k(\mathcal{C}_j,n)), x)$ for some computable $f$. By Lemma~\ref{lem:one-step-budget}, one call to $\iota_k$ on inputs of length $n_s$ has at most $2^{B(k,n_s)}$ outcomes; over $T_s(n_s)$ steps there are at most $2^{T_s(n_s)\,B(k,n_s)}$ outcome sequences. The transcript verifier (Lemma~\ref{lem:replay}) recomputes $\iota_k(\mathcal{C}_j,n)$ and checks $|y_j|\le B(k,n)$.
+\noindent\textbf{Selectors and budget.} Each oracle query and any introspective dependency is constructed as $q_j = f(\mathrm{decode}_k(\iota_k(\mathcal{C}_j,n)), x)$ for some computable $f$. By Lemma~\ref{lem:one-step-budget}, one call to $\iota_k$ on inputs of length $n_s$ has at most $2^{B(k,n_s)}$ outcomes; over $T_s(n_s)$ steps there are at most $2^{T_s(n_s)\,B(k,n_s)}$ outcome sequences. The transcript verifier recomputes $\iota_k(\mathcal{C}_j,n)$ and checks $|y_j|\le B(k,n)$.
 
-\textbf{Non-membership in $P^{O_\Psi}_\Psi$:}
-Suppose $L \in P^{O_\Psi}_\Psi$ via machine $M_j$. Then $M_j$ can decide whether transcripts are valid.
-
-\textbf{Contradiction Argument (counting and diagonalization):}
-\begin{enumerate}
-\item $M_j$ claims to decide transcript validity for all machines
-\item Consider input $(j, x_j, w_j)$ where $w_j$ is the actual transcript of $M_j^{O_\Psi}(x_j)$
-\item By Lemma~\ref{lem:one-step-budget}, in each step there are at most $2^{B(k,\len{x_j})}$ possible introspection outcomes, so over $t$ steps at most $2^{t\,B(k,\len{x_j})}$ possible introspection sequences
-\item By oracle construction: $O_\Psi(\langle \text{Diag}, j, x_j \rangle) = 1 - \text{output}(M_j^{O_\Psi}(x_j))$
-\item If $M_j^{O_\Psi}(x_j) = 1$, then $O_\Psi$ returns 0, making transcript invalid
-\item If $M_j^{O_\Psi}(x_j) = 0$, then $O_\Psi$ returns 1, contradicting the transcript
-\item Therefore $M_j$ cannot correctly decide its own transcript validity
-\end{enumerate}
-
-This contradiction establishes that $L \notin P^{O_\Psi}_\Psi$.
+\textbf{Non-membership in P Oracle Psi:}
+Suppose, for contradiction, that $L \in P^{O_\Psi}_\Psi$ via machine $M_j$. Consider the actual transcript $w_j$ of $M_j^{O_\Psi}(x_j)$. By Lemma~\ref{lem:one-step-budget}, each step permits at most $2^{B(k,\len{x_j})}$ introspection outcomes; over $t$ steps there are at most $2^{t\,B(k,\len{x_j})}$ outcome sequences. By oracle construction, $O_\Psi(\langle \text{Diag}, j, x_j \rangle) = 1 - \text{output}(M_j^{O_\Psi}(x_j))$, yielding a contradiction to correctness on its own transcript. Hence $L \notin P^{O_\Psi}_\Psi$.
 \end{proof}
 
 \section{Barrier Analysis}
@@ -646,7 +629,7 @@ For function $f: \{0,1\}^n \to \{0,1\}$ and depth $k \geq 1$:
 \textbf{Base case:}
 $$P_1(f) = \{(i,j) : \exists x,y \in \{0,1\}^n \text{ s.t. } x_i \oplus x_j \neq y_i \oplus y_j \text{ and } f(x) \neq f(y)\}$$
 
-\textbf{Recursive construction for $k \geq 2$:}
+\textbf{Recursive construction for k \ensuremath{\geq} 2:}
 $$P_k(f) = P_{k-1}(f) \cup \{\text{compositions of patterns from } P_1(f), \ldots, P_{k-1}(f)\}$$
 
 More formally, $P_k(f)$ consists of:
@@ -720,7 +703,7 @@ $S(x) \neq M_1(x)$ because $S$ cannot access the introspective state information
 Therefore, $k=1$ suffices to bypass the relativization barrier in our oracle-relative framework. \qed
 \end{proof}
 
-\begin{theorem}[Relativization Requires k$\geq$1]
+\begin{theorem}[Relativization Requires k \ensuremath{\geq} 1]
 \label{thm:relativization-k0}
 Any Psi-TM with k=0 cannot bypass the relativization barrier.
 \end{theorem}
@@ -806,12 +789,12 @@ Unroll the computation into a decision tree whose depth is at most the running t
 Any stronger (e.g., exponential) degree lower bound in this model is left as an open problem.
 \end{remark}
 
-\subsubsection{Proof Complexity: width-robust Psi-Resolution$_k$}
+\subsubsection{Proof Complexity: width-robust Psi-Resolution k}
 \label{sec:proof-complexity}
 
 We avoid claims about Frege. We work with Resolution, where width and size techniques are standard.
 
-\begin{definition}[Psi-Resolution$_k$]
+\begin{definition}[Psi-Resolution k]
 Fix input length $n$. A Psi-Resolution$_k$ proof of an unsatisfiable CNF $F$ over variables $X$ is a sequence of clauses $C_1,\ldots,C_m$ such that each $C_i$ is either
 \begin{itemize}
   \item an initial clause from $F$;
@@ -926,7 +909,7 @@ If $\text{Psi-TM}_k = \text{Psi-TM}_{k+1}$ for some $k$, then:
 
 \paragraph{Why Collapse is Impossible (information-theoretic).}
 If $\Psi\text{-TM}_k=\Psi\text{-TM}_{k+1}$ then $L_k\in\Psi\text{-P}_k$, contradicting our
-oracle-relative strictness theorem (Section~\ref{sec:strictness-oracle}). Our argument
+oracle-relative strictness theorem (Section~\ref{sec:oracle-strictness}). Our argument
 does not rely on unproved time lower bounds: it uses only the one-step information
 budget (Lemma~\ref{lem:one-step-budget}), i.e., at most $2^{B(k,n)}$ outcomes per call
 and at most $2^{t B(k,n)}$ outcome sequences over $t$ steps. Quantitative time bounds

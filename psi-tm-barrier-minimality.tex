@@ -1,31 +1,10 @@
-% Copyright (c) 2025 Rafig Huseynzade. All Rights Reserved.
-% Licensed under CC BY-NC-ND 4.0
-% Original work - do not copy without attribution
+% File content starts here - NO preamble
 
-\documentclass[11pt]{article}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\usepackage{geometry}
-
-\geometry{margin=1in}
-
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}{Lemma}
-\newtheorem{corollary}{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{claim}{Claim}
-
-\title{Barrier Minimality in Psi-TM:\\
-Minimal Introspection Requirements (oracle-relative / conservative)}
-\author{Mathematical Foundation}
-\date{\today}
-
-\begin{document}
-
-\maketitle
+% Local copy of the one-step information budget lemma for standalone compilation
+\begin{lemma}[One-Step Information Budget and Counting]
+\label{lem:one-step-budget-3}
+For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $k$, a single call to $\iota_k$ returns an output $y\in\{0,1\}^{\le B(k,n)}$ and hence at most $B(k,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{B(k,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t\,B(k,n)}$.
+\end{lemma}
 
 \section{Introduction}
 
@@ -62,7 +41,7 @@ A complexity class separation algebrizes if it holds relative to any low-degree 
 Psi-TM with introspection depth $k$ is said to make progress against a barrier if there is an oracle-relative separation or a partial/conditional statement consistent with selectors-only semantics and the information budget (Lemma~\ref{lem:one-step-budget}).
 \end{definition}
 
-\section{Relativization Barrier: k ≥ 1}
+\section{Relativization Barrier: k >= 1}
 
 \begin{theorem}[Relativization Barrier Minimality]
 The relativization barrier requires introspection depth $k \geq 1$ to bypass.
@@ -74,7 +53,7 @@ We prove both the necessity and sufficiency of $k \geq 1$.
 \textbf{Necessity (k = 0 is insufficient):}
 Let $M$ be a Psi-TM with introspection depth $k = 0$. Then $M$ has no introspection capabilities and behaves identically to a standard Turing machine. By the relativization barrier, $M$ cannot solve problems that relativize.
 
-\textbf{Sufficiency (k ≥ 1 is sufficient):}
+\textbf{Sufficiency (k >= 1 is sufficient):}
 We construct a Psi-TM with introspection depth $k = 1$ that can bypass the relativization barrier.
 
 \textbf{Construction:}
@@ -92,7 +71,7 @@ Each call to $\iota_1$ has at most $2^{B(1,n)}$ outcomes; over $t=O(n)$ steps th
 This establishes that introspection depth $k = 1$ is both necessary and sufficient to bypass the relativization barrier.
 \end{proof}
 
-\section{Natural Proofs Barrier: k ≥ 2}
+\section{Natural Proofs Barrier: k >= 2}
 
 \begin{theorem}[Natural Proofs Barrier Minimality]
 The natural proofs barrier requires introspection depth $k \geq 2$ to bypass.
@@ -101,10 +80,10 @@ The natural proofs barrier requires introspection depth $k \geq 2$ to bypass.
 \begin{proof}
 We prove both the necessity and sufficiency of $k \geq 2$.
 
-\textbf{Necessity (k ≤ 1 is insufficient):}
+\textbf{Necessity (k <= 1 is insufficient):}
 Let $M$ be a Psi-TM with introspection depth $k \leq 1$. The introspection function $\iota_k$ can only access depth-$\leq$1 structural patterns, which are insufficient to distinguish between random functions and functions with specific structural properties that natural proofs target.
 
-\textbf{Sufficiency (k ≥ 2 is sufficient):}
+\textbf{Sufficiency (k >= 2 is sufficient):}
 We construct a Psi-TM with introspection depth $k = 2$ that can bypass the natural proofs barrier.
 
 \textbf{Construction:}
@@ -122,7 +101,7 @@ Each call to $\iota_2$ has at most $2^{B(2,n)}$ outcomes; over $t=\mathrm{poly}(
 This establishes that introspection depth $k = 2$ is both necessary and sufficient to bypass the natural proofs barrier.
 \end{proof}
 
-\section{Proof Complexity Barrier: k ≥ 2}
+\section{Proof Complexity Barrier: k >= 2}
 
 \begin{theorem}[Proof Complexity Barrier Minimality]
 The proof complexity barrier requires introspection depth $k \geq 2$ to bypass.
@@ -131,10 +110,10 @@ The proof complexity barrier requires introspection depth $k \geq 2$ to bypass.
 \begin{proof}
 We prove both the necessity and sufficiency of $k \geq 2$.
 
-\textbf{Necessity (k ≤ 1 is insufficient):}
+\textbf{Necessity (k <= 1 is insufficient):}
 Let $M$ be a Psi-TM with introspection depth $k \leq 1$. The introspection function $\iota_k$ can only access depth-$\leq$1 structural patterns, which are insufficient to analyze complex proof structures that require depth-2 analysis.
 
-\textbf{Sufficiency (k ≥ 2 is sufficient):}
+\textbf{Sufficiency (k >= 2 is sufficient):}
 We construct a Psi-TM with introspection depth $k = 2$ that can bypass the proof complexity barrier.
 
 \textbf{Construction:}
@@ -152,7 +131,7 @@ Each call to $\iota_2$ has at most $2^{B(2,n)}$ outcomes; over $t=\mathrm{poly}(
 This establishes that introspection depth $k = 2$ is both necessary and sufficient to bypass the proof complexity barrier.
 \end{proof}
 
-\section{Algebraization Barrier: k ≥ 3}
+\section{Algebraization Barrier: k >= 3}
 
 \begin{theorem}[Algebraization Barrier Minimality]
 The algebraization barrier requires introspection depth $k \geq 3$ to bypass.
@@ -161,10 +140,10 @@ The algebraization barrier requires introspection depth $k \geq 3$ to bypass.
 \begin{proof}
 We prove both the necessity and sufficiency of $k \geq 3$.
 
-\textbf{Necessity (k ≤ 2 is insufficient):}
+\textbf{Necessity (k <= 2 is insufficient):}
 Let $M$ be a Psi-TM with introspection depth $k \leq 2$. The introspection function $\iota_k$ can only access depth-$\leq$2 structural patterns, which are insufficient to analyze algebraic structures that require depth-3 analysis.
 
-\textbf{Sufficiency (k ≥ 3 is sufficient):}
+\textbf{Sufficiency (k >= 3 is sufficient):}
 We construct a Psi-TM with introspection depth $k = 3$ that can bypass the algebraization barrier.
 
 \textbf{Construction:}
@@ -271,4 +250,4 @@ The optimal introspection depth for bypassing all barriers is $k = 3$, providing
 
 These results provide a rigorous foundation for understanding the minimal computational requirements for transcending classical complexity barriers.
 
-\end{document} 
+% End of included content
