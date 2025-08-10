@@ -90,7 +90,11 @@ Let $M$ be a Psi-TM with introspection depth $d \leq 1$. The introspection funct
 We construct a Psi-TM with introspection depth $d = 2$ that can bypass the natural proofs barrier.
 
 \textbf{Construction:}
-Consider the language $L_{nat} = \{w \in \{0,1\}^* \mid w \text{ has depth-2 structural patterns that satisfy natural proof properties}\}$.
+Consider the language $L_{nat}$ defined as follows:
+\begin{align}
+L_{nat} = \{w \in \{0,1\}^* \mid &\text{$w$ has depth-2 structural patterns} \nonumber \\
+&\text{that satisfy natural proof properties}\}
+\end{align}
 
 \textbf{Standard TM Limitation:}
 Standard Turing machines cannot solve $L_{nat}$ efficiently because the problem is protected by the natural proofs barrier.
@@ -121,7 +125,11 @@ Let $M$ be a Psi-TM with introspection depth $d \leq 1$. The introspection funct
 We construct a Psi-TM with introspection depth $d = 2$ that can bypass the proof complexity barrier.
 
 \textbf{Construction:}
-Consider the language $L_{proof} = \{w \in \{0,1\}^* \mid w \text{ encodes a valid proof with depth-2 structure}\}$.
+Consider the language $L_{proof}$ where
+\begin{align}
+L_{proof} = \{w \in \{0,1\}^* \mid &\text{$w$ encodes a valid proof} \nonumber \\
+&\text{with depth-2 structure}\}
+\end{align}
 
 \textbf{Standard TM Limitation:}
 Standard Turing machines cannot efficiently verify proofs in $L_{proof}$ because the problem is protected by the proof complexity barrier.
@@ -152,7 +160,11 @@ Let $M$ be a Psi-TM with introspection depth $d \leq 2$. The introspection funct
 We construct a Psi-TM with introspection depth $d = 3$ that can bypass the algebraization barrier.
 
 \textbf{Construction:}
-Consider the language $L_{alg} = \{w \in \{0,1\}^* \mid w \text{ encodes an algebraic structure with depth-3 properties}\}$.
+Consider the language $L_{alg}$ where
+\begin{align}
+L_{alg} = \{w \in \{0,1\}^* \mid &\text{$w$ encodes an algebraic structure} \nonumber \\
+&\text{with depth-3 properties}\}
+\end{align}
 
 \textbf{Standard TM Limitation:}
 Standard Turing machines cannot efficiently solve $L_{alg}$ because the problem is protected by the algebraization barrier.

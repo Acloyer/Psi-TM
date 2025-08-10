@@ -172,19 +172,20 @@ For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\io
   \centering
 \caption{Interface specification for $\iota_j$ (single source of truth). Complete definition of inputs, outputs, per-step bit budget $B(d,n) = c \cdot d \cdot \log n$, call placement constraints, and transcript accounting. All lemmas and theorems reference this specification rather than duplicating it.}
   \label{tab:iota-spec}
-  \begin{tabular}{@{}ll@{}}
+  \small  % уменьшаем шрифт
+  \begin{tabular}{@{}p{3.5cm}p{10cm}@{}}  % фиксированная ширина колонок
   \toprule
   Field & Specification \\
   \midrule
   Depth index & $j \in \{1,\ldots,d\}$ \\
-  Per-step bit budget & $\B(d,n) = c \cdot d \cdot \log n$ with fixed $c \ge 1$ \\
+  Per-step bit budget & $B(d,n) = c \cdot d \cdot \log n$ with fixed $c \ge 1$ \\
   Call policy & Exactly once per computation step; payload injected into $\delta$ that step \\
   Inputs & Current state and allowed local view; no advice; no randomness \\
-  Output payload & Bitstring $y \in \{0,1\}^{\le \B(d,n)}$ \\
-Transcript accounting & Over $T$ steps: at most $T \cdot \B(d,n)$ bits exposed via $\iota$; at most $2^{T \cdot \B(d,n)}$ distinct transcripts \\
+  Output payload & Bitstring $y \in \{0,1\}^{\le B(d,n)}$ \\
+  Transcript accounting & Over $T$ steps: at most $T \cdot B(d,n)$ bits exposed via $\iota$; at most $2^{T \cdot B(d,n)}$ distinct transcripts \\
   \bottomrule
   \end{tabular}
-  \end{table}
+\end{table}
   
   \begin{remark}[Depth notation]\label{rem:depth-notation}
 We use $d$ as the global depth bound. Interface indexes are $j\in\{1,\dots,d\}$, and the per-step budget is $\B(d,n)=c\cdot d\cdot \log n$ with fixed $c\ge 1$.

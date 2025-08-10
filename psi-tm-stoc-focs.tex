@@ -135,10 +135,13 @@ A binary tree $T$ is encoded as a string $\text{encode}(T) \in \{0,1\}^*$ as fol
 \end{itemize}
 \end{definition}
 
-\begin{definition}[Tree Evaluation Language L k]
-For each $k \geq 1$, define:
-$$L_k = \{\text{encode}(T)\#1^n \mid T \text{ is a binary tree of depth exactly } k+1, \text{ leaves are labeled with bits}, \text{ root evaluates to } 1\}$$
-where the evaluation follows standard Boolean logic (AND/OR gates at internal nodes).
+\begin{definition}[Tree Evaluation Language $L_k$]
+For each $k \geq 1$, define $L_k$ as the set of strings $\text{encode}(T)\#1^n$ where:
+\begin{itemize}
+\item $T$ is a binary tree of depth exactly $k+1$
+\item Leaves are labeled with bits  
+\item Root evaluates to $1$ under Boolean logic (AND/OR gates at internal nodes)
+\end{itemize}
 \end{definition}
 
 \begin{claim}
