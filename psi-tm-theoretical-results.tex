@@ -3,41 +3,43 @@
 % Local copy of the one-step information budget lemma for standalone compilation
 \begin{lemma}[One-Step Information Budget and Counting]
 \label{lem:one-step-budget-2}
-For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $k$, a single call to $\iota_k$ returns an output $y\in\{0,1\}^{\le B(k,n)}$ and hence at most $B(k,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{B(k,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t\,B(k,n)}$.
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\iota_d$ returns an output $y\in\{0,1\}^{\le \B(d,n)}$ and hence at most $\B(d,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{\B(d,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t \cdot \B(d,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t \cdot \B(d,n)}$.
 \end{lemma}
 
 \section{Formal Definitions and Preliminaries}
 
 \subsection{Structural Pattern Recognition}
 
-\begin{definition}[k-Structural Pattern]
-For a string $w \in \{0,1\}^*$, the k-structural pattern $P_k(w)$ is defined recursively:
+\begin{definition}[d-Structural Pattern]
+For a string $w \in \{0,1\}^*$, the d-structural pattern $P_d(w)$ is defined recursively:
 \begin{align*}
 P_0(w) &= \{\text{individual symbols in } w\} \\
 P_1(w) &= P_0(w) \cup \{\text{binary partitions of } w\} \\
-P_k(w) &= P_{k-1}(w) \cup \{\text{nested structures of depth } \leq k\}
+P_d(w) &= P_{d-1}(w) \cup \{\text{nested structures of depth } \leq d\}
 \end{align*}
 \end{definition}
 
 \begin{definition}[Introspective Complexity]
-The introspective complexity $\mathcal{I}_k(w)$ of a string $w$ is the minimum size of description of the k-structural pattern:
-$$\mathcal{I}_k(w) = \min\{|d| : d \text{ describes } P_k(w)\}$$
+The introspective complexity $\mathcal{I}_d(w)$ of a string $w$ is the minimum size of description of the d-structural pattern:
+$$\mathcal{I}_d(w) = \min\{|d| : d \text{ describes } P_d(w)\}$$
 \end{definition}
 
 \subsection{Formal Introspection Functions}
 
-\paragraph{Selectors.} Access to structural metadata is via $y=\iota_k(\mathcal{C},n)$ and selectors over $\mathrm{decode}_k(y)$ (state, head, and bounded-depth windows). Legacy $\texttt{INT\_*}$ names are aliases to these selectors; no raw $\texttt{INT\_*}$ access is permitted.
+\paragraph{Selectors.} Access to structural metadata is via $y=\iota_d(\mathcal{C},n)$ and selectors over $\mathrm{decode}_d(y)$ (state, head, and bounded-depth windows). Legacy $\texttt{INT\_*}$ names are aliases to these selectors; no raw $\texttt{INT\_*}$ access is permitted.
 
 \section{Information-Theoretic Limitations}
 
-\begin{lemma}[Selector indistinguishability at depth $k$]
-For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
+\begin{lemma}[Selector indistinguishability at depth $d$]
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+For any $d$, there exist inputs $x,x'$ with structural depths $d$ and $d{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
 \end{lemma}
 
 \begin{proof}
-We construct explicit examples for each $k \geq 1$.
+We construct explicit examples for each $d \geq 1$.
 
-\textbf{Construction for k = 1:}
+\textbf{Construction for d = 1:}
 Let $w_1 = 0011$ and $w_2 = 01$.
 
 \textbf{Analysis:}
@@ -47,22 +49,22 @@ Let $w_1 = 0011$ and $w_2 = 01$.
 \item All depth-$\le 1$ structural features coincide, so selectors over $\mathrm{decode}_1(\iota_1(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
 \end{enumerate}
 
-\textbf{General Construction for k \ensuremath{\geq} 2:}
-Let $P_k$ be the pattern of depth $k$ constructed recursively:
+\textbf{General Construction for d \ensuremath{\geq} 2:}
+Let $P_d$ be the pattern of depth $d$ constructed recursively:
 \begin{itemize}
 \item $P_0 = 0$
 \item $P_1 = 00$
-\item $P_k = P_{k-1} \circ P_{k-1}$ where $\circ$ represents structural composition
+\item $P_d = P_{d-1} \circ P_{d-1}$ where $\circ$ represents structural composition
 \end{itemize}
 
-Let $w_1 = P_{k+1}$ and $w_2 = P_k$.
+Let $w_1 = P_{d+1}$ and $w_2 = P_d$.
 
 \textbf{Verification:}
 \begin{enumerate}
-\item $d(w_1) = k+1$ by construction
-\item $d(w_2) = k$ by construction
-\item Both strings have identical depth-$k$ structural features
-\item Therefore, all selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
+\item $d(w_1) = d+1$ by construction
+\item $d(w_2) = d$ by construction
+\item Both strings have identical depth-$d$ structural features
+\item Therefore, all selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
 \end{enumerate}
 \end{proof}
 
@@ -71,42 +73,44 @@ Let $w_1 = P_{k+1}$ and $w_2 = P_k$.
 \subsection{Complexity Class Hierarchy}
 
 \begin{theorem}[Psi-Class Hierarchy]
-For any $k_1 < k_2$:
-$$\text{Psi-P}_{k_1} \subseteq \text{Psi-P}_{k_2}$$
-$$\text{Psi-PSPACE}_{k_1} \subseteq \text{Psi-PSPACE}_{k_2}$$
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+For any $d_1 < d_2$:
+$$\text{Psi-P}_{d_1} \subseteq \text{Psi-P}_{d_2}$$
+$$\text{Psi-PSPACE}_{d_1} \subseteq \text{Psi-PSPACE}_{d_2}$$
 \end{theorem}
 
 \begin{proof}
-Let $L \in \text{Psi-P}_{k_1}$. Then there exists a Psi-TM $M$ with $k_1$-limited introspection that recognizes $L$ in polynomial time.
+Let $L \in \text{Psi-P}_{d_1}$. Then there exists a Psi-TM $M$ with $d_1$-limited introspection that recognizes $L$ in polynomial time.
 
-We construct a Psi-TM $M'$ with $k_2$-limited introspection:
+We construct a Psi-TM $M'$ with $d_2$-limited introspection:
 \begin{enumerate}
 \item $M'$ simulates $M$ step-by-step
 \item For each introspection call of $M$, $M'$ performs the same introspection
-\item Since $k_1 < k_2$, all introspection calls of $M$ are valid for $M'$
+\item Since $d_1 < d_2$, all introspection calls of $M$ are valid for $M'$
 \item Time complexity remains polynomial
 \end{enumerate}
 
-Thus, $L \in \text{Psi-P}_{k_2}$. The same argument applies to PSPACE classes.
+Thus, $L \in \text{Psi-P}_{d_2}$. The same argument applies to PSPACE classes.
 \end{proof}
 
 \subsection{Connection to Classical Classes}
 
 \begin{theorem}[Inclusion in Classical Classes]
-For any $k \geq 0$:
-$$\text{Psi-P}_k \subseteq \text{PSPACE}$$
-$$\text{Psi-PSPACE}_k \subseteq \text{EXPSPACE}$$
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+For any $d \geq 0$:
+$$\text{Psi-P}_d \subseteq \text{PSPACE}$$
+$$\text{Psi-PSPACE}_d \subseteq \text{EXPSPACE}$$
 \end{theorem}
 
 \begin{proof}
-Let $L \in \text{Psi-P}_k$. Then there exists a Psi-TM $M$ with k-limited introspection that recognizes $L$ in polynomial time.
+Let $L \in \text{Psi-P}_d$. Then there exists a Psi-TM $M$ with d-limited introspection that recognizes $L$ in polynomial time.
 
 We construct a standard Turing machine $M'$ that simulates $M$:
 \begin{enumerate}
 \item State of $M'$ encodes $(q, \alpha, \beta, \psi)$
-\item Size of $\psi$ is bounded by $f(k) \cdot n = O(n)$ for constant $k$
+\item Size of $\psi$ is bounded by $f(d) \cdot n = O(n)$ for constant $d$
 \item Each introspection call is simulated by explicit computation using the dynamic programming algorithm
-\item Total space: $O(n + f(k) \cdot n) = O(n)$
+\item Total space: $O(n + f(d) \cdot n) = O(n)$
 \end{enumerate}
 
 Thus, $L \in \text{PSPACE}$. The EXPSPACE inclusion follows similarly.
@@ -115,6 +119,7 @@ Thus, $L \in \text{PSPACE}$. The EXPSPACE inclusion follows similarly.
 \subsection{Strict Inclusions}
 
 \begin{theorem}[Strict Inclusions with Minimal Introspection]
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 There exist languages $L$ such that:
 $$L \in \text{Psi-P}_1 \setminus \text{P}$$
 \end{theorem}
@@ -131,7 +136,9 @@ For standard Turing machines, this requires $\Omega(n^2)$ time to track nesting 
 For a depth-1 Psi-TM, in each step obtain $y=\iota_1(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_1(y)$ to read a bounded-depth window summary and head position. Check balance and that the structural depth is $\le 1$ using these selectors.
 
 \textbf{Budget accounting:}
-Each call to $\iota_1$ has at most $2^{B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\,B(1,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
+Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget-2}).
+
+\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(1,n) = O(n) \cdot c \cdot 1 \cdot \log n = O(n \log n) \ge \log M$ where $M$ is the number of distinct selector outputs. This ensures the machine has sufficient information budget to distinguish between valid and invalid inputs.
 
 Thus, $L_{SBS} \in \text{Psi-P}_1$ but requires $\Omega(n^2)$ time for standard Turing machines (under standard complexity assumptions).
 \end{proof}
@@ -141,21 +148,23 @@ Thus, $L_{SBS} \in \text{Psi-P}_1$ but requires $\Omega(n^2)$ time for standard 
 \subsection{Efficient Simulation}
 
 \begin{theorem}[Efficient Psi-TM Simulation]
-Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(k))$, where $f$ is a polynomial function.
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+Any Psi-TM $M_{psi}$ with d-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(d))$, where $f$ is a polynomial function.
 \end{theorem}
 
 \begin{proof}
 We present an algorithm for simulating $M_{psi}$:
 
 \begin{figure}[ht]
-\framebox[\textwidth]{\begin{minipage}{0.95\textwidth}
+\centering
+\fbox{\begin{minipage}{0.95\textwidth}
 \textbf{Algorithm:} Psi-TM Simulation
 \begin{enumerate}
 \item Initialize state $(q_0, \varepsilon, \varepsilon, \emptyset)$
 \item \textbf{while} not in accepting or rejecting state \textbf{do}
   \begin{enumerate}
   \item Read current symbol $a$
-  \item Compute $y = \iota_k(\mathcal{C},n)$ and the needed selectors
+  \item Compute $y = \iota_d(\mathcal{C},n)$ and the needed selectors
   \item Apply transition $\delta(q, a, \psi) = (q', b, d)$
   \item Update configuration
   \item Move head according to $d$
@@ -164,13 +173,14 @@ We present an algorithm for simulating $M_{psi}$:
 \end{minipage}}
 \end{figure}
 
-Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
+Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(d))$.
 \end{proof}
 
 \subsection{Universal Psi-TM}
 
 \begin{theorem}[Existence of Universal Psi-TM]
-There exists a universal Psi-TM $U_{psi}$ with k-limited introspection that can simulate any Psi-TM $M_{psi}$ with k-limited introspection with polynomial slowdown.
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+There exists a universal Psi-TM $U_{psi}$ with d-limited introspection that can simulate any Psi-TM $M_{psi}$ with d-limited introspection with polynomial slowdown.
 \end{theorem}
 
 \begin{proof}
@@ -183,7 +193,7 @@ We construct $U_{psi}$ as follows:
 \item \textbf{Transitions}: $U_{psi}$ applies the transition function of $M_{psi}$ based on the encoded description
 \end{enumerate}
 
-Since both machines have k-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
+Since both machines have d-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
 \end{proof}
 
 \section{Complexity Barriers}
@@ -191,37 +201,41 @@ Since both machines have k-limited introspection, the simulation preserves the i
 \subsection{Time bounds (conservative)}
 
 \begin{theorem}[Conservative time statements]
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 There exist problems $L$ such that:
 \begin{enumerate}
 \item $L \in \text{DTIME}(n^2)$ for standard Turing machines
-\item $L \in \text{Psi-P}_k$ for Psi-TM with suitable introspection
+\item $L \in \text{Psi-P}_d$ for Psi-TM with suitable introspection
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}
 Consider the Structural Matching (SM) problem:
 
-\textbf{Definition:} Given a string $w$ with nested structures, find all matching pairs at depth $\leq k$.
+\textbf{Definition:} Given a string $w$ with nested structures, find all matching pairs at depth $\leq d$.
 
 \textbf{Standard TM Complexity:}
 For standard Turing machines, this requires $\Omega(n^2)$ time to track all possible matches by explicit computation.
 
 \textbf{Psi-TM Solution (selectors only):}
-For a depth-$k$ Psi-TM, in each relevant step obtain $y=\iota_k(\mathcal{C},n)$ and use $\mathrm{VIEW\_WIN}(y,d)$ for $d\le k$ to enumerate matching pairs at depth $\le k$.
+For a depth-$d$ Psi-TM, in each relevant step obtain $y=\iota_d(\mathcal{C},n)$ and use $\mathrm{VIEW\_WIN}(y,d')$ for $d'\le d$ to enumerate matching pairs at depth $\le d$.
 
 \textbf{Budget accounting:}
-Each $\iota_k$ call has at most $2^{B(k,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\,B(k,n)}$ sequences (Lemma~\ref{lem:one-step-budget}).
+Each $\iota_d$ call has at most $2^{\B(d,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t \cdot \B(d,n)}$ sequences (Lemma~\ref{lem:one-step-budget-2}).
 
-Thus, SM $\in \text{Psi-P}_k$ but requires $\Omega(n^2)$ time for standard machines.
+\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(d,n) = \mathrm{poly}(n) \cdot c \cdot d \cdot \log n = \mathrm{poly}(n) \ge \log M$ where $M$ is the number of distinct selector outputs. This ensures sufficient information budget for pattern matching at depth $\le d$.
+
+Thus, SM $\in \text{Psi-P}_d$ but requires $\Omega(n^2)$ time for standard machines.
 \end{proof}
 
 \subsection{Space bounds (conservative)}
 
 \begin{theorem}[Conservative space statements]
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 There exist problems $L$ such that:
 \begin{enumerate}
 \item $L \in \text{DSPACE}(n^2)$ for standard Turing machines
-\item $L \in \text{Psi-PSPACE}_k$ for Psi-TM with suitable introspection
+\item $L \in \text{Psi-PSPACE}_d$ for Psi-TM with suitable introspection
 \end{enumerate}
 \end{theorem}
 
@@ -234,12 +248,14 @@ Consider the Structural Analysis (SA) problem:
 For standard Turing machines, this requires $\Omega(n^2)$ space to store intermediate structural information.
 
 \textbf{Psi-TM Solution (selectors only):}
-For a depth-$k$ Psi-TM, obtain $y=\iota_k(\mathcal{C},n)$ on demand and use selectors over $\mathrm{decode}_k(y)$ to read the required bounded-depth summaries without storing full intermediate structures.
+For a depth-$d$ Psi-TM, obtain $y=\iota_d(\mathcal{C},n)$ on demand and use selectors over $\mathrm{decode}_d(y)$ to read the required bounded-depth summaries without storing full intermediate structures.
 
 \textbf{Budget accounting:}
-Selectors expose at most $B(k,n)$ bits per call by Lemma~\ref{lem:one-step-budget}; thus space needed for introspective data per step is $O(B(k,n))$.
+Selectors expose at most $\B(d,n)$ bits per call by Lemma~\ref{lem:one-step-budget}; thus space needed for introspective data per step is $O(\B(d,n))$.
 
-Thus, SA $\in \text{Psi-PSPACE}_k$ but requires $\Omega(n^2)$ space for standard machines.
+\textbf{Formal derivation:} By the Budget Lemma, each selector call exposes at most $\B(d,n) = c \cdot d \cdot \log n = O(\log n)$ bits. Over $T$ steps, total space is $O(T \cdot \log n) = O(n \log n) \ll O(n^2)$, enabling space-efficient analysis.
+
+Thus, SA $\in \text{Psi-PSPACE}_d$ but requires $\Omega(n^2)$ space for standard machines.
 \end{proof}
 
 \section{Adversary Arguments}
@@ -247,46 +263,47 @@ Thus, SA $\in \text{Psi-PSPACE}_k$ but requires $\Omega(n^2)$ space for standard
 \subsection{Formal Adversary Construction}
 
 \begin{theorem}[Adversary Lower Bound]
-For any Psi-TM $M$ with introspection depth $k$, there exists an adversary $A$ such that:
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+For any Psi-TM $M$ with introspection depth $d$, there exists an adversary $A$ such that:
 $M$ cannot solve certain structural problems against $A$.
 \end{theorem}
 
 \begin{proof}
-We construct an explicit adversary strategy that defeats any depth-$k$ Psi-TM for specific problems.
+We construct an explicit adversary strategy that defeats any depth-$d$ Psi-TM for specific problems.
 
 \textbf{Adversary Strategy:}
 \begin{enumerate}
 \item \textbf{Input Generation:} For each $n \geq 1$, the adversary generates two inputs:
   \begin{itemize}
-  \item $w_1$ with structural depth $k+1$
-  \item $w_2$ with structural depth $k$
+  \item $w_1$ with structural depth $d+1$
+  \item $w_2$ with structural depth $d$
   \end{itemize}
 
-\item \textbf{Introspection Response:} For any call $y=\iota_k(\mathcal{C},n)$, only depth-$\le k$ features are exposed via selectors over $\mathrm{decode}_k(y)$; if $w$ has depth $k{+}1$, the exposure equals its depth-$k$ projection.
+\item \textbf{Introspection Response:} For any call $y=\iota_d(\mathcal{C},n)$, only depth-$\le d$ features are exposed via selectors over $\mathrm{decode}_d(y)$; if $w$ has depth $d{+}1$, the exposure equals its depth-$d$ projection.
 
 \item \textbf{Consistency Maintenance:} The adversary ensures that:
-All selectors over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ agree on $w_1$ and $w_2$
+All selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ agree on $w_1$ and $w_2$
 \end{enumerate}
 
 \textbf{Information-Theoretic Analysis:}
 \begin{enumerate}
-\item The introspection function $\iota_k$ can only access depth-$k$ information
-\item Both inputs $w_1$ and $w_2$ have identical depth-$k$ structural patterns
+\item The introspection function $\iota_d$ can only access depth-$d$ information
+\item Both inputs $w_1$ and $w_2$ have identical depth-$d$ structural patterns
 \item Machine $M$ receives identical introspection responses for both inputs
 \item Therefore, $M$ must produce the same output for both inputs
 \item Since the inputs have different structural properties, $M$ must err on at least one input
 \end{enumerate}
 
-This establishes that no depth-$k$ Psi-TM can solve certain structural problems against this adversary.
+This establishes that no depth-$d$ Psi-TM can solve certain structural problems against this adversary.
 \end{proof}
 
-\section{Conclusion}
+\section{Summary and Outlook}
 
 These results provide a rigorous foundation for understanding the computational power of Psi-TM models with different introspection depths. The key contributions include:
 
 \begin{enumerate}
 \item \textbf{Formal Definitions}: Complete formalization of introspection functions and structural patterns
-\item \textbf{Information-Theoretic Limitations}: Explicit constructions showing the limitations of depth-$k$ introspection
+\item \textbf{Information-Theoretic Limitations}: Explicit constructions showing the limitations of depth-$d$ introspection
 \item \textbf{Complexity Class Hierarchy}: Rigorous proofs of class inclusions and separations
 \item \textbf{Algorithmic Results}: Efficient simulation algorithms and universal machine constructions
 \item \textbf{Barrier Bypassing}: Concrete examples of problems where Psi-TM can bypass classical complexity barriers

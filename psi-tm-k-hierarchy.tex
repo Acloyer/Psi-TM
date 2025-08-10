@@ -1,12 +1,12 @@
 % File content starts here - NO preamble
 
-\section{Introduction and Motivation}
+\section{Related Work}
 
-The Psi-TM model extends standard Turing machines with minimal introspection capabilities, where introspection depth is limited to a constant $k = O(1)$. Previous work established that Psi-TM can bypass all four classical complexity barriers with minimal introspection requirements: relativization requires $k \geq 1$, natural proofs and proof complexity require $k \geq 2$, and algebraization requires $k \geq 3$.
+The Psi-TM model extends standard Turing machines with minimal introspection capabilities, where introspection depth is limited to a constant $d = O(1)$. Previous work established that Psi-TM can bypass all four classical complexity barriers with minimal introspection requirements: relativization requires $d \geq 1$, natural proofs and proof complexity require $d \geq 2$, and algebraization requires $d \geq 3$.
 
 The fundamental question addressed in this work is whether there exists a strict hierarchy of computational power based on introspection depth:
 
-\textbf{Main Question:} Does $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$ hold for all $k \geq 1$?
+\textbf{Main Question:} Does $\text{Psi-TM}_d \subsetneq \text{Psi-TM}_{d+1}$ hold for all $d \geq 1$?
 
 This question has profound implications for understanding the relationship between introspection depth and computational capability. A positive answer would establish that each additional level of introspection provides strictly more computational power, while a negative answer would indicate a collapse point beyond which increased introspection offers no additional advantage.
 
@@ -19,19 +19,19 @@ This question has profound implications for understanding the relationship betwe
 \item \textbf{Complexity Class Implications:} We establish corresponding separations in complexity classes
 \end{enumerate}
 
-\section{Formal Definitions: Psi-TM k}
+\section{Lower-Bound Toolkit}
 
 \subsection{Introspection Depth Hierarchy}
 
-\begin{definition}[Psi-TM k Model]
-For each $k \geq 1$, a Psi-TM with introspection depth $k$ is a 7-tuple:
-$$M_\Psi^k = (Q, \Sigma, \Gamma, \delta, q_0, F, \iota_k)$$
+\begin{definition}[Psi-TM d Model]
+For each $d \geq 1$, a Psi-TM with introspection depth $d$ is a 7-tuple:
+$$M_\Psi^d = (Q, \Sigma, \Gamma, \delta, q_0, F, \iota_d)$$
 where:
 \begin{itemize}
 \item $(Q, \Sigma, \Gamma, \delta, q_0, F)$ is a deterministic Turing machine
-\item $\iota_k: \mathrm{Config}\times \mathbb{N} \to \{0,1\}^{\le B(k,n)}$ is the $k$-limited introspection operator
+\item $\iota_d: \mathrm{Config}\times \mathbb{N} \to \{0,1\}^{\le \B(d,n)}$ is the $d$-limited introspection operator
 \item $\Psi_k$ denotes the range of the canonical code $C_k$ over admissible atoms of depth $\le k$
-\item $k$ is a constant independent of input size
+\item $d$ is a constant independent of input size
 \end{itemize}
 \end{definition}
 
@@ -44,20 +44,20 @@ For a string $w \in \Gamma^*$, the structural depth $d(w)$ is defined recursivel
 \end{itemize}
 \end{definition}
 
-\paragraph{Selectors (single semantics).} Introspective access is restricted to selectors over $y=\iota_k(\mathcal{C},n)$: $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, and $\mathrm{VIEW\_WIN}(y,d)$ for $d\le k$. Legacy $\texttt{INT\_*}$ names are aliases to these views.
+\paragraph{Selectors (single semantics).} Introspective access is restricted to selectors over $y=\iota_d(\mathcal{C},n)$: $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, and $\mathrm{VIEW\_WIN}(y,j)$ for $j\le d$. Legacy $\texttt{INT\_*}$ names are aliases to these views.
 
 \subsection{Complexity Classes}
 
-\begin{definition}[Psi-P k Class]
-The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with introspection depth $k$ in polynomial time.
+\begin{definition}[Psi-P d Class]
+The class $\text{Psi-P}_d$ consists of languages recognizable by Psi-TM with introspection depth $d$ in polynomial time.
 \end{definition}
 
-\begin{definition}[Psi-NP k Class]
-The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with introspection depth $k$.
+\begin{definition}[Psi-NP d Class]
+The class $\text{Psi-NP}_d$ consists of languages with polynomial-time verifiable certificates using Psi-TM with introspection depth $d$.
 \end{definition}
 
-\begin{definition}[Psi-PSPACE k Class]
-The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with introspection depth $k$ using polynomial space.
+\begin{definition}[Psi-PSPACE d Class]
+The class $\text{Psi-PSPACE}_d$ consists of languages recognizable by Psi-TM with introspection depth $d$ using polynomial space.
 \end{definition}
 
 \section{Explicit Language Constructions}
@@ -112,6 +112,7 @@ Therefore, $L_k \in \text{Psi-P}_{k+1}$.
 
 \begin{theorem}[Strict Hierarchy]
 \label{thm:strict-hierarchy-1}
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 For all $k \geq 1$:
 $$\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$$
 Equivalently:
@@ -130,6 +131,7 @@ We prove that no Psi-TM with introspection depth $k$ can recognize L k in polyno
 
 \begin{lemma}[Depth-k Limitation]
 \label{lem:depth-k-limitation-1}
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 Any Psi-TM with introspection depth $k$ cannot distinguish between trees of depth $k+1$ and trees of depth $k$ in polynomial time.
 \end{lemma}
 
@@ -204,6 +206,7 @@ This holds for all $k \geq 1$, establishing the strict hierarchy.
 
 \begin{theorem}[Structural Depth Lower Bound]
 \label{thm:structural-depth-lower-bound-1}
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 For any language $L \in \text{Psi-P}_{k+1} \setminus \text{Psi-P}_k$, there exists a family of inputs $\{w_n\}_{n \geq 1}$ such that:
 \begin{enumerate}
 \item $w_n$ has length $n$
@@ -279,6 +282,7 @@ This establishes the $\Omega(n^{k+1})$ lower bound for depth-$k$ machines.
 
 \begin{theorem}[Adversary Lower Bound]
 \label{thm:adversary-lower-bound-1}
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 For any Psi-TM $M$ with introspection depth $k$, there exists an adversary $A$ such that:
 $M$ cannot solve $L_k$ against $A$.
 \end{theorem}
@@ -324,6 +328,7 @@ This establishes that no depth-$k$ Psi-TM can solve $L_k$ against this adversary
 \subsection{Class Separations}
 
 \begin{theorem}[Complexity Class Separations]
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 For all $k \geq 1$:
 $$\text{Psi-P}_k \subsetneq \text{Psi-P}_{k+1} \subsetneq \text{PSPACE}$$
 $$\text{Psi-NP}_k \subsetneq \text{Psi-NP}_{k+1} \subsetneq \text{NPSPACE}$$
@@ -344,6 +349,7 @@ The languages $L_k$ demonstrate that the inclusions are proper, as they belong t
 \subsection{Collapse Threshold Analysis}
 
 \begin{theorem}[No Finite Collapse]
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 The Psi-TM hierarchy does not collapse at any finite level $k^*$.
 \end{theorem}
 
@@ -358,7 +364,8 @@ This follows from the explicit construction of $L_k$ for each $k \geq 1$ and the
 \subsection{Efficient Simulation}
 
 \begin{theorem}[Efficient Psi-TM Simulation]
-Any Psi-TM $M_{psi}$ with k-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(k))$, where $f$ is a polynomial function.
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+Any Psi-TM $M_{psi}$ with d-limited introspection can be simulated by a standard Turing machine $M$ with slowdown $O(n^3 \cdot f(d))$, where $f$ is a polynomial function.
 \end{theorem}
 
 \begin{proof}
@@ -372,7 +379,7 @@ We present an algorithm for simulating $M_{psi}$:
 \item \textbf{while} not in accepting or rejecting state \textbf{do}
   \begin{enumerate}
   \item Read current symbol $a$
-  \item Compute the required selectors from $y=\iota_k(\mathcal{C},n)$
+  \item Compute the required selectors from $y=\iota_d(\mathcal{C},n)$
   \item Apply transition $\delta(q, a, \psi) = (q', b, d)$
   \item Update configuration
   \item Move head according to $d$
@@ -381,13 +388,14 @@ We present an algorithm for simulating $M_{psi}$:
 \end{minipage}}
 \end{figure}
 
-Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(k))$.
+Each introspection call takes $O(n^3)$ time by the structural depth computation algorithm. Total simulation time: $O(T(n) \cdot n^3 \cdot f(d))$.
 \end{proof}
 
 \subsection{Universal Psi-TM}
 
 \begin{theorem}[Existence of Universal Psi-TM]
-There exists a universal Psi-TM $U_{psi}$ with k-limited introspection that can simulate any Psi-TM $M_{psi}$ with k-limited introspection with polynomial slowdown.
+Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+There exists a universal Psi-TM $U_{psi}$ with d-limited introspection that can simulate any Psi-TM $M_{psi}$ with d-limited introspection with polynomial slowdown.
 \end{theorem}
 
 \begin{proof}
@@ -400,10 +408,10 @@ We construct $U_{psi}$ as follows:
 \item \textbf{Transitions}: $U_{psi}$ applies the transition function of $M_{psi}$ based on the encoded description
 \end{enumerate}
 
-Since both machines have k-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
+Since both machines have d-limited introspection, the simulation preserves the introspection constraints. The slowdown is polynomial due to the overhead of interpreting the encoded machine description and computing introspection calls.
 \end{proof}
 
-\section{Conclusion}
+\section{Summary and Outlook}
 
 We have established a strict hierarchy of Psi-TM models based on introspection depth, with the following key results:
 

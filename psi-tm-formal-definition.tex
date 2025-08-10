@@ -2,317 +2,371 @@
 
 % Local copy of the one-step information budget lemma for standalone compilation
 \begin{lemma}[One-Step Information Budget and Counting]
-\label{lem:one-step-budget-1}
-For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $k$, a single call to $\iota_k$ returns an output $y\in\{0,1\}^{\le B(k,n)}$ and hence at most $B(k,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{B(k,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t\cdot B(k,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t\,B(k,n)}$.
-\end{lemma}
-
-% Local copy of selector indistinguishability lemma for standalone compilation
-\begin{lemma}[Selector indistinguishability at depth k]
-\label{lem:selector-indistinguishability-1}
-For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k+1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
-\end{lemma}
-
-\section{Introduction}
-
-In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a continuation of the Structurally-Aware Turing Machines (SA-TM) concept with minimal introspection. The Psi-TM model is characterized by selectors-only introspection semantics and explicit information budgets. Barrier statements are conservative: oracle-relative where proved, partial/conditional otherwise.
-
-\section{Formal Definition of Structural Depth}
-
-\subsection{Binary Tree Representation}
-
-\begin{definition}[Binary Tree]
-A binary tree $T$ is a finite tree where each node has at most two children. We denote:
-\begin{itemize}
-\item $\text{root}(T)$ -- the root node of $T$
-\item $\text{left}(v)$ -- the left child of node $v$ (if exists)
-\item $\text{right}(v)$ -- the right child of node $v$ (if exists)
-\item $\text{leaf}(T)$ -- the set of leaf nodes in $T$
-\item $\text{depth}(v)$ -- the depth of node $v$ (distance from root)
-\item $\text{depth}(T) = \max_{v \in T} \text{depth}(v)$ -- the depth of tree $T$
-\end{itemize}
-\end{definition}
-
-\begin{definition}[Parsing Tree]
-For a string $w \in \{0,1\}^*$, a parsing tree $T_w$ is a binary tree where:
-\begin{itemize}
-\item Each leaf is labeled with a symbol from $\{0,1\}$
-\item Each internal node represents a structural composition
-\item The concatenation of leaf labels in left-to-right order equals $w$
-\end{itemize}
-\end{definition}
-
-\subsection{Formal Structural Depth Definition}
-
-\begin{definition}[Formal Structural Depth]
-For a string $w \in \{0,1\}^*$, the structural depth $d(w)$ is defined as:
-$$d(w) = \min_{T_w} \text{depth}(T_w)$$
-where the minimum is taken over all possible parsing trees $T_w$ for $w$.
-
-\textbf{Base cases:}
-\begin{itemize}
-\item $d(\varepsilon) = 0$ (empty string)
-\item $d(0) = d(1) = 0$ (single symbols)
-\end{itemize}
-
-\textbf{Recursive case:}
-For $|w| > 1$, $d(w) = \min_{w=uv} \{1 + \max(d(u), d(v))\}$ where the minimum is taken over all binary partitions of $w$.
-\end{definition}
-
-\begin{lemma}[Well-Definedness of Structural Depth]
-The structural depth function $d: \{0,1\}^* \to \mathbb{N}$ is well-defined and computable.
-\end{lemma}
-
-\begin{proof}
-\textbf{Well-Definedness:}
-\begin{enumerate}
-\item For strings of length $\leq 1$, $d(w)$ is explicitly defined
-\item For longer strings, the minimum exists because:
+  \label{lem:one-step-budget}
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\iota_d$ returns an output $y\in\{0,1\}^{\le \B(d,n)}$ and hence at most $\B(d,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{\B(d,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t \cdot \B(d,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t \cdot \B(d,n)}$.
+  \end{lemma}
+  
+  % Local copy of selector indistinguishability lemma for standalone compilation
+  \begin{lemma}[Selector indistinguishability at depth d]
+  \label{lem:selector-indistinguishability}
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+  For any $d$, there exist inputs $x,x'$ with structural depths $d$ and $d+1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
+  \end{lemma}
+  
+  \section{Introduction}\label{sec:introduction}
+  
+  In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a continuation of the Structurally-Aware Turing Machines (SA-TM) concept with minimal introspection. The Psi-TM model is characterized by selectors-only introspection semantics and explicit information budgets. Barrier statements are conservative: oracle-relative where proved, partial/conditional otherwise.
+  
+  \section{Formal Definition of Structural Depth}
+  
+  \subsection{Binary Tree Representation}
+  
+  \begin{definition}[Binary Tree]
+  A binary tree $T$ is a finite tree where each node has at most two children. We denote:
   \begin{itemize}
-  \item The set of possible partitions is finite (at most $n-1$ partitions for length $n$)
-  \item Each partition yields a finite depth value
-  \item The minimum of a finite set of natural numbers exists
+  \item $\text{root}(T)$ -- the root node of $T$
+  \item $\text{left}(v)$ -- the left child of node $v$ (if exists)
+  \item $\text{right}(v)$ -- the right child of node $v$ (if exists)
+  \item $\text{leaf}(T)$ -- the set of leaf nodes in $T$
+  \item $\text{depth}(v)$ -- the depth of node $v$ (distance from root)
+  \item $\text{depth}(T) = \max_{v \in T} \text{depth}(v)$ -- the depth of tree $T$
   \end{itemize}
-\end{enumerate}
-
-\textbf{Computability:}
-We provide a dynamic programming algorithm. The algorithm is presented below.
-
-\textbf{Correctness:}
-\begin{enumerate}
-\item Base cases are handled correctly
-\item For each substring $w[i:j]$, we try all possible binary partitions
-\item The algorithm computes the minimum depth over all parsing trees
-\item Time complexity: $O(n^3)$ due to three nested loops
-\end{enumerate}
-\end{proof}
-
-\begin{figure}[ht]
-\framebox[\textwidth]{\begin{minipage}{0.95\textwidth}
-\textbf{Algorithm:} Structural Depth Computation
-\begin{enumerate}
-\item \textbf{Input:} String $w = w_1w_2\ldots w_n$
-\item \textbf{Output:} Structural depth $d(w)$
-\item Initialize $dp[i][j] = 0$ for all $i \leq j$
-\item \textbf{for} $i = 1$ to $n$ \textbf{do}
+  \end{definition}
+  
+  \begin{definition}[Parsing Tree]
+  For a string $w \in \{0,1\}^*$, a parsing tree $T_w$ is a binary tree where:
+  \begin{itemize}
+  \item Each leaf is labeled with a symbol from $\{0,1\}$
+  \item Each internal node represents a structural composition
+  \item The concatenation of leaf labels in left-to-right order equals $w$
+  \end{itemize}
+  \end{definition}
+  
+  \subsection{Formal Structural Depth Definition}
+  
+  \begin{definition}[Formal Structural Depth]
+  For a string $w \in \{0,1\}^*$, the structural depth $d(w)$ is defined as:
+  $$d(w) = \min_{T_w} \text{depth}(T_w)$$
+  where the minimum is taken over all possible parsing trees $T_w$ for $w$.
+  
+  \textbf{Base cases:}
+  \begin{itemize}
+  \item $d(\varepsilon) = 0$ (empty string)
+  \item $d(0) = d(1) = 0$ (single symbols)
+  \end{itemize}
+  
+  \textbf{Recursive case:}
+  For $|w| > 1$, $d(w) = \min_{w=uv} \{1 + \max(d(u), d(v))\}$ where the minimum is taken over all binary partitions of $w$.
+  \end{definition}
+  
+  \begin{lemma}[Well-Definedness of Structural Depth]
+  The structural depth function $d: \{0,1\}^* \to \mathbb{N}$ is well-defined and computable.
+  \end{lemma}
+  
+  \begin{proof}
+  \textbf{Well-Definedness:}
   \begin{enumerate}
-  \item $dp[i][i] = 0$ \quad // Base case: single symbols
+  \item For strings of length $\leq 1$, $d(w)$ is explicitly defined
+  \item For longer strings, the minimum exists because:
+    \begin{itemize}
+    \item The set of possible partitions is finite (at most $n-1$ partitions for length $n$)
+    \item Each partition yields a finite depth value
+    \item The minimum of a finite set of natural numbers exists
+    \end{itemize}
   \end{enumerate}
-\item \textbf{for} $\text{len} = 2$ to $n$ \textbf{do}
+  
+  \textbf{Computability:}
+  We provide a dynamic programming algorithm. The algorithm is presented below.
+  
+  \textbf{Correctness:}
   \begin{enumerate}
-  \item \textbf{for} $i = 1$ to $n-\text{len}+1$ \textbf{do}
+  \item Base cases are handled correctly
+  \item For each substring $w[i:j]$, we try all possible binary partitions
+  \item The algorithm computes the minimum depth over all parsing trees
+  \item Time complexity: $O(n^3)$ due to three nested loops
+  \end{enumerate}
+  \end{proof}
+  
+  \begin{figure}[ht]
+  \framebox[\textwidth]{\begin{minipage}{0.95\textwidth}
+  \textbf{Algorithm:} Structural Depth Computation
+  \begin{enumerate}
+  \item \textbf{Input:} String $w = w_1w_2\ldots w_n$
+  \item \textbf{Output:} Structural depth $d(w)$
+  \item Initialize $dp[i][j] = 0$ for all $i \leq j$
+  \item \textbf{for} $i = 1$ to $n$ \textbf{do}
     \begin{enumerate}
-    \item $j = i + \text{len} - 1$
-    \item $dp[i][j] = \infty$
-    \item \textbf{for} $k = i$ to $j-1$ \textbf{do}
+    \item $dp[i][i] = 0$ \quad // Base case: single symbols
+    \end{enumerate}
+  \item \textbf{for} $\text{len} = 2$ to $n$ \textbf{do}
+    \begin{enumerate}
+    \item \textbf{for} $i = 1$ to $n-\text{len}+1$ \textbf{do}
       \begin{enumerate}
-      \item $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
+      \item $j = i + \text{len} - 1$
+      \item $dp[i][j] = \infty$
+      \item \textbf{for} $k = i$ to $j-1$ \textbf{do}
+        \begin{enumerate}
+        \item $dp[i][j] = \min(dp[i][j], 1 + \max(dp[i][k], dp[k+1][j]))$
+        \end{enumerate}
       \end{enumerate}
     \end{enumerate}
+  \item \textbf{return} $dp[1][n]$
   \end{enumerate}
-\item \textbf{return} $dp[1][n]$
-\end{enumerate}
-\end{minipage}}
-\end{figure}
-
-\section{Formal Definition of Psi-TM}
-
-\subsection{Basic Components}
-
-\begin{definition}[Psi-TM Alphabet]
-Let $\Sigma$ be a finite alphabet, $\Gamma = \Sigma \cup \{B\}$ be the extended alphabet, where $B$ is the blank symbol. The set of states $Q = Q_{std} \cup Q_{psi}$, where:
-\begin{itemize}
-\item $Q_{std}$ -- standard Turing machine states
-\item $Q_{psi}$ -- introspective states with limited access to structure
-\end{itemize}
-\end{definition}
-
-\begin{definition}[Psi-TM Configuration]
-A configuration $\mathcal{C}$ of a Psi-TM is a tuple:
-$$\mathcal{C} = (q, \alpha, \beta, \psi)$$
-where:
-\begin{itemize}
-\item $q \in Q$ -- current state
-\item $\alpha \in \Gamma^*$ -- tape content to the left of the head
-\item $\beta \in \Gamma^*$ -- tape content to the right of the head
-\item $\psi \in \Psi_k$ -- introspective state, where $\Psi_k$ is the set of introspective metadata of depth $\leq k$
-\end{itemize}
-\end{definition}
-
-\subsection{Formal Introspection Functions}
-
-\paragraph{Selectors as views over $\iota_k$.}
-All introspective access is via $y=\iota_k(\mathcal{C},n)$ and selectors $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, and $\mathrm{VIEW\_WIN}(y,d)$ applied to $\mathrm{decode}_k(y)$. Any legacy $\texttt{INT\_*}$ notation is an alias for a selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$.
-
-\subsection{Transition Function}
-
-\begin{definition}[Psi-TM Transition Function]
-The transition function $\delta: Q \times \Gamma \times \Psi_k \to Q \times \Gamma \times \{L, R, S\}$ is defined as:
-$$\delta(q, a, \psi) = (q', b, d)$$
-where:
-\begin{itemize}
-\item $q, q' \in Q$
-\item $a, b \in \Gamma$
-\item $d \in \{L, R, S\}$ -- head movement direction
-\item $\psi \in \Psi_k$ -- current introspective metadata
-\end{itemize}
-\end{definition}
-
-\subsection{Introspection Constraints}
-
-\begin{definition}[k-Limited Introspection]
-For a configuration $\mathcal{C}$ on an input of length $n$, a single introspection call yields the codeword $y=\iota_k(\mathcal{C},n)$. Its length is bounded by $B(k,n)$ and $\mathrm{decode}_k(y)$ exposes only depth-$\le k$ tags (Lemma~\ref{lem:one-step-budget}).
-\end{definition}
-
-\section{Information-Theoretic Limitations}
-
-\begin{lemma}[Selector indistinguishability at depth $k$]
-For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
-\end{lemma}
-
-\begin{proof}
-Immediate from Lemma~\ref{lem:selector-indistinguishability}. \qed
-\end{proof}
-
-\section{Basic Properties of Psi-TM}
-
-\subsection{Equivalence to Standard Turing Machines}
-
-\begin{theorem}[Computational Equivalence]
-For any standard Turing machine $M$, there exists an equivalent Psi-TM $M_{psi}$ with k-limited introspection, where $k = O(1)$.
-\end{theorem}
-
-\begin{proof}
-Let $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$ be a standard Turing machine.
-
-We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept}, q_{reject}, \iota_k)$ as follows:
-
-\begin{enumerate}
-\item $Q_{psi} = Q \cup Q_{psi}$, where $Q_{psi} = \emptyset$ initially
-\item No introspection is used (no calls to $\iota_k$)
-\item $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$
-\end{enumerate}
-
-\textbf{Simulation Verification:} 
-$M_{psi}$ simulates $M$ step-by-step because introspection is not used in standard states, and the transition function $\delta_{psi}$ reduces to $\delta$ when $\psi = \emptyset$.
-
-\textbf{Reverse Simulation:}
-Any Psi-TM can be simulated by a standard Turing machine by explicitly encoding introspective metadata in the state. The size of $\psi$ is bounded by $f(k) \cdot n = O(n)$ for constant $k$, so the simulation requires polynomial overhead.
-\end{proof}
-
-\subsection{Barrier status (conservative)}
-
-\begin{theorem}[Conservative barrier statements]
-There exist oracle-relative separations and partial/conditional results consistent with the barrier status in the barrier analysis section:
-\begin{enumerate}
-\item Oracle-relative: $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ for a suitable oracle $O_\Psi$ (Theorem~\ref{thm:diagonal})
-\item Partial/conditional: statements for natural proofs and proof complexity; algebraization open/conservative
-\end{enumerate}
-\end{theorem}
-
-\begin{proof}
-Consider the Structural Pattern Recognition (SPR) problem:
-
-\textbf{Definition of SPR:} 
-Given a string $w \in \{0,1\}^*$, determine if $d(w) \leq k$.
-
-\textbf{Standard TM Complexity:}
-For standard Turing machines, this problem requires $\Omega(n^k)$ time, as it is necessary to track $k$ levels of nesting by explicit computation.
-
-\textbf{Psi-TM Solution (selectors-only):}
-For Psi-TM with k-limited introspection, obtain $y=\iota_k(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_k(y)$ to read bounded-depth summaries; all accesses obey the budget in Lemma~\ref{lem:one-step-budget}.
-
-\textbf{Time Analysis:}
-\begin{enumerate}
-\item $\texttt{INT\_STRUCT(k)}(w)$ computation: $O(n^3)$ by the dynamic programming algorithm
-\item Pattern checking: $O(n)$ since $k = O(1)$
-\item Total time: $O(n^3)$
-\end{enumerate}
-
-Thus, SPR $\in \text{Psi-P}_k$ for Psi-TM, but requires $\Omega(n^k)$ time for standard Turing machines (under standard complexity assumptions).
-\end{proof}
-
-% Local copy of the diagonal separation theorem for standalone compilation
-\begin{theorem}[Diagonal Separation for Psi-TM]
-\label{thm:diagonal-1}
-There exists an oracle $O_\Psi$ such that $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$.
-\end{theorem}
-
-\subsection{Minimality of Introspection}
-
-\begin{theorem}[Minimality of Introspection]
-If Psi-TM introspection is limited to a constant $k = O(1)$, then the model preserves equivalence to standard Turing machines in computational power.
-\end{theorem}
-
-\begin{proof}
-Let $M_{psi}$ be a Psi-TM with k-limited introspection, where $k = O(1)$.
-
-We show that $M_{psi}$ can be simulated by a standard Turing machine $M$ with polynomial slowdown:
-
-\begin{enumerate}
-\item State of $M$ encodes: $(q, \alpha, \beta, \psi)$
-\item Size of $\psi$ is bounded by $f(k) \cdot n = O(n)$ for constant $k$
-\item Each introspection call $y=\iota_k(\mathcal{C},n)$ is computed explicitly in $O(n^3)$ time
-\item Each step of $M_{psi}$ is simulated in $O(n^3)$ steps of $M$
-\item Total simulation time: $O(T(n) \cdot n^3)$, where $T(n)$ is the running time of $M_{psi}$
-\end{enumerate}
-
-\textbf{Reverse Simulation:}
-Any standard Turing machine can be simulated by a Psi-TM with empty introspection without slowdown.
-
-This establishes polynomial-time equivalence between Psi-TM with constant introspection depth and standard Turing machines.
-\end{proof}
-
-\section{Complexity Classes}
-
-\begin{definition}[Psi-P Class]
-The class $\text{Psi-P}_k$ consists of languages recognizable by Psi-TM with k-limited introspection in polynomial time.
-\end{definition}
-
-\begin{definition}[Psi-NP Class]
-The class $\text{Psi-NP}_k$ consists of languages with polynomial-time verifiable certificates using Psi-TM with k-limited introspection.
-\end{definition}
-
-\begin{definition}[Psi-PSPACE Class]
-The class $\text{Psi-PSPACE}_k$ consists of languages recognizable by Psi-TM with k-limited introspection using polynomial space.
-\end{definition}
-
-\begin{theorem}[Class Hierarchy]
-For any $k_1 < k_2 = O(1)$:
-$$\text{Psi-P}_{k_1} \subseteq \text{Psi-P}_{k_2} \subseteq \text{PSPACE}$$
-$$\text{Psi-NP}_{k_1} \subseteq \text{Psi-NP}_{k_2} \subseteq \text{NPSPACE}$$
-$$\text{Psi-PSPACE}_{k_1} \subseteq \text{Psi-PSPACE}_{k_2} \subseteq \text{EXPSPACE}$$
-\end{theorem}
-
-\begin{proof}
-\textbf{Inclusion Proof:}
-Let $L \in \text{Psi-P}_{k_1}$. Then there exists a Psi-TM $M$ with $k_1$-limited introspection that recognizes $L$ in polynomial time.
-
-We construct a Psi-TM $M'$ with $k_2$-limited introspection:
-\begin{enumerate}
-\item $M'$ simulates $M$ step-by-step
-\item For each introspection call of $M$, $M'$ performs the same introspection
-\item Since $k_1 < k_2$, all introspection calls of $M$ are valid for $M'$
-\item Time complexity remains polynomial
-\end{enumerate}
-
-\textbf{PSPACE Inclusion:}
-Any Psi-TM with constant introspection depth can be simulated by a standard Turing machine with polynomial space overhead, as shown in the minimality theorem.
-
-The same arguments apply to NP and PSPACE classes.
-\end{proof}
-
-\section{Conclusion}
-
-The Psi-TM model represents a rigorous mathematical foundation for a minimal introspective computational model that:
-
-\begin{enumerate}
-\item Preserves equivalence to standard Turing machines
-\item Provides partial bypass of complexity barriers
-\item Minimizes introspection to constant depth
-\item Formally establishes structural depth as a computable property
-\item Provides explicit constructions for information-theoretic limitations
-\end{enumerate}
-
-This model opens new directions in computational complexity theory and formal automata theory.
-
-% End of included content
+  \end{minipage}}
+  \end{figure}
+  
+  \section{Formal Definition of Psi-TM}
+  
+  \subsection{Basic Components}
+  
+  \begin{definition}[Psi-TM Alphabet]
+  Let $\Sigma$ be a finite alphabet, $\Gamma = \Sigma \cup \{B\}$ be the extended alphabet, where $B$ is the blank symbol. The set of states $Q = Q_{std} \cup Q_{psi}$, where:
+  \begin{itemize}
+  \item $Q_{std}$ -- standard Turing machine states
+  \item $Q_{psi}$ -- introspective states with limited access to structure
+  \end{itemize}
+  \end{definition}
+  
+  \begin{definition}[Psi-TM Configuration]
+  A configuration $\mathcal{C}$ of a Psi-TM is a tuple:
+  $$\mathcal{C} = (q, \alpha, \beta, \psi)$$
+  where:
+  \begin{itemize}
+  \item $q \in Q$ -- current state
+  \item $\alpha \in \Gamma^*$ -- tape content to the left of the head
+  \item $\beta \in \Gamma^*$ -- tape content to the right of the head
+  \item $\psi \in \Psi_d$ -- introspective state, where $\Psi_d$ is the set of introspective metadata of depth $\leq d$
+  \end{itemize}
+  \end{definition}
+  
+  \subsection{Formal Introspection Functions}
+  
+  \paragraph{Selectors as views over $\iota_d$.}
+  All introspective access is via $y=\iota_d(\mathcal{C},n)$ and selectors $\mathrm{VIEW\_STATE}(y)$, $\mathrm{VIEW\_HEAD}(y)$, and $\mathrm{VIEW\_WIN}(y,d')$ applied to $\mathrm{decode}_d(y)$. Any legacy $\texttt{INT\_*}$ notation is an alias for a selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$.
+  
+  \subsection{Transition Function}
+  
+  \begin{definition}[Psi-TM Transition Function]
+  The transition function $\delta: Q \times \Gamma \times \Psi_d \to Q \times \Gamma \times \{L, R, S\}$ is defined as:
+  $$\delta(q, a, \psi) = (q', b, d)$$
+  where:
+  \begin{itemize}
+  \item $q, q' \in Q$
+  \item $a, b \in \Gamma$
+  \item $d \in \{L, R, S\}$ -- head movement direction
+  \item $\psi \in \Psi_d$ -- current introspective metadata
+  \end{itemize}
+  \end{definition}
+  
+  \subsection{Introspection Constraints}
+  
+  \begin{definition}[d-Limited Introspection]
+  For a configuration $\mathcal{C}$ on an input of length $n$, a single introspection call yields the codeword $y=\iota_d(\mathcal{C},n)$. Its length is bounded by $\B(d,n)$ and $\mathrm{decode}_d(y)$ exposes only depth-$\le d$ tags (Lemma~\ref{lem:one-step-budget}).
+  \end{definition}
+  
+\subsection{Introspection Interface \texorpdfstring{$\iota_j$}{iota-j} (Model Freeze)}
+\label{sec:model-freeze}
+  
+  \begin{table}[t]
+  \centering
+\caption{Interface specification for $\iota_j$ (single source of truth). Complete definition of inputs, outputs, per-step bit budget $B(d,n) = c \cdot d \cdot \log n$, call placement constraints, and transcript accounting. All lemmas and theorems reference this specification rather than duplicating it.}
+  \label{tab:iota-spec}
+  \begin{tabular}{@{}ll@{}}
+  \toprule
+  Field & Specification \\
+  \midrule
+  Depth index & $j \in \{1,\ldots,d\}$ \\
+  Per-step bit budget & $\B(d,n) = c \cdot d \cdot \log n$ with fixed $c \ge 1$ \\
+  Call policy & Exactly once per computation step; payload injected into $\delta$ that step \\
+  Inputs & Current state and allowed local view; no advice; no randomness \\
+  Output payload & Bitstring $y \in \{0,1\}^{\le \B(d,n)}$ \\
+Transcript accounting & Over $T$ steps: at most $T \cdot \B(d,n)$ bits exposed via $\iota$; at most $2^{T \cdot \B(d,n)}$ distinct transcripts \\
+  \bottomrule
+  \end{tabular}
+  \end{table}
+  
+  \begin{remark}[Depth notation]\label{rem:depth-notation}
+We use $d$ as the global depth bound. Interface indexes are $j\in\{1,\dots,d\}$, and the per-step budget is $\B(d,n)=c\cdot d\cdot \log n$ with fixed $c\ge 1$.
+  \end{remark}
+  
+  \begin{definition}[Iota injection into the transition]\label{def:iota-injection}
+  Let $\mathcal{C}_t$ be the configuration at step $t$. Exactly once per step, the machine obtains a payload $y_t = \iota_j(\mathcal{C}_t, n) \in \{0,1\}^{\le \B(d,n)}$ and passes it as an auxiliary argument to the transition:
+  \[
+  (q_{t+1}, s_{t+1}) \;=\; \delta\bigl(q_t, s_t, x_t;\, y_t\bigr).
+  \]
+  Transcript accounting therefore sums to at most $T \cdot \B(d,n)$ bits over $T$ steps.
+  \end{definition}
+  
+  % (i) Table~\ref{tab:iota-spec} is the single source of truth for \iota;
+  % (ii) all \iota-using results state the restricted regime and cite the table;
+  % (iii) Model Freeze (\S\ref{sec:model-freeze}) precedes all references; no 'Section ??' remains.
+  
+  \paragraph{Restricted Regime.}
+  Unless stated otherwise, all results in v0.8 assume: deterministic; single pass over input; no advice; no randomness.
+  We refer to Table~\ref{tab:iota-spec} whenever $\iota_j$ is used and write $\B(d,n)$ as specified above.
+  
+  \section{Information-Theoretic Limitations}
+  
+  \begin{lemma}[Selector indistinguishability at depth $d$]
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+  For any $d$, there exist inputs $x,x'$ with structural depths $d$ and $d{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
+  \end{lemma}
+  
+  \begin{proof}
+We provide a self-contained derivation using the Budget Lemma (transcript bound $2^{T \cdot \B(d,n)}$) under the restricted regime.
+  
+  \textbf{Key insight:} For inputs $x,x'$ with structural depths $d$ and $d+1$, the depth-$d$ projection is identical, so selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ return identical values.
+  
+\textbf{Formal derivation:} By the Budget Lemma, each $\iota_d$ call has at most $2^{\B(d,n)}$ outcomes. Over $T$ steps, there are at most $2^{T \cdot \B(d,n)}$ outcome sequences. Since $T \cdot \B(d,n) \ge \log M$ where $M$ is the number of distinct selector outputs, the machine cannot distinguish between inputs that agree on depth-$d$ features.
+  
+  Therefore, for any $d$, there exist inputs with depths $d$ and $d+1$ that are indistinguishable by depth-$d$ introspection.
+  \end{proof}
+  
+  \section{Basic Properties of Psi-TM}
+  
+  \subsection{Equivalence to Standard Turing Machines}
+  
+  \begin{theorem}[Computational Equivalence]
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+  For any standard Turing machine $M$, there exists an equivalent Psi-TM $M_{psi}$ with d-limited introspection, where $d = O(1)$.
+  \end{theorem}
+  
+  \begin{proof}
+  Let $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$ be a standard Turing machine.
+  
+  We construct $M_{psi} = (Q_{psi}, \Sigma, \Gamma, \delta_{psi}, q_0, q_{accept}, q_{reject}, \iota_d)$ as follows:
+  
+  \begin{enumerate}
+  \item $Q_{psi} = Q \cup Q_{psi}$, where $Q_{psi} = \emptyset$ initially
+  \item No introspection is used (no calls to $\iota_d$)
+  \item $\delta_{psi}(q, a, \emptyset) = \delta(q, a)$ for all $q \in Q_{std}$
+  \end{enumerate}
+  
+  \textbf{Simulation Verification:} 
+  $M_{psi}$ simulates $M$ step-by-step because introspection is not used in standard states, and the transition function $\delta_{psi}$ reduces to $\delta$ when $\psi = \emptyset$.
+  
+  \textbf{Reverse Simulation:}
+  Any Psi-TM can be simulated by a standard Turing machine by explicitly encoding introspective metadata in the state. The size of $\psi$ is bounded by $f(d) \cdot n = O(n)$ for constant $d$, so the simulation requires polynomial overhead.
+  \end{proof}
+  
+  \subsection{Barrier status (conservative)}
+  
+  \begin{theorem}[Conservative barrier statements]
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+  There exist oracle-relative separations and partial/conditional results consistent with the barrier status in the barrier analysis section:
+  \begin{enumerate}
+\item Oracle-relative: $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$ for a suitable oracle $O_\Psi$ (Theorem~\ref{thm:diagonal-1})
+  \item Partial/conditional: statements for natural proofs and proof complexity; algebraization open/conservative
+  \end{enumerate}
+  \end{theorem}
+  
+  \begin{proof}
+  Consider the Structural Pattern Recognition (SPR) problem:
+  
+  \textbf{Definition of SPR:} 
+  Given a string $w \in \{0,1\}^*$, determine if $d(w) \leq d$.
+  
+  \textbf{Standard TM Complexity:}
+  For standard Turing machines, this requires $\Omega(n^d)$ time, as it is necessary to track $d$ levels of nesting by explicit computation.
+  
+  \textbf{Psi-TM Solution (selectors-only):}
+  For Psi-TM with d-limited introspection, obtain $y=\iota_d(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_d(y)$ to read bounded-depth summaries; all accesses obey the budget in Lemma~\ref{lem:one-step-budget}.
+  
+  \textbf{Time Analysis:}
+  \begin{enumerate}
+  \item $\texttt{INT\_STRUCT(d)}(w)$ computation: $O(n^3)$ by the dynamic programming algorithm
+  \item Pattern checking: $O(n)$ since $d = O(1)$
+  \item Total time: $O(n^3)$
+  \end{enumerate}
+  
+  Thus, SPR $\in \text{Psi-P}_d$ for Psi-TM, but requires $\Omega(n^d)$ time for standard Turing machines (under standard complexity assumptions).
+  \end{proof}
+  
+  % Local copy of the diagonal separation theorem for standalone compilation
+  \begin{theorem}[Diagonal Separation for Psi-TM]
+  \label{thm:diagonal-1}
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+  There exists an oracle $O_\Psi$ such that $P^{O_\Psi}_\Psi \neq NP^{O_\Psi}_\Psi$.
+  \end{theorem}
+  
+  \subsection{Minimality of Introspection}
+  
+  \begin{theorem}[Minimality of Introspection]
+  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
+  If Psi-TM introspection is limited to a constant $d = O(1)$, then the model preserves equivalence to standard Turing machines in computational power.
+  \end{theorem}
+  
+  \begin{proof}
+  Let $M_{psi}$ be a Psi-TM with d-limited introspection, where $d = O(1)$.
+  
+  We show that $M_{psi}$ can be simulated by a standard Turing machine $M$ with polynomial slowdown:
+  
+  \begin{enumerate}
+  \item State of $M$ encodes: $(q, \alpha, \beta, \psi)$
+  \item Size of $\psi$ is bounded by $f(d) \cdot n = O(n)$ for constant $d$
+  \item Each introspection call $y=\iota_d(\mathcal{C},n)$ is computed explicitly in $O(n^3)$ time
+  \item Each step of $M_{psi}$ is simulated in $O(n^3)$ steps of $M$
+  \item Total simulation time: $O(T(n) \cdot n^3)$, where $T(n)$ is the running time of $M_{psi}$
+  \end{enumerate}
+  
+  \textbf{Reverse Simulation:}
+  Any standard Turing machine can be simulated by a Psi-TM with empty introspection without slowdown.
+  
+  This establishes polynomial-time equivalence between Psi-TM with constant introspection depth and standard Turing machines.
+  \end{proof}
+  
+  \section{Complexity Classes}
+  
+  \begin{definition}[Psi-P Class]
+  The class $\text{Psi-P}_d$ consists of languages recognizable by Psi-TM with d-limited introspection in polynomial time.
+  \end{definition}
+  
+  \begin{definition}[Psi-NP Class]
+  The class $\text{Psi-NP}_d$ consists of languages with polynomial-time verifiable certificates using Psi-TM with d-limited introspection.
+  \end{definition}
+  
+  \begin{definition}[Psi-PSPACE Class]
+  The class $\text{Psi-PSPACE}_d$ consists of languages recognizable by Psi-TM with d-limited introspection using polynomial space.
+  \end{definition}
+  
+  \begin{theorem}[Class Hierarchy]
+  For any $d_1 < d_2 = O(1)$:
+  $$\text{Psi-P}_{d_1} \subseteq \text{Psi-P}_{d_2} \subseteq \text{PSPACE}$$
+  $$\text{Psi-NP}_{d_1} \subseteq \text{Psi-NP}_{d_2} \subseteq \text{NPSPACE}$$
+  $$\text{Psi-PSPACE}_{d_1} \subseteq \text{Psi-PSPACE}_{d_2} \subseteq \text{EXPSPACE}$$
+  \end{theorem}
+  
+  \begin{proof}
+  \textbf{Inclusion Proof:}
+  Let $L \in \text{Psi-P}_{d_1}$. Then there exists a Psi-TM $M$ with $d_1$-limited introspection that recognizes $L$ in polynomial time.
+  
+  We construct a Psi-TM $M'$ with $d_2$-limited introspection:
+  \begin{enumerate}
+  \item $M'$ simulates $M$ step-by-step
+  \item For each introspection call of $M$, $M'$ performs the same introspection
+  \item Since $d_1 < d_2$, all introspection calls of $M$ are valid for $M'$
+  \item Time complexity remains polynomial
+  \end{enumerate}
+  
+  \textbf{PSPACE Inclusion:}
+  Any Psi-TM with constant introspection depth can be simulated by a standard Turing machine with polynomial space overhead, as shown in the minimality theorem.
+  
+  The same arguments apply to NP and PSPACE classes.
+  \end{proof}
+  
+  \section{Summary and Outlook}
+  
+  The Psi-TM model represents a rigorous mathematical foundation for a minimal introspective computational model that:
+  
+  \begin{enumerate}
+  \item Preserves equivalence to standard Turing machines
+  \item Provides partial bypass of complexity barriers
+  \item Minimizes introspection to constant depth
+  \item Formally establishes structural depth as a computable property
+  \item Provides explicit constructions for information-theoretic limitations
+  \end{enumerate}
+  
+  This model opens new directions in computational complexity theory and formal automata theory.
+  
+  % End of included content
