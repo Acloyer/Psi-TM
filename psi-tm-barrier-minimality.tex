@@ -62,7 +62,7 @@ We construct a Psi-TM with introspection depth $d = 1$ that can bypass the relat
 Consider the language $L_{rel} = \{w \in \{0,1\}^* \mid \text{structural depth } d(w) = 1\}$.
 
 \textbf{Standard TM Limitation:}
-For any oracle $A$, standard Turing machines cannot solve $L_{rel}$ in polynomial time because the problem relativizes.
+For any oracle $A$, standard Turing machines are not known to solve $L_{rel}$ in polynomial time; conservatively (oracle-relative), such problems remain hard when the separation relativizes.
 
 \textbf{Psi-TM Solution:}
 A Psi-TM with introspection depth $d = 1$ uses one call $y=\iota_1(\mathcal{C},n)$ and selectors over $\mathrm{decode}_1(y)$ to extract the needed bounded-depth summary, respecting the per-step budget $\B(1,n)$ (Lemma~\ref{lem:one-step-budget}).
@@ -97,7 +97,7 @@ L_{nat} = \{w \in \{0,1\}^* \mid &\text{$w$ has depth-2 structural patterns} \no
 \end{align}
 
 \textbf{Standard TM Limitation:}
-Standard Turing machines cannot solve $L_{nat}$ efficiently because the problem is protected by the natural proofs barrier.
+Standard Turing machines are believed not to solve $L_{nat}$ efficiently; this is a conservative/heuristic statement grounded in the natural proofs barrier.
 
 \textbf{Psi-TM Solution:}
 A Psi-TM with introspection depth $d = 2$ performs calls to $\iota_2(\mathcal{C},n)$ and uses selectors over $\mathrm{decode}_2(y)$ to obtain depth-2 summaries; per call outcomes are bounded by $2^{\B(2,n)}$ (Lemma~\ref{lem:one-step-budget}).
@@ -132,7 +132,7 @@ L_{proof} = \{w \in \{0,1\}^* \mid &\text{$w$ encodes a valid proof} \nonumber \
 \end{align}
 
 \textbf{Standard TM Limitation:}
-Standard Turing machines cannot efficiently verify proofs in $L_{proof}$ because the problem is protected by the proof complexity barrier.
+Standard Turing machines are believed not to efficiently verify proofs in $L_{proof}$; this reflects conservative expectations from proof complexity barriers.
 
 \textbf{Psi-TM Solution:}
 A Psi-TM with introspection depth $d = 2$ uses selectors over $\mathrm{decode}_2(\iota_2(\mathcal{C},n))$ to extract bounded-depth summaries for verification, with per-step outcomes bounded by $2^{\B(2,n)}$ (Lemma~\ref{lem:one-step-budget}).
@@ -167,7 +167,7 @@ L_{alg} = \{w \in \{0,1\}^* \mid &\text{$w$ encodes an algebraic structure} \non
 \end{align}
 
 \textbf{Standard TM Limitation:}
-Standard Turing machines cannot efficiently solve $L_{alg}$ because the problem is protected by the algebraization barrier.
+Standard Turing machines are believed not to efficiently solve $L_{alg}$; this is a conservative statement aligned with algebraization barriers.
 
 \textbf{Psi-TM Solution:}
 A Psi-TM with introspection depth $d = 3$ uses selectors over $\mathrm{decode}_3(\iota_3(\mathcal{C},n))$; per-step outcomes are bounded by $2^{\B(3,n)}$ (Lemma~\ref{lem:one-step-budget}).
@@ -252,7 +252,7 @@ Use the algebraization-bypassing language $L_{alg}$ to separate $\text{Psi-P}_3$
 Each separation follows from the corresponding barrier bypass capability and the impossibility of standard Turing machines solving these problems.
 \end{proof}
 
-\section{Summary and Outlook}
+\section{Outlook — Barriers}
 
 This work establishes the minimal introspection requirements for bypassing classical complexity barriers:
 
