@@ -19,6 +19,7 @@
 \usepackage{xcolor}            % Custom colors
 \usepackage{cleveref}          % Custom cross-referencing
 \usepackage{tikz}              % TikZ graphics
+\usetikzlibrary{positioning,calc}
 \usepackage{tikz-cd}          % Commutative diagrams
 \usepackage{pgfplots}         % Plotting package
 \pgfplotsset{compat=1.18}
@@ -26,6 +27,10 @@
 \usepackage[utf8]{inputenc}   % UTF-8 input encoding
 \usepackage[T1]{fontenc}      % T1 font encoding
 \usepackage[numbers]{natbib}
+
+% By default, all logarithms are base 2 (avoid recursion)
+\let\oldlog\log
+\renewcommand{\log}{\oldlog_2}
 
 \geometry{margin=2.5cm}
 \setlength{\emergencystretch}{3em}
@@ -79,10 +84,16 @@ We analyze minimal introspection requirements ($d=1,2,3$) with oracle-relative s
 \tableofcontents
 \newpage
 
+% Notation convention (explicit): by default, all logarithms are base 2
+\begin{remark}[Notation]
+By default, $\log$ denotes base-2 logarithm.
+\end{remark}
+
 \section{Roadmap}\label{sec:roadmap}
 This paper is organized to first freeze the model and the $\iota$ interface, then present lower-bound tools, hierarchy results, and conservative barrier statements. For a high-level overview and acceptance criteria, see README.md.
 
 \input{psi-tm-formal-definition}
+\input{psi-tm-lower-bound-tools}
 \input{psi-tm-barrier-minimality}
 \input{psi-tm-k-hierarchy}
 \input{psi-tm-stoc-focs}
