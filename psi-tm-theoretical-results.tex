@@ -1,11 +1,5 @@
 % File content starts here - NO preamble
-
-% Local copy of the one-step information budget lemma for standalone compilation
-\begin{lemma}[One-Step Information Budget and Counting]
-\label{lem:one-step-budget-2}
-Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\iota_d$ returns an output $y\in\{0,1\}^{\le \B(d,n)}$ and hence at most $\B(d,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{\B(d,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t \cdot \B(d,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t \cdot \B(d,n)}$.
-\end{lemma}
+% [Duplicate one-step budget lemma removed; cite Lemma~\ref{lemma:budget-9-2} (Budget Lemma) and Table~\ref{tab:iota-spec} instead]
 
 \section{Formal Definitions and Preliminaries}
 
@@ -31,13 +25,10 @@ $$\mathcal{I}_d(w) = \min\{|d| : d \text{ describes } P_d(w)\}$$
 
 \section{Information-Theoretic Limitations}
 
-\begin{lemma}[Selector indistinguishability at depth $d$]
-Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-For any $d$, there exist inputs $x,x'$ with structural depths $d$ and $d{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
-\end{lemma}
+% [Duplicate selector indistinguishability lemma removed; see Lemma~\ref{lemma:selector-indist}]
 
-\begin{proof}
-We construct explicit examples for each $d \geq 1$.
+\begin{proof}[Sketch via Lemma~\ref{lemma:selector-indist}]
+We recall explicit examples for each $d \geq 1$.
 
 \textbf{Construction for d = 1:}
 Let $w_1 = 0011$ and $w_2 = 01$.
@@ -46,7 +37,7 @@ Let $w_1 = 0011$ and $w_2 = 01$.
 \begin{enumerate}
 \item $d(w_1) = 2$: The optimal parsing tree has structure $((0)(0))((1)(1))$ with depth 2
 \item $d(w_2) = 1$: The optimal parsing tree has structure $(0)(1)$ with depth 1
-\item All depth-$\le 1$ structural features coincide, so selectors over $\mathrm{decode}_1(\iota_1(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
+\item All depth-$\le 1$ structural features coincide, so selectors over $\mathrm{decode}_1(\iota_1(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (by Lemma~\ref{lemma:budget-9-2} (Budget Lemma) and Table~\ref{tab:iota-spec})
 \end{enumerate}
 
 \textbf{General Construction for d \ensuremath{\geq} 2:}
@@ -64,7 +55,7 @@ Let $w_1 = P_{d+1}$ and $w_2 = P_d$.
 \item $d(w_1) = d+1$ by construction
 \item $d(w_2) = d$ by construction
 \item Both strings have identical depth-$d$ structural features
-\item Therefore, all selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (Lemma~\ref{lem:one-step-budget})
+\item Therefore, all selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ return identical values on $w_1$ and $w_2$ (by Lemma~\ref{lemma:budget-9-2} (Budget Lemma) and Table~\ref{tab:iota-spec})
 \end{enumerate}
 \end{proof}
 
@@ -136,7 +127,7 @@ For standard Turing machines, this requires $\Omega(n^2)$ time to track nesting 
 For a depth-1 Psi-TM, in each step obtain $y=\iota_1(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_1(y)$ to read a bounded-depth window summary and head position. Check balance and that the structural depth is $\le 1$ using these selectors.
 
 \textbf{Budget accounting:}
-Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget-2}).
+Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (by Lemma~\ref{lemma:budget-9-2}).
 
 \textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(1,n) = O(n) \cdot c \cdot 1 \cdot \log n = O(n \log n) \ge \log M$ where $M$ is the number of distinct selector outputs. This ensures the machine has sufficient information budget to distinguish between valid and invalid inputs.
 
@@ -221,7 +212,7 @@ For standard Turing machines, this requires $\Omega(n^2)$ time to track all poss
 For a depth-$d$ Psi-TM, in each relevant step obtain $y=\iota_d(\mathcal{C},n)$ and use $\mathrm{VIEW\_WIN}(y,d')$ for $d'\le d$ to enumerate matching pairs at depth $\le d$.
 
 \textbf{Budget accounting:}
-Each $\iota_d$ call has at most $2^{\B(d,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t \cdot \B(d,n)}$ sequences (Lemma~\ref{lem:one-step-budget-2}).
+Each $\iota_d$ call has at most $2^{\B(d,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t \cdot \B(d,n)}$ sequences (by Lemma~\ref{lemma:budget-9-2}).
 
 \textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(d,n) = \mathrm{poly}(n) \cdot c \cdot d \cdot \log n = \mathrm{poly}(n) \ge \log M$ where $M$ is the number of distinct selector outputs. This ensures sufficient information budget for pattern matching at depth $\le d$.
 
@@ -251,7 +242,7 @@ For standard Turing machines, this requires $\Omega(n^2)$ space to store interme
 For a depth-$d$ Psi-TM, obtain $y=\iota_d(\mathcal{C},n)$ on demand and use selectors over $\mathrm{decode}_d(y)$ to read the required bounded-depth summaries without storing full intermediate structures.
 
 \textbf{Budget accounting:}
-Selectors expose at most $\B(d,n)$ bits per call by Lemma~\ref{lem:one-step-budget}; thus space needed for introspective data per step is $O(\B(d,n))$.
+Selectors expose at most $\B(d,n)$ bits per call by Lemma~\ref{lemma:budget-9-2}; thus space needed for introspective data per step is $O(\B(d,n))$.
 
 \textbf{Formal derivation:} By the Budget Lemma, each selector call exposes at most $\B(d,n) = c \cdot d \cdot \log n = O(\log n)$ bits. Over $T$ steps, total space is $O(T \cdot \log n) = O(n \log n) \ll O(n^2)$, enabling space-efficient analysis.
 

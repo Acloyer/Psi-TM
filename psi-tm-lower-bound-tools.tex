@@ -10,7 +10,7 @@ All results in this section assume the \textbf{restricted regime}: deterministic
 These three fundamental tools constitute the core methodology for establishing lower bounds in the restricted regime. The Budget Lemma provides a basic counting argument for transcript limitations. The $\Psi$-Fooling Bound extends this to worst-case distinguishability, while the $\Psi$-Fano Bound handles average-case scenarios with error tolerance. Together, they form the foundation for proving separations in subsequent target languages (v0.8.3--v0.8.4).
 
 \begin{lemma}[Budget Lemma]
-\label{lem:budget}
+\label{lem:budget}\label{Lk:budget-lemma}\label{lemma:budget-9-2}
 Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
 For any Psi-TM with introspection depth $d \geq 1$, running for $T \geq 1$ steps on input of length $n \geq 1$, where the introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) exposes at most $B(d,n) = c \cdot d \cdot \log n$ bits per step with fixed parameter $c \geq 1$:
 \begin{equation}
@@ -42,12 +42,18 @@ T \;\geq\; \left\lceil \frac{\log M}{B(d,n)} \right\rceil
 \end{equation}
 \end{lemma}
 
+% Alias as a theorem to standardize cross-references used across sections
+\begin{theorem}[\(\Psi\)-Fooling Bound]
+\label{thm:psi-fooling}\label{Lk:psi-fooling}
+The statement is identical to Lemma~\ref{lem:psi-fooling} with the same preconditions and conclusion $T\ge \lceil \log M / B(d,n)\rceil$.
+\end{theorem}
+
 \begin{proof}[Proof sketch]
 By Lemma~\ref{lem:budget}, after $T$ steps there are at most $2^{T \cdot B(d,n)}$ distinct transcripts. To distinguish $M$ inputs in the fooling set, require $2^{T \cdot B(d,n)} \ge M$, hence $T \cdot B(d,n) \ge \log M$ and the bound follows by ceiling. Classical fooling arguments use unlimited communication; here the channel capacity is bounded by $B(d,n)$ bits per step.
 \end{proof}
 
 \begin{lemma}[\(\Psi\)-Fano Bound]
-\label{lem:psi-fano}
+\label{lem:psi-fano}\label{Lk:psi-fano}
 Assumes the restricted regime and uses Table~\ref{tab:iota-spec}.
 For any Psi-TM with introspection depth $\leq d$, input length $n \geq 1$, running time $T \geq 1$, input distribution over $M \geq 2$ outcomes, and error probability $0 < \varepsilon < 1 - 1/M$, where introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) provides channel capacity $T \cdot B(d,n)$ bits with $B(d,n) = c \cdot d \cdot \log n$:
 \begin{equation}
@@ -149,7 +155,7 @@ The Fano bound trades input complexity for error tolerance, typically yielding w
 \end{minipage}
 \end{remark}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Summary of Lower-Bound Tools (assumes restricted regime \& Table~\ref{tab:iota-spec} budget)}
 \label{tab:lower-bound-summary}
@@ -239,5 +245,6 @@ These information-theoretic bounds enable the separation proofs in Section~\ref{
 \label{eq:lk-preview}
 T(n) = \Omega\!\left(\frac{\alpha \cdot n/k}{(k-1) \cdot \log n}\right) = \Omega\!\left(\frac{n}{k(k-1)\log n}\right)
 \end{equation}
+In this overview bound, constants $\alpha,c$ are absorbed into $\Omega(\cdot)$ for readability.
 by applying equation~\eqref{eq:fooling-bound} at depth $k{-}1$. The upper bound construction achieves $O(n)$ time at depth $k$ through sequential table lookups, establishing the strict separation $L_k \in \text{Psi-P}_k \setminus \text{Psi-P}_{k-1}$.
 

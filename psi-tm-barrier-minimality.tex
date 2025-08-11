@@ -1,11 +1,6 @@
 % File content starts here - NO preamble
 
-% Local copy of the one-step information budget lemma for standalone compilation
-\begin{lemma}[One-Step Information Budget and Counting]
-\label{lem:one-step-budget-3}
-Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\iota_d$ returns an output $y\in\{0,1\}^{\le \B(d,n)}$ and hence at most $\B(d,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{\B(d,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t \cdot \B(d,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t \cdot \B(d,n)}$.
-\end{lemma}
+% [Duplicate one-step budget lemma removed; cite Lemma~\ref{lemma:budget-9-2} (Budget Lemma) and Table~\ref{tab:iota-spec} instead]
 
 \section{Related Work}
 
@@ -39,7 +34,7 @@ A complexity class separation algebrizes if it holds relative to any low-degree 
 \subsection{Psi-TM barrier status}
 
 \begin{definition}[Barrier status (conservative)]
-Psi-TM with introspection depth $k$ is said to make progress against a barrier if there is an oracle-relative separation or a partial/conditional statement consistent with selectors-only semantics and the information budget (Lemma~\ref{lem:one-step-budget}).
+Psi-TM with introspection depth $k$ is said to make progress against a barrier if there is an oracle-relative separation or a partial/conditional statement consistent with selectors-only semantics and the information budget (Lemma~\ref{lemma:budget-9-2}).
 \end{definition}
 
 \section{Relativization Barrier: k >= 1}
@@ -65,10 +60,10 @@ Consider the language $L_{rel} = \{w \in \{0,1\}^* \mid \text{structural depth }
 For any oracle $A$, standard Turing machines are not known to solve $L_{rel}$ in polynomial time; conservatively (oracle-relative), such problems remain hard when the separation relativizes.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $d = 1$ uses one call $y=\iota_1(\mathcal{C},n)$ and selectors over $\mathrm{decode}_1(y)$ to extract the needed bounded-depth summary, respecting the per-step budget $\B(1,n)$ (Lemma~\ref{lem:one-step-budget}).
+A Psi-TM with introspection depth $d = 1$ uses one call $y=\iota_1(\mathcal{C},n)$ and selectors over $\mathrm{decode}_1(y)$ to extract the needed bounded-depth summary, respecting the per-step budget $\B(1,n)$ (Lemma~\ref{lemma:budget-9-2}).
 
 \textbf{Budget accounting:}
-Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
+Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (Lemma~\ref{lemma:budget-9-2}).
 
 This establishes that introspection depth $k = 1$ is both necessary and sufficient to bypass the relativization barrier.
 \end{proof}
@@ -100,10 +95,10 @@ L_{nat} = \{w \in \{0,1\}^* \mid &\text{$w$ has depth-2 structural patterns} \no
 Standard Turing machines are believed not to solve $L_{nat}$ efficiently; this is a conservative/heuristic statement grounded in the natural proofs barrier.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $d = 2$ performs calls to $\iota_2(\mathcal{C},n)$ and uses selectors over $\mathrm{decode}_2(y)$ to obtain depth-2 summaries; per call outcomes are bounded by $2^{\B(2,n)}$ (Lemma~\ref{lem:one-step-budget}).
+A Psi-TM with introspection depth $d = 2$ performs calls to $\iota_2(\mathcal{C},n)$ and uses selectors over $\mathrm{decode}_2(y)$ to obtain depth-2 summaries; per call outcomes are bounded by $2^{\B(2,n)}$ (Lemma~\ref{lemma:budget-9-2}).
 
 \textbf{Budget accounting:}
-Each call to $\iota_2$ has at most $2^{\B(2,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\cdot\B(2,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
+Each call to $\iota_2$ has at most $2^{\B(2,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\cdot\B(2,n)}$ outcome sequences (Lemma~\ref{lemma:budget-9-2}).
 
 This establishes that introspection depth $k = 2$ is both necessary and sufficient to bypass the natural proofs barrier.
 \end{proof}
@@ -135,10 +130,10 @@ L_{proof} = \{w \in \{0,1\}^* \mid &\text{$w$ encodes a valid proof} \nonumber \
 Standard Turing machines are believed not to efficiently verify proofs in $L_{proof}$; this reflects conservative expectations from proof complexity barriers.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $d = 2$ uses selectors over $\mathrm{decode}_2(\iota_2(\mathcal{C},n))$ to extract bounded-depth summaries for verification, with per-step outcomes bounded by $2^{\B(2,n)}$ (Lemma~\ref{lem:one-step-budget}).
+A Psi-TM with introspection depth $d = 2$ uses selectors over $\mathrm{decode}_2(\iota_2(\mathcal{C},n))$ to extract bounded-depth summaries for verification, with per-step outcomes bounded by $2^{\B(2,n)}$ (Lemma~\ref{lemma:budget-9-2}).
 
 \textbf{Budget accounting:}
-Each call to $\iota_2$ has at most $2^{\B(2,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\cdot\B(2,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
+Each call to $\iota_2$ has at most $2^{\B(2,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\cdot\B(2,n)}$ outcome sequences (Lemma~\ref{lemma:budget-9-2}).
 
 This establishes that introspection depth $k = 2$ is both necessary and sufficient to bypass the proof complexity barrier.
 \end{proof}
@@ -170,10 +165,10 @@ L_{alg} = \{w \in \{0,1\}^* \mid &\text{$w$ encodes an algebraic structure} \non
 Standard Turing machines are believed not to efficiently solve $L_{alg}$; this is a conservative statement aligned with algebraization barriers.
 
 \textbf{Psi-TM Solution:}
-A Psi-TM with introspection depth $d = 3$ uses selectors over $\mathrm{decode}_3(\iota_3(\mathcal{C},n))$; per-step outcomes are bounded by $2^{\B(3,n)}$ (Lemma~\ref{lem:one-step-budget}).
+A Psi-TM with introspection depth $d = 3$ uses selectors over $\mathrm{decode}_3(\iota_3(\mathcal{C},n))$; per-step outcomes are bounded by $2^{\B(3,n)}$ (Lemma~\ref{lemma:budget-9-2}).
 
 \textbf{Budget accounting:}
-Each call to $\iota_3$ has at most $2^{\B(3,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\cdot\B(3,n)}$ outcome sequences (Lemma~\ref{lem:one-step-budget}).
+Each call to $\iota_3$ has at most $2^{\B(3,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t\cdot\B(3,n)}$ outcome sequences (Lemma~\ref{lemma:budget-9-2}).
 
 This establishes that introspection depth $k = 3$ is both necessary and sufficient to bypass the algebraization barrier.
 \end{proof}

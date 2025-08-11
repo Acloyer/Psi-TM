@@ -1,18 +1,7 @@
 % File content starts here - NO preamble
-
-% Local copy of the one-step information budget lemma for standalone compilation
-\begin{lemma}[One-Step Information Budget and Counting]
-  \label{lem:one-step-budget}
-  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\iota_d$ returns an output $y\in\{0,1\}^{\le \B(d,n)}$ and hence at most $\B(d,n)$ fresh bits of introspective information. In particular, the set of possible outcomes of one call has cardinality at most $2^{\B(d,n)}$. Moreover, across $t$ computation steps and any adaptive strategy, the cumulative fresh introspective information is at most $t \cdot \B(d,n)$, and the number of possible length-$t$ outcome sequences is at most $2^{t \cdot \B(d,n)}$.
-  \end{lemma}
+% [Duplicate one-step budget lemma removed; cite Lemma~\ref{lemma:budget-9-2} (Budget Lemma) and Table~\ref{tab:iota-spec} instead]
   
-  % Local copy of selector indistinguishability lemma for standalone compilation
-  \begin{lemma}[Selector indistinguishability at depth d]
-  \label{lem:selector-indistinguishability}
-  Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-  For any $d$, there exist inputs $x,x'$ with structural depths $d$ and $d+1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
-  \end{lemma}
+  % [Duplicate selector indistinguishability lemma removed; see Lemma~\ref{lemma:selector-indist}]
   
   \section{Introduction}\label{sec:introduction}
   
@@ -162,7 +151,7 @@ For any input $x\in\{0,1\}^n$ and any Psi-TM of depth $d$, a single call to $\io
   \subsection{Introspection Constraints}
   
   \begin{definition}[d-Limited Introspection]
-  For a configuration $\mathcal{C}$ on an input of length $n$, a single introspection call yields the codeword $y=\iota_d(\mathcal{C},n)$. Its length is bounded by $\B(d,n)$ and $\mathrm{decode}_d(y)$ exposes only depth-$\le d$ tags (Lemma~\ref{lem:one-step-budget}).
+  For a configuration $\mathcal{C}$ on an input of length $n$, a single introspection call yields the codeword $y=\iota_d(\mathcal{C},n)$. Its length is bounded by $\B(d,n)$ and $\mathrm{decode}_d(y)$ exposes only depth-$\le d$ tags (Lemma~\ref{lemma:budget-9-2}).
   \end{definition}
   
 \subsection{Introspection Interface \texorpdfstring{$\iota_j$}{iota-j} (Model Freeze)}
@@ -210,18 +199,13 @@ We use $d$ as the global depth bound. Interface indexes are $j\in\{1,\dots,d\}$,
   \section{Information-Theoretic Limitations}
   
   \begin{lemma}[Selector indistinguishability at depth $d$]
+  \label{lemma:selector-indist}
   Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
   For any $d$, there exist inputs $x,x'$ with structural depths $d$ and $d{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
   \end{lemma}
-  
-  \begin{proof}
-We provide a self-contained derivation using the Budget Lemma (transcript bound $2^{T \cdot \B(d,n)}$) under the restricted regime.
-  
-  \textbf{Key insight:} For inputs $x,x'$ with structural depths $d$ and $d+1$, the depth-$d$ projection is identical, so selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ return identical values.
-  
-\textbf{Formal derivation:} By the Budget Lemma, each $\iota_d$ call has at most $2^{\B(d,n)}$ outcomes. Over $T$ steps, there are at most $2^{T \cdot \B(d,n)}$ outcome sequences. Since $T \cdot \B(d,n) \ge \log M$ where $M$ is the number of distinct selector outputs, the machine cannot distinguish between inputs that agree on depth-$d$ features.
-  
-  Therefore, for any $d$, there exist inputs with depths $d$ and $d+1$ that are indistinguishable by depth-$d$ introspection.
+
+  \begin{proof}[Proof sketch]
+  By the interface in Table~\ref{tab:iota-spec}, the decoded codeword at depth $d$ exposes only depth-$\le d$ tags. Choose inputs that are identical on all depth-$\le d$ local features but differ only in depth-$(d{+}1)$ structure. Then all selectors over $\mathrm{decode}_d(\iota_d(\mathcal{C},n))$ coincide on the two inputs. Moreover, by Lemma~\ref{lemma:budget-9-2}, each step reveals at most $\B(d,n)$ bits, which does not permit recovery of depth-$(d{+}1)$ features at depth $d$ in one step.
   \end{proof}
   
   \section{Basic Properties of Psi-TM}
@@ -272,7 +256,7 @@ We provide a self-contained derivation using the Budget Lemma (transcript bound 
   For standard Turing machines, this requires $\Omega(n^d)$ time, as it is necessary to track $d$ levels of nesting by explicit computation.
   
   \textbf{Psi-TM Solution (selectors-only):}
-  For Psi-TM with d-limited introspection, obtain $y=\iota_d(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_d(y)$ to read bounded-depth summaries; all accesses obey the budget in Lemma~\ref{lem:one-step-budget}.
+  For Psi-TM with d-limited introspection, obtain $y=\iota_d(\mathcal{C},n)$ and use selectors over $\mathrm{decode}_d(y)$ to read bounded-depth summaries; all accesses obey the budget in Lemma~\ref{lemma:budget-9-2}.
   
   \textbf{Time Analysis:}
   \begin{enumerate}

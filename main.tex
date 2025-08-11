@@ -94,6 +94,7 @@ This paper is organized to first freeze the model and the $\iota$ interface, the
 
 \input{psi-tm-formal-definition}
 \input{psi-tm-lower-bound-tools}
+\input{psi-tm-08-3-lk-pointer-chase}
 \input{psi-tm-barrier-minimality}
 \input{psi-tm-k-hierarchy}
 \input{psi-tm-stoc-focs}
@@ -150,20 +151,12 @@ Each selector is undefined if the corresponding tag is absent; by Definition~\re
 \end{definition}
 
 \begin{definition}[Single-semantics rule for introspection]
-Every occurrence of an operation of the form \texttt{INT\_*} in this paper is by definition a shorthand for applying the corresponding selector to the most recently obtained codeword $y=\iota_k(\mathcal{C},n)$. There is no alternative or parallel API for reading state, code, input, or structure: all such accesses are views over the decoded $\iota_k$ codeword, and any bits used must fit within the step budget $\B(d,n)$ (Lemma~\ref{lem:one-step-budget}).
+Every occurrence of an operation of the form \texttt{INT\_*} in this paper is by definition a shorthand for applying the corresponding selector to the most recently obtained codeword $y=\iota_k(\mathcal{C},n)$. There is no alternative or parallel API for reading state, code, input, or structure: all such accesses are views over the decoded $\iota_k$ codeword, and any bits used must fit within the step budget $\B(d,n)$ (Lemma~\ref{lemma:budget-9-2}).
 \end{definition}
 
-\begin{lemma}[Selector indistinguishability at depth $k$]
-\label{lem:selector-indistinguishability}
-Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-For any $k$, there exist inputs $x,x'$ with structural depths $k$ and $k{+}1$ such that for the same configuration $\mathcal{C}$ on inputs of length $n$, every selector over $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ returns identical outputs on $x$ and $x'$ within one step.
-\end{lemma}
-
-\begin{proof}
-By the code design for $\mathcal{C}_k$ (Definition~\ref{def:iota-k} and Definition~\ref{def:psi-k}), the admissible tag set at depth $k$ is $\{\textsf{state},\textsf{head},\textsf{win}1,\ldots,\textsf{win}k\}$ and excludes any depth-$(k{+}1)$ tags. Choose $x$ and $x'$ that agree on all depth-$\le k$ local features around the head but differ only in depth-$(k{+}1)$ structure. Then the decoded sequence $\mathrm{decode}_k(\iota_k(\mathcal{C},n))$ exposes only these depth-$\le k$ tags and associated values, so
-\[\mathrm{VIEW\_STATE}(y),\ \mathrm{VIEW\_HEAD}(y),\ \mathrm{VIEW\_WIN}(y,d)~(d\le k)\]
-are identical on $x$ and $x'$. Furthermore, the number of possible one-step outcomes is at most $2^{\B(d,n)}$ and across $t$ steps at most $2^{t \cdot \B(d,n)}$ (Lemma~\ref{lem:one-step-budget}), which does not allow revealing depth-$(k{+}1)$ features at depth $k$. Hence every selector returns identical outputs on $x$ and $x'$. \qed
-\end{proof}
+\begin{remark}[Selector indistinguishability]
+See Lemma~\ref{lemma:selector-indist} for the formal indistinguishability statement.
+\end{remark}
 
 \subsection{Introspection selector API (views over iota k)}
 
@@ -186,7 +179,7 @@ are identical on $x$ and $x'$. Furthermore, the number of possible one-step outc
 \end{tabular}
 \end{table}
 
-All selectors are read-only views over $y$; any use of their values must occur within the step in which $y$ was produced unless $y$ is explicitly written to the work tape at linear cost (per the model semantics). The bound $|y|\le \B(d,n)$ controls the maximum information available per step (Lemma~\ref{lem:one-step-budget}).
+All selectors are read-only views over $y$; any use of their values must occur within the step in which $y$ was produced unless $y$ is explicitly written to the work tape at linear cost (per the model semantics). The bound $|y|\le \B(d,n)$ controls the maximum information available per step (Lemma~\ref{lemma:budget-9-2}).
 
 % [Removed outdated v0.7 budget semantics; Model Freeze (Section~\ref{sec:model-freeze}) is the single source of truth.]
 
@@ -205,7 +198,7 @@ Assumes the restricted regime (deterministic, single pass, no advice, no randomn
 $L_k\in \Psi\text{-}P_k$ and can be decided in time $O(n)$ with at most $k$ calls to $\iota_k$ and total introspective bits $\le k\cdot \B(d,n)$.
 \end{lemma}
 \begin{proof}
-Scan to extract blocks. At each level $i\le k$, one call to $\iota_k$ yields the head position and window summaries (Definition~\ref{def:iota-k}), which bound the cost of locating the needed index within $u_i$ without revisiting prior blocks. Total time is linear in $n$ and total introspective bits are $\le k\,\B(d,n)$ by Lemma~\ref{lem:one-step-budget}. \qed
+Scan to extract blocks. At each level $i\le k$, one call to $\iota_k$ yields the head position and window summaries (Definition~\ref{def:iota-k}), which bound the cost of locating the needed index within $u_i$ without revisiting prior blocks. Total time is linear in $n$ and total introspective bits are $\le k\,\B(d,n)$ by Lemma~\ref{lemma:budget-9-2}. \qed
 \end{proof}
 
 \begin{theorem}[Time--information tradeoff]
@@ -214,7 +207,7 @@ Assumes the restricted regime (deterministic, single pass, no advice, no randomn
 For every depth-$(k{-}1)$ $\Psi$-TM deciding $L_k$ on inputs of length $n$, if it performs at most $t$ calls to $\iota_{k-1}$ then the transcript contains at most $t\,\B(d,n)$ fresh introspective bits. Consequently, if $t=\mathrm{poly}(\log n)$ there exist inputs on which the machine must spend $\Omega(n)$ additional work-tape operations to resolve the final pointer.
 \end{theorem}
 \begin{proof}
-The first statement is Lemma~\ref{lem:one-step-budget} applied $t$ times. The last pointer ranges over $m=\Theta(n)$ possibilities; without sufficient introspective information, the remaining uncertainty necessitates scanning $\Omega(n)$ tape cells in the worst case to find the designated position. \qed
+The first statement is Lemma~\ref{lemma:budget-9-2} applied $t$ times. The last pointer ranges over $m=\Theta(n)$ possibilities; without sufficient introspective information, the remaining uncertainty necessitates scanning $\Omega(n)$ tape cells in the worst case to find the designated position. \qed
 \end{proof}
 
 \begin{corollary}[Non-oracle strictness is open]
@@ -232,7 +225,7 @@ For every $k\ge1$, there exists an oracle $O_{\PSi,k}$ such that $\Psi\text{-}P_
 \begin{proof}
 Enumerate all depth-$(k{-}1)$ polynomial-time oracle \PSi-TMs as in Lemma~\ref{lem:enum}. At stage $s$, choose length $n_s:=2^{2^s}$ and input $x_s:=1^{n_s}$. Simulate $M_s^{O_{<s}}(x_s)$ for $T_s(n_s)$ steps, obtaining the set $Q_s$ of asked queries of length $n_s$. Choose $q_s\in\bits^{n_s}\setminus Q_s$ and set $O_{\le s}(q_s):=1-M_s^{O_{<s}}(x_s)$.
 
-Define language $L_k^{O}$ that, on inputs of the form $x_s$, outputs the oracle bit $O(q_s)$. A depth-$k$ decider reconstructs $q_s$ using at most $k$ applications of $\iota_k$ to assemble the designated string structure and then queries $O$, placing $L_k^{O}\in\Psi\text{-}P_{k}^{O}$. No depth-$(k{-}1)$ polynomial-time decider can compute $L_k^{O}$ by construction, as it would need to ask $q_s$, which it does not (and cannot reconstruct from at most $T_s(n_s) B(k{-}1,n_s)$ introspective bits by Lemma~\ref{lem:one-step-budget}). Hence strictness holds relative to $O_{\PSi,k}$. \qed
+Define language $L_k^{O}$ that, on inputs of the form $x_s$, outputs the oracle bit $O(q_s)$. A depth-$k$ decider reconstructs $q_s$ using at most $k$ applications of $\iota_k$ to assemble the designated string structure and then queries $O$, placing $L_k^{O}\in\Psi\text{-}P_{k}^{O}$. No depth-$(k{-}1)$ polynomial-time decider can compute $L_k^{O}$ by construction, as it would need to ask $q_s$, which it does not (and cannot reconstruct from at most $T_s(n_s) B(k{-}1,n_s)$ introspective bits by Lemma~\ref{lemma:budget-9-2}). Hence strictness holds relative to $O_{\PSi,k}$. \qed
 \end{proof}
 
 \begin{corollary}[Hierarchy--barrier connection (oracle-relative)]

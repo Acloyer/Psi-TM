@@ -32,6 +32,43 @@ For each $k \geq 1$, we prove $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$
 - **psi-tm-theoretical-results.tex** - Theoretical results and complexity analysis
 - **psi-tm-stoc-focs.tex** - STOC/FOCS results and oracle-relative separations
 
+## v0.8.3: L_k (Pointer-Chase)
+
+**Language Definition:** Pointer-chase through k function tables $T_1,\ldots,T_k:[m]\to[m]$ with tail predicate $b:[m]\to\{0,1\}$
+
+**Core Results:**
+- **UB:** Depth-k algorithm in $O(n)$ time, $O(\log n)$ space  
+- **LB:** Depth-$(k{-}1)$ requires $\Omega\!\big(n/(k(k{-}1)\log n)\big)$ time via Budget/Fooling
+- **Separation:** First combat-ready depth hierarchy result in restricted regime
+
+**Proof Chain (ASCII Diagram):**
+```
+Fooling Family |ℱₙ| = 2^{αm} 
+       ↓
+Ψ-Fooling Bound: T ≥ log|ℱₙ|/B(k-1,n)
+       ↓  
+Budget: B(k-1,n) = c(k-1)log n
+       ↓
+Size: m = Θ(n/k) 
+       ↓
+Result: T = Ω(n/(k(k-1)log n))
+```
+
+**Integration:** Section integrated into `paper/main.tex` via `\input{08_3_Lk_pointer_chase}` for arXiv submission
+
+**Artifacts:** 
+- `paper/08_3_Lk_pointer_chase.tex` - LaTeX section for inclusion in main.tex (NOT standalone)
+- `lean/Lk_LB_Skeleton.lean` - Formal statement skeleton  
+- `notebooks/lk_pointer_chase.ipynb` - Empirical validation with log₂ M trend analysis
+- `paper/fig/lk_logM.png` - Generated plot showing linear αm bound
+
+**Build:** 
+- `make all` - Full paper compilation via main.tex (requires LaTeX, Jupyter, Lean 4)
+- `make arxiv-check` - Verify arXiv submission readiness
+- **Main document:** `paper/main.tex` (all sections integrated via \input)
+
+**arXiv Notes:** All cross-references work from main.tex context. Labels namespaced with "Lk:" prefix.
+
 ### Documentation
 - **MANIFEST.md** - Detailed file structure and purpose documentation
 - **README.md** - This file with setup and usage instructions
