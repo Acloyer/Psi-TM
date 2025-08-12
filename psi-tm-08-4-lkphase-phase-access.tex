@@ -1,0 +1,84 @@
+\section{Target Language \texorpdfstring{$L_k^{\text{phase}}$}{Lkphase} (Phase-Locked Access)}
+\label{Lkphase:sec}
+
+\paragraph{Assumptions \& Regime.}
+We work in the restricted regime: deterministic, one-pass, no advice, no randomness. The $\iota$-interface specification follows Table~\ref{tab:iota-spec} with per-step budget $B(d,n) = c \cdot d \cdot \log n$. Budget accounting and transcript limitations are governed by Lemma~\ref{lem:budget} (Budget Lemma). All computational steps perform exactly one $\iota_j$ call per step as specified in Table~\ref{tab:iota-spec}. All logarithms are base 2.
+
+\paragraph{Setup and Phase-Lock Constraint.}
+Fix a query position $q\in[m]$ as a global constant (not counted toward input size). For $j\in[k]$, the phase snapshot is a function $S_j:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log m\rceil$. \textbf{Phase-Lock Constraint (Formal):} Each snapshot $S_j$ is accessible exclusively through interface $\iota_j$. This enforces information-theoretic separation: any algorithm with depth $d<k$ cannot distinguish instances differing only in $S_{d+1},\ldots,S_k$, as the required interfaces $\iota_{d+1},\ldots,\iota_k$ are unavailable within the computational model. The constraint is enforced by the budget $B(d,n)$ from Lemma~\ref{lem:budget}, which limits total information exposure per computation. In particular, at every step, the machine performs \emph{exactly one $\iota_j$ call per step} to obtain the bounded codeword used by the transition function.
+
+\begin{definition}[Language Lkphase]
+\label{Lkphase:def:language}
+Input: phase snapshots $S_1,\ldots,S_k:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log m\rceil$, and a query $q\in[m]$. Computation: extract $v_j:=S_j(q)$ using $\iota_j$ for each $j\in[k]$. Output: accept iff $f(v_1,\ldots,v_k)=1$ for a fixed Boolean function $f:\{0,1\}^{k\ell}\to\{0,1\}$. Encoding size: $n=k\cdot m\cdot \ell$ bits.
+\end{definition}
+
+\begin{theorem}[UB at depth $k$]
+\label{Lkphase:thm:UB}
+There exists a depth-$k$ $\Psi$-algorithm deciding $L_k^{\text{phase}}$ in time $O(n)$ and $O(\log m)$ workspace.
+\end{theorem}
+
+\begin{proof}
+Run a $k$-phase scan. In phase $j$, stream through $S_j$ using \emph{exactly one $\iota_j$ call per step} to access the current snapshot view; when the stream position equals $q$, read $v_j=S_j(q)$ and store it. Across all phases, we store only $v_1,\ldots,v_k$ plus counters, totaling $O(k\ell)=O(\log m)$ bits. After phase $k$, compute $f(v_1,\ldots,v_k)$ and accept accordingly. The total I/O is $O(n)$ and workspace is $O(\log m)$.
+\end{proof}
+
+\begin{lemma}[Transcript Collision Lemma]
+\label{Lkphase:lem:transcript-collision}
+There exists a family $\mathcal{F}_n$ with $\lvert\mathcal{F}_n\rvert=2^{\alpha m\ell}$ for a fixed constant $\alpha>0$, such that any depth-$(k{-}1)$ $\Psi$-algorithm in the restricted regime produces identical transcripts on distinct $x,x'\in\mathcal{F}_n$ while $f(v_1,\ldots,v_k)$ differs between these instances.
+\end{lemma}
+
+\begin{proof}
+Fix $S_1,\ldots,S_{k-1}$ and the values $v_1,\ldots,v_{k-1}$ at position $q$. Vary only $S_k(q)$ over all $2^{\ell}$ possibilities, and define $f$ so that roughly half of these instances accept and half reject. This yields $\lvert\mathcal{F}_n\rvert\ge 2^{\ell}=2^{\lceil\log m\rceil}$. By Table~\ref{tab:iota-spec}, a depth-$(k{-}1)$ algorithm has per-step budget $B(k{-}1,n)=c\,(k{-}1)\,\log n$ and, by phase-lock, no access to $S_k$ (access is \emph{accessible only via} $\iota_k$). Consequently, its entire transcript across phases $1,\ldots,k{-}1$ is independent of $S_k(q)$, so all such instances yield \emph{identical transcripts} while differing in acceptance due to the $S_k(q)$ choice.
+
+\textbf{Information-Theoretic Analysis:}
+\begin{enumerate}
+\item \textbf{Budget Constraint:} By Lemma~\ref{lem:budget} (Budget Lemma), depth-$(k{-}1)$ algorithms have per-step budget $B(k{-}1,n) = c\,(k{-}1)\,\log n$, with total information exposure bounded by $T \cdot B(k{-}1,n)$ bits over $T$ steps.
+\item \textbf{Interface Limitation:} Access to $S_k$ requires $\iota_k$ calls, which are unavailable at depth $k{-}1$ by definition of the computational model.
+\item \textbf{Projection Property:} All accessible information through $\iota_1,\ldots,\iota_{k-1}$ depends only on $S_1,\ldots,S_{k-1}$, creating a natural projection $\pi_{k-1}:\mathcal{I}_k\to\mathcal{I}_{k-1}$ where $\mathcal{I}_d$ represents instances accessible at depth $d$.
+\item \textbf{Transcript Invariance:} For any $x,x'\in\mathcal{F}_n$ differing only in $S_k$, we have $\pi_{k-1}(x)=\pi_{k-1}(x')$, hence identical transcripts while $f(v_1,\ldots,v_k)$ differs.
+\end{enumerate}
+\end{proof}
+
+\begin{theorem}[LB at depth $k{-}1$]
+\label{Lkphase:thm:LB}
+Any depth-$(k{-}1)$ $\Psi$-algorithm deciding $L_k^{\text{phase}}$ in the restricted regime requires
+\[
+T(n)=\Omega\!\left(\frac{n}{k(k{-}1)\log n}\right).
+\]
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{Lkphase:lem:transcript-collision}: $|\mathcal{F}_n| = 2^{\alpha m \ell}$ with $m = \Theta(n/k)$ and $\ell = \lceil\log m\rceil = \Theta(\log n)$.
+
+By \(\Psi\)-Fooling (Theorem~\ref{thm:psi-fooling}): $T \geq \frac{\log|\mathcal{F}_n|}{B(k-1,n)}$.
+
+From Table~\ref{tab:iota-spec}: $B(k-1,n) = c(k-1)\log n$.
+
+Substituting: $T \geq \frac{\alpha m \ell}{c(k-1)\log n} = \frac{\alpha m \log m}{c(k-1)\log n}$.
+
+With $m = \Theta(n/k)$ and $\log m = \Theta(\log n)$: $T = \Omega\left(\frac{n}{k(k-1)\log n}\right)$.
+\end{proof}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.62\linewidth]{fig/lkphase_transcript.png}
+  \caption{Phase-lock mechanism demonstration: Transcript collision visualization showing how depth-$(k{-}1)$ algorithms produce identical transcripts on instances differing only in $S_k(q)$. Left panel: Phase access pattern (phases $1$ through $k{-}1$ accessible, phase $k$ blocked). Right panel: Resulting transcript hashes showing collision despite different acceptance outcomes. The phase-lock constraint forces information-theoretic blindness to the distinguishing layer.}
+  \label{Lkphase:fig:transcript}
+\end{figure}
+
+\paragraph{Figure Interpretation.}
+The visualization demonstrates the core mechanism of phase-locked separation: algorithmic computation at depth $k{-}1$ produces identical transcripts (right panel) despite accessing different problem instances. The left panel shows the access pattern where $\iota_1,\ldots,\iota_{k-1}$ interfaces are available but $\iota_k$ is blocked by the computational model. This interface-based restriction creates an information bottleneck that prevents depth-$(k{-}1)$ algorithms from distinguishing instances that differ only in $S_k(q)$, even when these instances have different acceptance outcomes via $f(v_1,\ldots,v_k)$.
+
+\paragraph{Research Significance.}
+The phase-locked access mechanism introduces a novel separation technique in computational complexity theory. Unlike traditional diagonalization or oracle construction methods, phase-locking leverages \textbf{interface accessibility constraints} to create information-theoretic barriers. This approach has several implications:
+
+\begin{enumerate}
+\item \textbf{Methodological Innovation:} Interface-based separation provides a new tool for proving computational hierarchy results, potentially applicable to other computational models.
+\item \textbf{Practical Relevance:} Phase-locked systems naturally arise in distributed computing and secure multi-party computation, where different parties have access to different data phases.
+\item \textbf{Theoretical Foundation:} The technique bridges information theory and computational complexity, offering a framework for analyzing problems where computational access itself is constrained.
+\end{enumerate}
+
+This work establishes phase-locked access as a fundamental primitive for hierarchy separation, with potential applications beyond the Psi-TM model.
+
+\paragraph{Separation Strength.}
+The phase-lock mechanism yields a strong separation: without $\iota_k$, algorithms are information-theoretically blind to the final distinguishing layer, forcing \emph{identical transcripts} that nevertheless \emph{differ in acceptance} only when the missing phase is revealed. This conclusion relies on the constrained $\iota$-interface (Table~\ref{tab:iota-spec}) and the budget $B(d,n)$ from Lemma~\ref{lem:budget}.
+

@@ -172,3 +172,75 @@ For questions about the technical content or LaTeX compilation, please refer to 
 ---
 
 **Note**: This project is prepared for arXiv submission and follows all arXiv requirements for LaTeX documents, including package restrictions, encoding requirements, and structural guidelines.
+
+## v0.8.4: L_k^{phase} (Phase-Locked Access)
+
+**Language Definition:** k-phase computation where snapshot $S_j$ accessible only via $\iota_j$ interface, enforcing strict phase-lock separation
+
+**Core Innovation:** **Transcript Collision Lemma** - formalizes that without $\iota_k$ access, all transcripts are identical regardless of $S_k$ content
+
+**Core Results:**
+- **UB:** Depth-k algorithm in $O(n)$ time, $O(\log m)$ space using phase-sequential access
+- **LB:** Depth-$(k{-}1)$ requires $\Omega\!\big(n/(k(k{-}1)\log n)\big)$ time via phase-lock constraint
+- **Separation Mechanism:** Information-theoretic blindness without appropriate $\iota_j$ interface
+
+**Phase-Lock Chain (ASCII Diagram):**
+Phase Snapshots: S_1,...,S_{k-1},S_k
+\u2193
+Access Control: S_j only via \iota_j
+\u2193
+Depth k-1: Cannot access S_k (missing \iota_k)
+\u2193
+Transcript Collision: Identical until phase k
+\u2193
+Fooling Family: |F_n| = 2^{\alpha m \ell} via S_k variation
+\u2193
+Result: T = \Omega(n/(k(k-1)log n))
+
+**Key Lemma:** \emph{Transcript Collision Lemma} - Any depth-$(k{-}1)$ algorithm produces identical transcripts on instances differing only in $S_k$, while acceptance differs
+
+**Integration:** Section integrated into `main.tex` via `\input{psi-tm-08-4-lkphase-phase-access}` for arXiv submission
+
+**Artifacts:**
+- `psi-tm-08-4-lkphase-phase-access.tex` - LaTeX section with phase-lock formalization
+- `lean/Lkphase_Transcript_Skeleton.lean` - Formal transcript collision statement
+- `notebooks/lkphase_transcript_analysis.ipynb` - Empirical phase-lock demonstration
+- `fig/lkphase_transcript.png` - Transcript collision visualization
+
+**Build:**
+- `make all` - Build verification (LaTeX compilation manual)
+- `make arxiv-check` - Verify arXiv submission readiness including transcript lemma
+- **Main document:** `main.tex` (all sections integrated via \input)
+
+**arXiv Notes:** All cross-references work from main.tex context. Labels namespaced with "Lkphase:" prefix. Core acceptance criterion: single lemma formalizing transcript collision mechanism.
+
+**Figure Interpretation:**
+- **Left Panel:** Phase access pattern showing interface-based restriction ($\iota_1,\ldots,\iota_{k-1}$ accessible, $\iota_k$ blocked)
+- **Right Panel:** Transcript collision demonstration (identical hashes, different outcomes)
+- **Core Insight:** Information-theoretic separation via computational access constraints
+
+**Visualization Details:**
+- Each data point represents a problem instance differing only in $S_k(q)$
+- Transcript hashes identical across instances (horizontal clustering)
+- Acceptance outcomes differ via $f(v_1,\ldots,v_k)$ despite identical transcripts
+- Demonstrates phase-lock as fundamental separation primitive
+
+## v0.8.4: L_k^{phase} (Phase-Locked Access) - Research Impact
+
+**Methodological Innovation:** Introduces **phase-locked access** as a novel separation technique in computational complexity theory. Unlike traditional diagonalization, this method uses interface accessibility constraints to create information-theoretic barriers.
+
+**Theoretical Contributions:**
+- **Interface-Based Separation:** S_j accessible only via ι_j creates natural computational hierarchy
+- **Transcript Collision Mechanism:** Formal characterization of identical transcripts with different outputs  
+- **Information-Theoretic Foundation:** Bridges information theory and computational complexity
+
+**Research Significance:**
+- **New Separation Tool:** Phase-locking applicable to other computational models
+- **Practical Relevance:** Natural connection to distributed computing and secure protocols
+- **Theoretical Depth:** Establishes interface constraints as fundamental separation primitive
+
+**Future Applications:**
+- Quantum computational models with restricted access
+- Circuit complexity with hierarchical constraints  
+- Interactive proof systems with phase separation
+- Secure multi-party computation protocol design
