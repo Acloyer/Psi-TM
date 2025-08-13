@@ -4,6 +4,10 @@
 \paragraph{Assumptions \& Regime.}
 We work in the restricted regime: deterministic, one-pass, no advice, no randomness. The $\iota$-interface specification follows Table~\ref{tab:iota-spec} with per-step budget $B(d,n) = c \cdot d \cdot \log n$. Budget accounting and transcript limitations are governed by Lemma~\ref{lem:budget} (Budget Lemma). All computational steps perform exactly one $\iota_j$ call per step as specified in Table~\ref{tab:iota-spec}. All logarithms are base 2.
 
+\begin{tcolorbox}[title=Mini-Recap, colback=white]
+One $\iota_j$-call per step; per-step bit budget $B(d,n)=c\cdot d\cdot \log n$; deterministic; no advice; no randomness; transcript length $\le T\cdot B(d,n)$ bits (Table~1; Budget Lemma).
+\end{tcolorbox}
+
 \paragraph{Setup and Phase-Lock Constraint.}
 Fix a query position $q\in[m]$ as a global constant (not counted toward input size). For $j\in[k]$, the phase snapshot is a function $S_j:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log m\rceil$. \textbf{Phase-Lock Constraint (Formal):} Each snapshot $S_j$ is accessible exclusively through interface $\iota_j$. This enforces information-theoretic separation: any algorithm with depth $d<k$ cannot distinguish instances differing only in $S_{d+1},\ldots,S_k$, as the required interfaces $\iota_{d+1},\ldots,\iota_k$ are unavailable within the computational model. The constraint is enforced by the budget $B(d,n)$ from Lemma~\ref{lem:budget}, which limits total information exposure per computation. In particular, at every step, the machine performs \emph{exactly one $\iota_j$ call per step} to obtain the bounded codeword used by the transition function.
 

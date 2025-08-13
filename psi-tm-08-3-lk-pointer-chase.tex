@@ -8,6 +8,10 @@ We work in the restricted regime: deterministic computation, single pass over th
 \[ B(d,n) \;=\; c\,d\,\log n, \quad c\ge 1 \text{ fixed.} \]
 Every computation step performs exactly one $\iota_j$ call with payload injected into the transition function that step; see Definition~\ref{def:iota-injection}. Transcript accounting follows from Lemma~\ref{lemma:budget-9-2} (Budget Lemma) and Table~\ref{tab:iota-spec}.
 
+\begin{tcolorbox}[title=Mini-Recap, colback=white]
+One $\iota_j$-call per step; per-step bit budget $B(d,n)=c\cdot d\cdot \log n$; deterministic; no advice; no randomness; transcript length $\le T\cdot B(d,n)$ bits (Table~1; Budget Lemma).
+\end{tcolorbox}
+
 \paragraph{Setup and Encoding.}
 Parameters: fix an integer $k\ge 2$. For a universe size $m$, the input consists of $k$ functions $T_1,\ldots,T_k : [m]\to[m]$, a tail predicate $b:[m]\to\{0,1\}$, and a designated start index $s\in[m]$ (see Remark~\ref{Lk:start-index}). The canonical bit-encoding stores each $T_j$ as an $m$-entry table with values in $[m]$ using $\lceil\log m\rceil$ bits per entry, and $b$ as $m$ bits. Thus the total input length is
 \[
@@ -79,7 +83,7 @@ keeping $c$ and $\alpha$ explicit until the asymptotic form. In particular, $T \
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{paper/fig/lk_logM.png}
-  \caption{Fooling set size analysis for $L_{k}$ pointer-chase language. Plot shows $\log(M)$ (distinguishable instances, bits) vs. $m$ (table size) with theoretical bound $y = \alpha\cdot m$ where $\alpha \approx 0.9$. Linear relationship confirms that $\lvert\mathcal{F}_{n}\rvert = 2^{\alpha m}$ fooling families can be constructed, validating the lower bound $T = \Omega\!\big(n/(k(k{-}1)\log n)\big)$ via $\Psi$-Fooling framework. Data points: empirical measurements; line: theoretical prediction.}
+  \caption{Figure 3: Fooling set size analysis for $L_k$ pointer-chase language. Plot shows $\log(M)$ (distinguishable instances, bits) vs. $m$ (table size) with theoretical bound $y = \alpha\cdot m$ where $\alpha \approx 0.9$. Linear relationship confirms that $|F_n| = 2^{\alpha m}$ fooling families can be constructed, validating the lower bound $T = \Omega(n/(k(k{-}1) \log n))$ via the $\Psi$-Fooling framework. Data points: synthetic values from theoretical formula; line: theoretical prediction.}
   \label{Lk:fig-lk-logM}
 \end{figure}
 }{%
