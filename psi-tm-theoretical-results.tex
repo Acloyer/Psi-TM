@@ -129,7 +129,7 @@ For a depth-1 Psi-TM, in each step obtain $y=\iota_1(\mathcal{C},n)$ and use sel
 \textbf{Budget accounting:}
 Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (by Lemma~\ref{lemma:budget-9-2}).
 
-\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B\!(1,n) = O(n) \cdot c \cdot 1 \cdot \log_{2} n = O(n \log_{2} n) \ge \log_{2} M$ where $M$ is the number of distinct selector outputs. This ensures the machine has sufficient information budget to distinguish between valid and invalid inputs.
+\textbf{Formal derivation:} By the Budget Lemma, $t \cdot B\!(1,n) = O(n) \cdot c \cdot 1 \cdot \log_{2} n = O(n \log_{2} n) \ge \log_{2} M$ where $M$ is the number of distinct selector outputs. This ensures the machine has sufficient information budget to distinguish between valid and invalid inputs.
 
 Thus, $L_{SBS} \in \text{Psi-P}_1$ but requires $\Omega(n^2)$ time for standard Turing machines (under standard complexity assumptions).
 \end{proof}
