@@ -37,35 +37,35 @@ For each $k \geq 1$, we prove $\text{Psi-TM}_k \subsetneq \text{Psi-TM}_{k+1}$
 **Language Definition:** Pointer-chase through k function tables $T_1,\ldots,T_k:[m]\to[m]$ with tail predicate $b:[m]\to\{0,1\}$
 
 **Core Results:**
-- **UB:** Depth-k algorithm in $O(n)$ time, $O(\log n)$ space  
-- **LB:** Depth-$(k{-}1)$ requires $\Omega\!\big(n/(k(k{-}1)\log n)\big)$ time via Budget/Fooling
+- **UB:** Depth-k algorithm in $O(n)$ time, $O(\log_{2} n)$ space  
+- **LB:** Depth-$(k{-}1)$ requires $\Omega\!\big(n/(k(k{-}1)\log_{2} n)\big)$ time via Budget/Fooling
 - **Separation:** First combat-ready depth hierarchy result in restricted regime
 
 **Proof Chain (ASCII Diagram):**
 ```
-Fooling Family |ℱₙ| = 2^{αm} 
+Fooling Family |F_n| = 2^{αm} 
        ↓
-Ψ-Fooling Bound: T ≥ log|ℱₙ|/B(k-1,n)
+Ψ-Fooling Bound: T ≥ log₂|F_n|/B(k-1,n)
        ↓  
-Budget: B(k-1,n) = c(k-1)log n
+Budget: B(k-1,n) = c(k-1)log₂ n
        ↓
 Size: m = Θ(n/k) 
        ↓
-Result: T = Ω(n/(k(k-1)log n))
+Result: T = Ω(n/(k(k-1)log₂ n))
 ```
 
-**Integration:** Section integrated into `paper/main.tex` via `\input{08_3_Lk_pointer_chase}` for arXiv submission
+**Integration:** Section integrated into `main.tex` via `\input{psi-tm-08-3-lk-pointer-chase}` for arXiv submission
 
 **Artifacts:** 
-- `paper/08_3_Lk_pointer_chase.tex` - LaTeX section for inclusion in main.tex (NOT standalone)
+- `psi-tm-08-3-lk-pointer-chase.tex` - LaTeX section for inclusion in main.tex (NOT standalone)
 - `lean/Lk_LB_Skeleton.lean` - Formal statement skeleton  
-- `notebooks/lk_pointer_chase.ipynb` - Empirical validation with log₂ M trend analysis
-- `paper/fig/lk_logM.png` - Generated plot showing linear αm bound
+- `notebooks/lk_pointer_chase.ipynb` - Empirical validation with $\log_{2} M$ trend analysis
+- `paper/fig/lk_logM.png` - Generated plot showing linear $\alpha m$ bound (already present)
 
 **Build:** 
 - `make all` - Full paper compilation via main.tex (requires LaTeX, Jupyter, Lean 4)
 - `make arxiv-check` - Verify arXiv submission readiness
-- **Main document:** `paper/main.tex` (all sections integrated via \input)
+- **Main document:** `main.tex` (all sections integrated via \input)
 
 **arXiv Notes:** All cross-references work from main.tex context. Labels namespaced with "Lk:" prefix.
 
@@ -181,7 +181,7 @@ For questions about the technical content or LaTeX compilation, please refer to 
 
 **Core Results:**
 - **UB:** Depth-k algorithm in $O(n)$ time, $O(\log m)$ space using phase-sequential access
-- **LB:** Depth-$(k{-}1)$ requires $\Omega\!\big(n/(k(k{-}1)\log n)\big)$ time via phase-lock constraint
+- **LB:** Depth-$(k{-}1)$ requires $\Omega\!\big(n/(k(k{-}1)\log_{2} n)\big)$ time via phase-lock constraint
 - **Separation Mechanism:** Information-theoretic blindness without appropriate $\iota_j$ interface
 
 **Phase-Lock Chain (ASCII Diagram):**
@@ -195,7 +195,7 @@ Transcript Collision: Identical until phase k
 \u2193
 Fooling Family: |F_n| = 2^{\alpha m \ell} via S_k variation
 \u2193
-Result: T = \Omega(n/(k(k-1)log n))
+Result: T = \Omega(n/(k(k-1)log₂ n))
 
 **Key Lemma:** \emph{Transcript Collision Lemma} - Any depth-$(k{-}1)$ algorithm produces identical transcripts on instances differing only in $S_k$, while acceptance differs
 
@@ -244,3 +244,52 @@ Result: T = \Omega(n/(k(k-1)log n))
 - Circuit complexity with hierarchical constraints  
 - Interactive proof systems with phase separation
 - Secure multi-party computation protocol design
+
+## v0.8.5: Anti-Simulation Hook
+
+**Core Innovation:** **No-Poly-Simulation Theorem** - quantitative proof that depth k-1 cannot simulate `\iota_k` calls using polynomially-many `\iota_{k-1}` calls without violating Budget Lemma
+
+**Attack Model:** Depth-(k-1) algorithm attempts to simulate single `\iota_k` call using s = n^\beta calls to `\iota_{k-1}`
+
+**Core Results:**
+- **No-Poly-Simulation:** Simulation requires $n^{\beta}$ budget but only $O(\log_{2} n)$ allocated; violation whenever $\displaystyle \beta \geq \frac{\log_{2}(k/(k-1))}{\log_{2} n}$
+- **Failure Mode Analysis:** Exhaustive enumeration of potential bypass methods and why each is blocked
+- **Quantitative Barrier:** Exponential gap between required vs. allocated simulation budget
+
+**Anti-Simulation Chain (ASCII Diagram):**
+```
+Simulation Attempt: s = n^β calls to ι_{k-1}
+         ↓
+Budget Required: s·B(k-1,n) = n^β·c·(k-1)·log₂ n
+         ↓
+Budget Allocated: B(k-1,n) = c·(k-1)·log₂ n
+         ↓
+Violation iff: β ≥ log₂(k/(k-1)) / log₂ n
+         ↓
+Contradiction: Polynomial requirement vs logarithmic allocation
+```
+
+**Failure Modes Blocked:**
+1. **Super-logarithmic budget:** Violates B(d,n) = O(\log n) constraint
+2. **Randomized simulation:** Violates deterministic requirement  
+3. **Advice mechanism:** Violates no-advice constraint
+4. **Multi-pass access:** Violates one-pass constraint
+
+**Hook Integration:** Reinforces LB proofs from v0.8.3-v0.8.4 by eliminating primary escape route for depth-(k-1) algorithms
+
+**Quantitative Guarantee:** Even with unlimited ingenuity in payload design, fundamental budget constraints prevent simulation
+
+**Integration:** Section integrated into `main.tex` via `\input{psi-tm-08-5-anti-simulation-hook}` for arXiv submission
+
+**Artifacts:**
+- `psi-tm-08-5-anti-simulation-hook.tex` - LaTeX section with quantitative no-simulation proof
+- `lean/AntiSim_Hook_Skeleton.lean` - Formal anti-simulation statement with failure mode analysis
+- `notebooks/anti_simulation_analysis.ipynb` - Empirical budget violation demonstration  
+- `fig/anti_simulation_budget.png` - Budget gap visualization showing exponential barrier
+
+**Build:**
+- `make all` - Build verification (LaTeX compilation manual)
+- `make arxiv-check` - Verify arXiv submission readiness including failure mode analysis
+- **Main document:** `main.tex` (all sections integrated via \input)
+
+**arXiv Notes:** All cross-references work from main.tex context. Labels namespaced with "AntiSim:" prefix. Core acceptance criterion: clear quantitative statement with dependency graph showing LB hook integration.

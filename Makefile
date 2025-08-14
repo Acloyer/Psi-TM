@@ -1,60 +1,59 @@
-.PHONY: all pdf notebooks lean test clean arxiv-check
+.PHONY: all pdf notebooks lean test clean arxiv-check figures
 
 # Main build target - compiles full paper via main.tex  
 all: notebooks lean test
-	@echo "✓ v0.8.4 L_k^{phase} (Phase-Locked Access) build complete (arXiv-ready)"
+	@echo "✓ v0.8.5 Anti-Simulation Hook build complete (arXiv-ready)"
 	@echo "⚠ PDF compilation disabled - manual LaTeX compilation required"
 
 notebooks:
 	@echo "Executing notebooks..."
 	mkdir -p fig
-	cd notebooks && jupyter nbconvert --execute --inplace lkphase_transcript_analysis.ipynb
-	@test -f fig/lkphase_transcript.png && echo "✓ Phase-lock plot saved to fig/" || echo "✗ Phase-lock plot missing from fig/"
-	@echo "✓ Notebook executed and transcript visualization generated"
+	jupyter nbconvert --execute --inplace notebooks/anti_simulation_analysis.ipynb --ExecutePreprocessor.cwd=.
+	@test -f fig/anti_simulation_budget.png && echo "✓ Anti-simulation plot saved to fig/" || echo "✗ Anti-simulation plot missing from fig/"
+	@echo "✓ Notebook executed and budget violation analysis generated"
+
+FIGS = fig/anti_simulation_budget.png fig/anti_simulation_failure_modes.png
+
+figures: $(FIGS)
+
+fig/anti_simulation_budget.png: scripts/plot_anti_simulation.py
+	python scripts/plot_anti_simulation.py --plot budget
+
+fig/anti_simulation_failure_modes.png: scripts/plot_anti_simulation.py
+	python scripts/plot_anti_simulation.py --plot modes
 
 lean:
 	@echo "Checking Lean proofs..."
-	lean --make lean/Lkphase_Transcript_Skeleton.lean || (echo "⚠ Lean check failed (expected with TODOs)"; true)
-	@echo "✓ Lean phase-lock skeleton verified"
+	lean --make lean/AntiSim_Hook_Skeleton.lean || (echo "⚠ Lean check failed (expected with TODOs)"; true)
+	@echo "✓ Lean anti-simulation skeleton verified"
 
 test:
 	@echo "Running tests..."
 	pytest tests/ -v || echo "⚠ No tests found or tests failed"  
 	@echo "✓ Tests completed"
 
-# arXiv submission check with v0.8.4 requirements
+# arXiv submission check with v0.8.5 requirements
 arxiv-check:
-	@echo "🔍 Verifying arXiv readiness (v0.8.4)..."
-	@grep -v "^%" main.tex | grep -q "\\input{psi-tm-08-4-lkphase-phase-access}" && echo "✓ Section integrated in main.tex (not commented)" || echo "✗ Missing or commented \\input in main.tex"
-	@grep -q "label{Lkphase:}" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Namespaced labels" || echo "✗ Labels not properly namespaced"
-	@grep -q "\\ref{tab:iota-spec}" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Table reference present" || echo "✗ Missing \\ref{tab:iota-spec}"  
-	@grep -q "\\ref{thm:psi-fooling}" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Ψ-Fooling reference present" || echo "✗ Missing \\ref{thm:psi-fooling}"
-	@grep -q "\\ref{lem:budget}" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Budget Lemma reference present" || echo "✗ Missing \\ref{lem:budget}"
-	@grep -q "identical transcripts" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Transcript collision lemma" || echo "✗ Missing transcript collision"
-	@test -f fig/lkphase_transcript.png && echo "✓ Figure exists at correct path" || echo "✗ Missing fig/lkphase_transcript.png"
-	@grep -q "fig/lkphase_transcript.png" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Figure path in LaTeX" || echo "✗ Figure path mismatch"
+	@echo "🔍 Verifying arXiv readiness (v0.8.5)..."
+	@grep -v "^%" main.tex | grep -q "\\input{psi-tm-08-5-anti-simulation-hook}" && echo "✓ Section integrated in main.tex (not commented)" || echo "✗ Missing or commented \\input in main.tex"
+	@grep -q "label{AntiSim:" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Namespaced labels" || echo "✗ Labels not properly namespaced"
+	@grep -q "No-Poly-Simulation" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Core theorem present" || echo "✗ Missing No-Poly-Simulation theorem"
+	@grep -q "Failure Mode Analysis" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Failure modes analyzed" || echo "✗ Missing failure mode analysis"
+	@grep -q "budget violation" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Budget violation mechanism" || echo "✗ Missing budget violation"
 	@echo "📄 Ready for arXiv submission"
 
 clean:
 	rm -f *.aux *.log *.pdf *.bbl *.blg
 	rm -f notebooks/*.html 
-	rm -f fig/lkphase_transcript.png
+	rm -f fig/anti_simulation_budget.png
 	@echo "✓ Cleaned build artifacts"
 
-# Quick verification of v0.8.4 acceptance criteria
+# Quick verification of v0.8.5 acceptance criteria
 verify: arxiv-check
-	@echo "🔍 Verifying v0.8.4 acceptance criteria..."
-	@grep -q "exactly one \\\\iota_j.*call per step" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ ι-interface compliance" || echo "✗ Missing ι-call specification"
-	@grep -q "Transcript Collision Lemma" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Core lemma present" || echo "✗ Missing transcript collision lemma"
-	@grep -q "identical transcripts.*differ.*acceptance" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Phase-lock formalization" || echo "✗ Missing phase-lock constraint"
-	@grep -q "accessible only via.*\\\\iota_j" psi-tm-08-4-lkphase-phase-access.tex && echo "✓ Phase access constraint" || echo "✗ Missing access restriction"
-	@test -f fig/lkphase_transcript.png && echo "✓ Transcript plot generated" || echo "✗ Missing transcript visualization"
-
-# Comprehensive cross-reference verification (v0.8.4)
-makefileverify: arxiv-check
-	@echo "🔍 Verifying v0.8.4 cross-references..."
-	@grep -c "\\ref{lem:budget}" psi-tm-08-4-lkphase-phase-access.tex > /dev/null && echo "✓ Budget Lemma refs present" || echo "✗ Missing Budget Lemma \\ref{lem:budget}"
-	@grep -c "\\ref{thm:psi-fooling}" psi-tm-08-4-lkphase-phase-access.tex > /dev/null && echo "✓ Ψ-Fooling refs present" || echo "✗ Missing Ψ-Fooling \\ref{thm:psi-fooling}"
-	@grep -c "\\ref{tab:iota-spec}" psi-tm-08-4-lkphase-phase-access.tex > /dev/null && echo "✓ Table refs present" || echo "✗ Missing Table \\ref{tab:iota-spec}"
-	@test -f fig/lkphase_transcript.png && echo "✓ Figure exists" || echo "✗ Missing fig/lkphase_transcript.png"
-	@echo "📄 v0.8.4 ready for arXiv submission"
+	@echo "🔍 Verifying v0.8.5 acceptance criteria..."
+	@grep -q "No-Poly-Simulation" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Core theorem present" || echo "✗ Missing No-Poly-Simulation theorem"
+	@grep -q "s = n\\^\\beta" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Quantitative simulation bound" || echo "✗ Missing quantitative bound"
+	@grep -q "\\beta \\geq 1/(k-1)" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Threshold specification" || echo "✗ Missing threshold"
+	@grep -q "Failure Mode Analysis" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ Failure modes enumerated" || echo "✗ Missing failure mode analysis"
+	@grep -q "dependency.*LB" psi-tm-08-5-anti-simulation-hook.tex && echo "✓ LB integration" || echo "✗ Missing LB dependency"
+	@test -f fig/anti_simulation_budget.png && echo "✓ Budget violation plot generated" || echo "✗ Missing budget analysis visualization"

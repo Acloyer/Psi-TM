@@ -29,10 +29,6 @@
 \usepackage[T1]{fontenc}      % T1 font encoding
 \usepackage[numbers]{natbib}
 
-% By default, all logarithms are base 2 (avoid recursion)
-\let\oldlog\log
-\renewcommand{\log}{\oldlog_2}
-
 \geometry{margin=2.5cm}
 \setlength{\emergencystretch}{3em}
 
@@ -60,7 +56,8 @@
 \newcommand{\len}[1]{\left|#1\right|}
 \newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
 % \newcommand{\checkmark}{$\surd$}  % Already defined by amssymb
-\newcommand{\B}[2]{B(#1,#2)}  % Budget function macro (use: \B(d,n) = c\,d\,\log n)
+% Budget function macro; used as \B(d,n)
+\def\B(#1,#2){B(#1,#2)}
 \newcommand{\PsPk}[1]{\Psi\text{-}P_{#1}}  % Psi-P_k macro
 
 \title{Psi-TM: Minimal Introspection for Complexity Barrier Analysis\\
@@ -70,7 +67,7 @@
 Arizona State University\\
 \href{mailto:huseynzaderafig@gmail.com}{huseynzaderafig@gmail.com}}
 
-\date{\today}
+\date{August 14, 2025}
 
 \begin{document}
 
@@ -87,7 +84,7 @@ We analyze minimal introspection requirements ($d=1,2,3$) with oracle-relative s
 
 % Notation convention (explicit): by default, all logarithms are base 2
 \begin{remark}[Notation]
-By default, $\log$ denotes base-2 logarithm.
+We write logarithms with explicit base: e.g., $\log_{2} n$. Unless stated otherwise, all logarithms are base 2.
 \end{remark}
 
 \section{Roadmap}\label{sec:roadmap}
@@ -97,6 +94,7 @@ This paper is organized to first freeze the model and the $\iota$ interface, the
 \input{psi-tm-lower-bound-tools}
 \input{psi-tm-08-3-lk-pointer-chase}
 \input{psi-tm-08-4-lkphase-phase-access}
+\input{psi-tm-08-5-anti-simulation-hook}
 \input{psi-tm-barrier-minimality}
 \input{psi-tm-k-hierarchy}
 \input{psi-tm-stoc-focs}

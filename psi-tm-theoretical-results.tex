@@ -129,7 +129,7 @@ For a depth-1 Psi-TM, in each step obtain $y=\iota_1(\mathcal{C},n)$ and use sel
 \textbf{Budget accounting:}
 Each call to $\iota_1$ has at most $2^{\B(1,n)}$ outcomes; over $t=O(n)$ steps there are at most $2^{t\cdot\B(1,n)}$ outcome sequences (by Lemma~\ref{lemma:budget-9-2}).
 
-\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(1,n) = O(n) \cdot c \cdot 1 \cdot \log n = O(n \log n) \ge \log M$ where $M$ is the number of distinct selector outputs. This ensures the machine has sufficient information budget to distinguish between valid and invalid inputs.
+\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B\!(1,n) = O(n) \cdot c \cdot 1 \cdot \log_{2} n = O(n \log_{2} n) \ge \log_{2} M$ where $M$ is the number of distinct selector outputs. This ensures the machine has sufficient information budget to distinguish between valid and invalid inputs.
 
 Thus, $L_{SBS} \in \text{Psi-P}_1$ but requires $\Omega(n^2)$ time for standard Turing machines (under standard complexity assumptions).
 \end{proof}
@@ -214,7 +214,7 @@ For a depth-$d$ Psi-TM, in each relevant step obtain $y=\iota_d(\mathcal{C},n)$ 
 \textbf{Budget accounting:}
 Each $\iota_d$ call has at most $2^{\B(d,n)}$ outcomes; over $t=\mathrm{poly}(n)$ steps there are at most $2^{t \cdot \B(d,n)}$ sequences (by Lemma~\ref{lemma:budget-9-2}).
 
-\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(d,n) = \mathrm{poly}(n) \cdot c \cdot d \cdot \log n = \mathrm{poly}(n) \ge \log M$ where $M$ is the number of distinct selector outputs. This ensures sufficient information budget for pattern matching at depth $\le d$.
+\textbf{Formal derivation:} By the Budget Lemma, $t \cdot \B(d,n) = \mathrm{poly}(n) \cdot c \cdot d \cdot \log_{2} n = \mathrm{poly}(n) \ge \log_{2} M$ where $M$ is the number of distinct selector outputs. This ensures sufficient information budget for pattern matching at depth $\le d$.
 
 Thus, SM $\in \text{Psi-P}_d$ but requires $\Omega(n^2)$ time for standard machines.
 \end{proof}
@@ -244,7 +244,7 @@ For a depth-$d$ Psi-TM, obtain $y=\iota_d(\mathcal{C},n)$ on demand and use sele
 \textbf{Budget accounting:}
 Selectors expose at most $\B(d,n)$ bits per call by Lemma~\ref{lemma:budget-9-2}; thus space needed for introspective data per step is $O(\B(d,n))$.
 
-\textbf{Formal derivation:} By the Budget Lemma, each selector call exposes at most $\B(d,n) = c \cdot d \cdot \log n = O(\log n)$ bits. Over $T$ steps, total space is $O(T \cdot \log n) = O(n \log n) \ll O(n^2)$, enabling space-efficient analysis.
+\textbf{Formal derivation:} By the Budget Lemma, each selector call exposes at most $\B(d,n) = c \cdot d \cdot \log_{2} n = O(\log_{2} n)$ bits. Over $T$ steps, total space is $O(T \cdot \log_{2} n) = O(n \log_{2} n) \ll O(n^2)$, enabling space-efficient analysis.
 
 Thus, SA $\in \text{Psi-PSPACE}_d$ but requires $\Omega(n^2)$ space for standard machines.
 \end{proof}

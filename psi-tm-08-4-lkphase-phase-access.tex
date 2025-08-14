@@ -2,18 +2,18 @@
 \label{Lkphase:sec}
 
 \paragraph{Assumptions \& Regime.}
-We work in the restricted regime: deterministic, one-pass, no advice, no randomness. The $\iota$-interface specification follows Table~\ref{tab:iota-spec} with per-step budget $B(d,n) = c \cdot d \cdot \log n$. Budget accounting and transcript limitations are governed by Lemma~\ref{lem:budget} (Budget Lemma). All computational steps perform exactly one $\iota_j$ call per step as specified in Table~\ref{tab:iota-spec}. All logarithms are base 2.
+We work in the restricted regime: deterministic, one-pass, no advice, no randomness. The $\iota$-interface specification follows Table~\ref{tab:iota-spec} with per-step budget $B(d,n) = c \cdot d \cdot \log_{2} n$. Budget accounting and transcript limitations are governed by Lemma~\ref{lem:budget} (Budget Lemma). All computational steps perform exactly one $\iota_j$ call per step as specified in Table~\ref{tab:iota-spec}. All logarithms are base 2.
 
 \begin{tcolorbox}[title=Mini-Recap, colback=white]
-One $\iota_j$-call per step; per-step bit budget $B(d,n)=c\cdot d\cdot \log n$; deterministic; no advice; no randomness; transcript length $\le T\cdot B(d,n)$ bits (Table~1; Budget Lemma).
+One $\iota_j$-call per step; per-step bit budget $B(d,n)=c\cdot d\cdot \log_{2} n$; deterministic; no advice; no randomness; transcript length $\le T\cdot B(d,n)$ bits (Table~1; Budget Lemma).
 \end{tcolorbox}
 
 \paragraph{Setup and Phase-Lock Constraint.}
-Fix a query position $q\in[m]$ as a global constant (not counted toward input size). For $j\in[k]$, the phase snapshot is a function $S_j:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log m\rceil$. \textbf{Phase-Lock Constraint (Formal):} Each snapshot $S_j$ is accessible exclusively through interface $\iota_j$. This enforces information-theoretic separation: any algorithm with depth $d<k$ cannot distinguish instances differing only in $S_{d+1},\ldots,S_k$, as the required interfaces $\iota_{d+1},\ldots,\iota_k$ are unavailable within the computational model. The constraint is enforced by the budget $B(d,n)$ from Lemma~\ref{lem:budget}, which limits total information exposure per computation. In particular, at every step, the machine performs \emph{exactly one $\iota_j$ call per step} to obtain the bounded codeword used by the transition function.
+Fix a query position $q\in[m]$ as a global constant (not counted toward input size). For $j\in[k]$, the phase snapshot is a function $S_j:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log_{2} m\rceil$. \textbf{Phase-Lock Constraint (Formal):} Each snapshot $S_j$ is accessible exclusively through interface $\iota_j$. This enforces information-theoretic separation: any algorithm with depth $d<k$ cannot distinguish instances differing only in $S_{d+1},\ldots,S_k$, as the required interfaces $\iota_{d+1},\ldots,\iota_k$ are unavailable within the computational model. The constraint is enforced by the budget $B(d,n)$ from Lemma~\ref{lem:budget}, which limits total information exposure per computation. In particular, at every step, the machine performs \emph{exactly one $\iota_j$ call per step} to obtain the bounded codeword used by the transition function.
 
 \begin{definition}[Language Lkphase]
 \label{Lkphase:def:language}
-Input: phase snapshots $S_1,\ldots,S_k:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log m\rceil$, and a query $q\in[m]$. Computation: extract $v_j:=S_j(q)$ using $\iota_j$ for each $j\in[k]$. Output: accept iff $f(v_1,\ldots,v_k)=1$ for a fixed Boolean function $f:\{0,1\}^{k\ell}\to\{0,1\}$. Encoding size: $n=k\cdot m\cdot \ell$ bits.
+Input: phase snapshots $S_1,\ldots,S_k:[m]\to\{0,1\}^{\ell}$ with $\ell=\lceil\log_{2} m\rceil$, and a query $q\in[m]$. Computation: extract $v_j:=S_j(q)$ using $\iota_j$ for each $j\in[k]$. Output: accept iff $f(v_1,\ldots,v_k)=1$ for a fixed Boolean function $f:\{0,1\}^{k\ell}\to\{0,1\}$. Encoding size: $n=k\cdot m\cdot \ell$ bits.
 \end{definition}
 
 \begin{theorem}[UB at depth $k$]
@@ -31,11 +31,11 @@ There exists a family $\mathcal{F}_n$ with $\lvert\mathcal{F}_n\rvert=2^{\alpha 
 \end{lemma}
 
 \begin{proof}
-Fix $S_1,\ldots,S_{k-1}$ and the values $v_1,\ldots,v_{k-1}$ at position $q$. Vary only $S_k(q)$ over all $2^{\ell}$ possibilities, and define $f$ so that roughly half of these instances accept and half reject. This yields $\lvert\mathcal{F}_n\rvert\ge 2^{\ell}=2^{\lceil\log m\rceil}$. By Table~\ref{tab:iota-spec}, a depth-$(k{-}1)$ algorithm has per-step budget $B(k{-}1,n)=c\,(k{-}1)\,\log n$ and, by phase-lock, no access to $S_k$ (access is \emph{accessible only via} $\iota_k$). Consequently, its entire transcript across phases $1,\ldots,k{-}1$ is independent of $S_k(q)$, so all such instances yield \emph{identical transcripts} while differing in acceptance due to the $S_k(q)$ choice.
+Fix $S_1,\ldots,S_{k-1}$ and the values $v_1,\ldots,v_{k-1}$ at position $q$. Vary only $S_k(q)$ over all $2^{\ell}$ possibilities, and define $f$ so that roughly half of these instances accept and half reject. This yields $\lvert\mathcal{F}_n\rvert\ge 2^{\ell}=2^{\lceil\log_{2} m\rceil}$. By Table~\ref{tab:iota-spec}, a depth-$(k{-}1)$ algorithm has per-step budget $B(k{-}1,n)=c\,(k{-}1)\,\log_{2} n$ and, by phase-lock, no access to $S_k$ (access is \emph{accessible only via} $\iota_k$). Consequently, its entire transcript across phases $1,\ldots,k{-}1$ is independent of $S_k(q)$, so all such instances yield \emph{identical transcripts} while differing in acceptance due to the $S_k(q)$ choice.
 
 \textbf{Information-Theoretic Analysis:}
 \begin{enumerate}
-\item \textbf{Budget Constraint:} By Lemma~\ref{lem:budget} (Budget Lemma), depth-$(k{-}1)$ algorithms have per-step budget $B(k{-}1,n) = c\,(k{-}1)\,\log n$, with total information exposure bounded by $T \cdot B(k{-}1,n)$ bits over $T$ steps.
+\item \textbf{Budget Constraint:} By Lemma~\ref{lem:budget} (Budget Lemma), depth-$(k{-}1)$ algorithms have per-step budget $B(k{-}1,n) = c\,(k{-}1)\,\log_{2} n$, with total information exposure bounded by $T \cdot B(k{-}1,n)$ bits over $T$ steps.
 \item \textbf{Interface Limitation:} Access to $S_k$ requires $\iota_k$ calls, which are unavailable at depth $k{-}1$ by definition of the computational model.
 \item \textbf{Projection Property:} All accessible information through $\iota_1,\ldots,\iota_{k-1}$ depends only on $S_1,\ldots,S_{k-1}$, creating a natural projection $\pi_{k-1}:\mathcal{I}_k\to\mathcal{I}_{k-1}$ where $\mathcal{I}_d$ represents instances accessible at depth $d$.
 \item \textbf{Transcript Invariance:} For any $x,x'\in\mathcal{F}_n$ differing only in $S_k$, we have $\pi_{k-1}(x)=\pi_{k-1}(x')$, hence identical transcripts while $f(v_1,\ldots,v_k)$ differs.
@@ -46,20 +46,20 @@ Fix $S_1,\ldots,S_{k-1}$ and the values $v_1,\ldots,v_{k-1}$ at position $q$. Va
 \label{Lkphase:thm:LB}
 Any depth-$(k{-}1)$ $\Psi$-algorithm deciding $L_k^{\text{phase}}$ in the restricted regime requires
 \[
-T(n)=\Omega\!\left(\frac{n}{k(k{-}1)\log n}\right).
+T(n)=\Omega\!\left(\frac{n}{k(k{-}1)\log_{2} n}\right).
 \]
 \end{theorem}
 
 \begin{proof}
-By Lemma~\ref{Lkphase:lem:transcript-collision}: $|\mathcal{F}_n| = 2^{\alpha m \ell}$ with $m = \Theta(n/k)$ and $\ell = \lceil\log m\rceil = \Theta(\log n)$.
+By Lemma~\ref{Lkphase:lem:transcript-collision}: $|\mathcal{F}_n| = 2^{\alpha m \ell}$ with $m = \Theta(n/k)$ and $\ell = \lceil\log_{2} m\rceil = \Theta(\log_{2} n)$.
 
-By \(\Psi\)-Fooling (Theorem~\ref{thm:psi-fooling}): $T \geq \frac{\log|\mathcal{F}_n|}{B(k-1,n)}$.
+By \(\Psi\)-Fooling (Theorem~\ref{thm:psi-fooling}): $T \geq \frac{\log_{2}|\mathcal{F}_n|}{B(k-1,n)}$.
 
-From Table~\ref{tab:iota-spec}: $B(k-1,n) = c(k-1)\log n$.
+From Table~\ref{tab:iota-spec}: $B(k-1,n) = c \cdot (k-1) \cdot \log_{2} n$.
 
-Substituting: $T \geq \frac{\alpha m \ell}{c(k-1)\log n} = \frac{\alpha m \log m}{c(k-1)\log n}$.
+Substituting: $T \geq \frac{\alpha m \ell}{c \cdot (k-1) \cdot \log_{2} n} = \frac{\alpha m \log_{2} m}{c \cdot (k-1) \cdot \log_{2} n}$.
 
-With $m = \Theta(n/k)$ and $\log m = \Theta(\log n)$: $T = \Omega\left(\frac{n}{k(k-1)\log n}\right)$.
+With $m = \Theta(n/k)$ and $\log_{2} m = \Theta(\log_{2} n)$: $T = \Omega\left(\frac{n}{k(k-1)\log_{2} n}\right)$.
 \end{proof}
 
 \begin{figure}[t]

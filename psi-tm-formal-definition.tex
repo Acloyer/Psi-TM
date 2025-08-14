@@ -5,7 +5,7 @@
   
   \section{Introduction}\label{sec:introduction}
   
-  In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a continuation of the Structurally-Aware Turing Machines (SA-TM) [50] concept with minimal introspection. The Psi-TM model is characterized by selectors-only introspection semantics and explicit information budgets. Barrier statements are conservative: oracle-relative where proved, partial/conditional otherwise.
+  In this work, we formally define the computational model \textbf{Psi-TM} (Psi-Turing Machine) as a continuation of the Structurally-Aware Turing Machines (SA-TM) \cite{Huseynzade2025} concept with minimal introspection. The Psi-TM model is characterized by selectors-only introspection semantics and explicit information budgets. Barrier statements are conservative: oracle-relative where proved, partial/conditional otherwise.
   
   \section{Formal Definition of Structural Depth}
   
@@ -159,7 +159,7 @@
   
   \begin{table}[t]
   \centering
-\caption{Interface specification for $\iota_j$ (single source of truth). Complete definition of inputs, outputs, per-step bit budget $B(d,n) = c \cdot d \cdot \log n$, call placement constraints, and transcript accounting. All lemmas and theorems reference this specification rather than duplicating it.}
+\caption{Interface specification for $\iota_j$ (single source of truth). Complete definition of inputs, outputs, per-step bit budget $B(d,n) = c \cdot d \cdot \log_{2} n$, call placement constraints, and transcript accounting. All lemmas and theorems reference this specification rather than duplicating it.}
   \label{tab:iota-spec}
   \small  % уменьшаем шрифт
   \begin{tabular}{@{}p{3.5cm}p{10cm}@{}}  % фиксированная ширина колонок
@@ -167,7 +167,7 @@
   Field & Specification \\
   \midrule
   Depth index & $j \in \{1,\ldots,d\}$ \\
-  Per-step bit budget & $B(d,n) = c \cdot d \cdot \log n$ with fixed $c \ge 1$ \\
+Per-step bit budget & $B(d,n) = c \cdot d \cdot \log_{2} n$ with fixed $c \ge 1$ \\
   Call policy & Exactly once per computation step; payload injected into $\delta$ that step \\
   Inputs & Current state and allowed local view; no advice; no randomness \\
   Output payload & Bitstring $y \in \{0,1\}^{\le B(d,n)}$ \\
@@ -177,7 +177,7 @@
 \end{table}
   
   \begin{remark}[Depth notation]\label{rem:depth-notation}
-We use $d$ as the global depth bound. Interface indexes are $j\in\{1,\dots,d\}$, and the per-step budget is $\B(d,n)=c\cdot d\cdot \log n$ with fixed $c\ge 1$.
+We use $d$ as the global depth bound. Interface indexes are $j\in\{1,\dots,d\}$, and the per-step budget is $\B(d,n)=c\cdot d\cdot \log_{2} n$ with fixed $c\ge 1$.
   \end{remark}
   
   \begin{definition}[Iota injection into the transition]\label{def:iota-injection}

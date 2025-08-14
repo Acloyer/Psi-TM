@@ -12,7 +12,7 @@ These three fundamental tools constitute the core methodology for establishing l
 \begin{lemma}[Budget Lemma]
 \label{lem:budget}\label{Lk:budget-lemma}\label{lemma:budget-9-2}
 Assumes the restricted regime (deterministic, single pass, no advice, no randomness) and uses Table~\ref{tab:iota-spec}.
-For any Psi-TM with introspection depth $d \geq 1$, running for $T \geq 1$ steps on input of length $n \geq 1$, where the introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) exposes at most $B(d,n) = c \cdot d \cdot \log n$ bits per step with fixed parameter $c \geq 1$:
+For any Psi-TM with introspection depth $d \geq 1$, running for $T \geq 1$ steps on input of length $n \geq 1$, where the introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) exposes at most $B(d,n) = c \cdot d \cdot \log_{2} n$ bits per step with fixed parameter $c \geq 1$:
 \begin{equation}
 \label{eq:budget-bound}
 \text{Number of distinct transcripts} \;\leq\; 2^{\,T\,\cdot\, B(d,n)}
@@ -35,36 +35,36 @@ This differs from classical transcript counting by the explicit $B(d,n)$ constra
 \begin{lemma}[\(\Psi\)-Fooling Bound]
 \label{lem:psi-fooling}
 Assumes the restricted regime and uses Table~\ref{tab:iota-spec}.
-For any deterministic Psi-TM with introspection depth $\leq d$, input length $n \geq 1$, running time $T \geq 1$, and fooling set $\mathbb{F}_n$ with $|\mathbb{F}_n| = M \geq 2$ pairwise distinguishable inputs, where introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) provides at most $B(d,n) = c \cdot d \cdot \log n$ bits per step:
+For any deterministic Psi-TM with introspection depth $\leq d$, input length $n \geq 1$, running time $T \geq 1$, and fooling set $\mathbb{F}_n$ with $|\mathbb{F}_n| = M \geq 2$ pairwise distinguishable inputs, where introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) provides at most $B(d,n) = c \cdot d \cdot \log_{2} n$ bits per step:
 \begin{equation}
 \label{eq:fooling-bound}
-T \;\geq\; \left\lceil \frac{\log M}{B(d,n)} \right\rceil
+ T \;\geq\; \left\lceil \frac{\log_{2} M}{B(d,n)} \right\rceil
 \end{equation}
 \end{lemma}
 
 % Alias as a theorem to standardize cross-references used across sections
 \begin{theorem}[\(\Psi\)-Fooling Bound]
 \label{thm:psi-fooling}\label{Lk:psi-fooling}
-The statement is identical to Lemma~\ref{lem:psi-fooling} with the same preconditions and conclusion $T\ge \lceil \log M / B(d,n)\rceil$.
+The statement is identical to Lemma~\ref{lem:psi-fooling} with the same preconditions and conclusion $T\ge \lceil \log_{2} M / B(d,n)\rceil$.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
-By Lemma~\ref{lem:budget}, after $T$ steps there are at most $2^{T \cdot B(d,n)}$ distinct transcripts. To distinguish $M$ inputs in the fooling set, require $2^{T \cdot B(d,n)} \ge M$, hence $T \cdot B(d,n) \ge \log M$ and the bound follows by ceiling. Classical fooling arguments use unlimited communication; here the channel capacity is bounded by $B(d,n)$ bits per step.
+By Lemma~\ref{lem:budget}, after $T$ steps there are at most $2^{T \cdot B(d,n)}$ distinct transcripts. To distinguish $M$ inputs in the fooling set, require $2^{T \cdot B(d,n)} \ge M$, hence $T \cdot B(d,n) \ge \log_{2} M$ and the bound follows by ceiling. Classical fooling arguments use unlimited communication; here the channel capacity is bounded by $B(d,n)$ bits per step.
 \end{proof}
 
 \begin{lemma}[\(\Psi\)-Fano Bound]
 \label{lem:psi-fano}\label{Lk:psi-fano}
 Assumes the restricted regime and uses Table~\ref{tab:iota-spec}.
-For any Psi-TM with introspection depth $\leq d$, input length $n \geq 1$, running time $T \geq 1$, input distribution over $M \geq 2$ outcomes, and error probability $0 < \varepsilon < 1 - 1/M$, where introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) provides channel capacity $T \cdot B(d,n)$ bits with $B(d,n) = c \cdot d \cdot \log n$:
+For any Psi-TM with introspection depth $\leq d$, input length $n \geq 1$, running time $T \geq 1$, input distribution over $M \geq 2$ outcomes, and error probability $0 < \varepsilon < 1 - 1/M$, where introspection function $\iota_d$ (Table~\ref{tab:iota-spec}) provides channel capacity $T \cdot B(d,n)$ bits with $B(d,n) = c \cdot d \cdot \log_{2} n$:
 \begin{equation}
 \label{eq:fano-bound}
-T \;\geq\; \frac{\log M - h(\varepsilon) - \varepsilon\,\log(M-1)}{B(d,n)}
+ T \;\geq\; \frac{\log_{2} M - h(\varepsilon) - \varepsilon\,\log_{2}(M-1)}{B(d,n)}
 \end{equation}
-where $h(\varepsilon) = -\varepsilon \log \varepsilon - (1-\varepsilon) \log(1-\varepsilon)$ is the binary entropy.
+where $h(\varepsilon) = -\varepsilon \log_{2} \varepsilon - (1-\varepsilon) \log_{2}(1-\varepsilon)$ is the binary entropy.
 \end{lemma}
 
 \begin{proof}[Proof sketch]
-Standard Fano's inequality applies to transcript information with mutual information measured in bits. This follows the standard form of Fano's inequality: $H(X\mid Y) \leq h(\varepsilon) + \varepsilon \, \log(|X|-1)$ where $X$ is the input distribution and $Y$ is the observed transcript. The machine observes $\leq T \cdot B(d,n)$ bits total, providing channel capacity $T \cdot B(d,n)$. Hence $T \cdot B(d,n)$ must be at least $\log M - h(\varepsilon) - \varepsilon \log(M-1)$. Classical Fano's inequality uses arbitrary channel capacity; here adapted to the $B(d,n)$ constraint specific to $\Psi$-TM with introspection depth $d$.
+Standard Fano's inequality applies to transcript information with mutual information measured in bits. This follows the standard form of Fano's inequality: $H(X\mid Y) \leq h(\varepsilon) + \varepsilon \, \log_{2}(|X|-1)$ where $X$ is the input distribution and $Y$ is the observed transcript. The machine observes $\leq T \cdot B(d,n)$ bits total, providing channel capacity $T \cdot B(d,n)$. Hence $T \cdot B(d,n)$ must be at least $\log_{2} M - h(\varepsilon) - \varepsilon \log_{2}(M-1)$. Classical Fano's inequality uses arbitrary channel capacity; here adapted to the $B(d,n)$ constraint specific to $\Psi$-TM with introspection depth $d$.
 \end{proof}
 
 \subsection{Worked Examples}
@@ -72,10 +72,10 @@ Standard Fano's inequality applies to transcript information with mutual informa
 The following illustrates Lemma~\ref{lem:psi-fooling} in action.
 
 Consider depth $d = 2$, input length $n = 1000$, with fixed parameter $c = 1$ throughout.
-Thus $B(2,1000) = 1 \cdot 2 \cdot \log 1000 \approx 2 \cdot 10 = 20$ bits per step.
+Thus $B(2,1000) = 1 \cdot 2 \cdot \log_{2} 1000 \approx 2 \cdot 10 = 20$ bits per step.
 
 For a fooling set of size $M = 2^{100}$ (i.e., $|\mathbb{F}_n| = 2^{100}$): by equation~\eqref{eq:fooling-bound},
-\[T \;\geq\; \left\lceil \frac{\log M}{B(d,n)} \right\rceil = \left\lceil \frac{100}{20} \right\rceil = 5 \text{ steps}\]
+\[T \;\geq\; \left\lceil \frac{\log_{2} M}{B(d,n)} \right\rceil = \left\lceil \frac{100}{20} \right\rceil = 5 \text{ steps}\]
 
 This demonstrates that any depth-2 $\Psi$-TM requires at least 5 computation steps to distinguish between $2^{100}$ carefully constructed inputs, regardless of algorithmic sophistication.
 
@@ -94,11 +94,11 @@ The following illustrates Lemma~\ref{lem:psi-fano} for average-case analysis.
 Consider the same parameters: depth $d = 2$, input length $n = 1000$, so $B(2,1000) = 20$ bits per step.
 
 Suppose we have a uniform distribution over $M = 2^{60}$ possible inputs, and we want error probability $\varepsilon = 0.1$ (10\% error rate). The binary entropy is:
-\[h(0.1) = -0.1 \log(0.1) - 0.9 \log(0.9) \approx 0.469 \text{ bits}\]
+\[h(0.1) = -0.1 \log_{2}(0.1) - 0.9 \log_{2}(0.9) \approx 0.469 \text{ bits}\]
 
 By Lemma~\ref{lem:psi-fano}:
 \begin{align}
-T &\geq \frac{\log M - h(\varepsilon) - \varepsilon \log(M-1)}{B(d,n)} \\
+T &\geq \frac{\log_{2} M - h(\varepsilon) - \varepsilon \log_{2}(M-1)}{B(d,n)} \\
 &\geq \frac{60 - 0.469 - 0.1 \cdot 60}{20} \\
 &\geq \frac{60 - 0.469 - 6}{20} = \frac{53.531}{20} \approx 2.68
 \end{align}
@@ -107,7 +107,7 @@ Therefore $T \geq 3$ steps. This shows that even allowing 10\% error rate, any d
 
 \subsubsection{Example Application (High-Depth Case)}
 Consider higher depth $d = 3$, larger input $n = 2^{20} = 1{,}048{,}576$, with $c = 1$.
-Thus $B(3,2^{20}) = 3 \cdot \log(2^{20}) = 3 \cdot 20 = 60$ bits per step.
+Thus $B(3,2^{20}) = 3 \cdot \log_{2}(2^{20}) = 3 \cdot 20 = 60$ bits per step.
 
 For fooling set $M = 2^{900}$:
 \begin{equation}
@@ -127,7 +127,7 @@ This demonstrates scalability: even with a significantly higher introspection bu
     minor grid style={draw=black!20},
     axis lines=left,
     ticks=both,
-    xlabel={\footnotesize $\log M$},
+    xlabel={\footnotesize $\log_{2} M$},
     ylabel={\footnotesize $T$},
     xmin=40, xmax=240,
     ymin=0, ymax=12,
@@ -162,13 +162,13 @@ The Fano bound trades input complexity for error tolerance, typically yielding w
 \small
 \begin{tabular}{@{}p{2.5cm}p{5.5cm}p{3cm}p{3.5cm}@{}}
 \toprule
-\multicolumn{4}{c}{\textbf{Key Formula: } $B(d,n) = c \cdot d \cdot \log n$} \\
+\multicolumn{4}{c}{\textbf{Key Formula: } $B(d,n) = c \cdot d \cdot \log_{2} n$} \\
 \midrule
 Lemma & Statement & Proof Idea & Usage \\
 \midrule
 Budget Lemma & $\leq 2^{T \cdot B(d,n)}$ transcripts & Counting argument & All target languages \\
 $\Psi$-Fooling Bound & $T \geq \lceil \log M / B(d,n) \rceil$ & Distinguishability & Pointer-chase $L_k$ \\
-$\Psi$-Fano Bound & $T \geq [\log M - h(\varepsilon) - \varepsilon \, \log(M-1)] / B(d,n)$ & Fano's inequality & Average-case analysis \\
+$\Psi$-Fano Bound & $T \geq [\log_{2} M - h(\varepsilon) - \varepsilon \, \log_{2}(M-1)] / B(d,n)$ & Fano's inequality & Average-case analysis \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -182,13 +182,13 @@ Figure~\ref{fig:bounds-visualization} shows the linear relationship between tran
 \begin{tikzpicture}[scale=0.9]
 \begin{axis}[
     width=10cm, height=6cm,
-    xlabel={$\log|\mathbb{F}_n|$},
+    xlabel={$\log_{2}|\mathbb{F}_n|$},
     ylabel={$T$ (steps)},
     xmin=0, xmax=120,
     ymin=0, ymax=12,
     grid=major,
     legend pos=north west,
-    title={Lower Bound: $T \geq \log|\mathbb{F}_n| / B(d,n)$}
+    title={Lower Bound: $T \geq \log_{2}|\mathbb{F}_n| / B(d,n)$}
 ]
 % d=1, n=1000: B(1,1000) ≈ 10
 \addplot[blue, thick, domain=0:120, samples=200] {x/10};
@@ -215,14 +215,14 @@ Figure~\ref{fig:bounds-visualization} shows the linear relationship between tran
 \node[rectangle, draw, fill=blue!20, thick] (input) {Input Space\\$|\mathbb{F}_n| = M$};
 
 % Budget layer  
-\node[rectangle, draw, fill=yellow!30, above of=input] (budget) {Budget Lemma\\Eq.~\eqref{eq:budget-bound}\\$\leq 2^{T \cdot B(d,n)}$ transcripts};
+\node[rectangle, draw, yshift=0.5cm, fill=yellow!30, above of=input] (budget) {Budget Lemma\\Eq.~\eqref{eq:budget-bound}\\$\leq 2^{T \cdot B(d,n)}$ transcripts};
 
 % Bounds layer
-\node[rectangle, draw, fill=green!30, above left of=budget, xshift=-1cm] (fooling) {Fooling Bound\\Eq.~\eqref{eq:fooling-bound}\\Worst-case};
-\node[rectangle, draw, fill=orange!30, above right of=budget, xshift=1cm] (fano) {Fano Bound\\Eq.~\eqref{eq:fano-bound}\\Average-case};
+\node[rectangle, draw, fill=green!30, above left of=budget, xshift=-1cm, yshift=0.75cm] (fooling) {Fooling Bound\\Eq.~\eqref{eq:fooling-bound}\\Worst-case};
+\node[rectangle, draw, fill=orange!30, above right of=budget, xshift=1cm, yshift=0.75cm] (fano) {Fano Bound\\Eq.~\eqref{eq:fano-bound}\\Average-case};
 
 % Result layer
-\node[rectangle, draw, fill=red!20, above of=budget, yshift=2cm] (result) {Lower Bound\\$T = \Omega(\log M / B(d,n))$};
+\node[rectangle, draw, fill=red!20, above of=budget, yshift=2cm] (result) {Lower Bound\\$T = \Omega(\log_{2} M / B(d,n))$};
 
 % Arrows
 \draw[->, thick, blue] (input) -- (budget);
@@ -232,8 +232,8 @@ Figure~\ref{fig:bounds-visualization} shows the linear relationship between tran
 \draw[->, thick, orange] (fano) -- (result);
 
 % Labels on arrows
-\node[above, rotate=35] at ($(budget)!0.5!(fooling)$) {\small distinguishability};
-\node[above, rotate=-35] at ($(budget)!0.5!(fano)$) {\small error probability};
+\node[above, yshift=-0.3cm] at ($(budget)!1.5!(fooling)$) {\small distinguishability};
+\node[above, yshift=-0.3cm] at ($(budget)!1.5!(fano)$) {\small error probability};
 
 \end{tikzpicture}
 \caption{Complete derivation flow: from input complexity through transcript bounds to time lower bounds}
@@ -243,8 +243,7 @@ Figure~\ref{fig:bounds-visualization} shows the linear relationship between tran
 These information-theoretic bounds enable the separation proofs in Section~\ref{sec:target-languages}. For the pointer-chase language $L_k$ in v0.8.3, we will construct fooling sets with $M = 2^{\alpha m}$ where $m = \Theta(n/k)$, yielding:
 \begin{equation}
 \label{eq:lk-preview}
-T(n) = \Omega\!\left(\frac{\alpha \cdot n/k}{(k-1) \cdot \log n}\right) = \Omega\!\left(\frac{n}{k(k-1)\log n}\right)
+ T(n) = \Omega\!\left(\frac{\alpha \cdot n/k}{(k-1) \cdot \log_{2} n}\right) = \Omega\!\left(\frac{n}{k(k-1)\log_{2} n}\right)
 \end{equation}
 In this overview bound, constants $\alpha,c$ are absorbed into $\Omega(\cdot)$ for readability.
 by applying equation~\eqref{eq:fooling-bound} at depth $k{-}1$. The upper bound construction achieves $O(n)$ time at depth $k$ through sequential table lookups, establishing the strict separation $L_k \in \text{Psi-P}_k \setminus \text{Psi-P}_{k-1}$.
-
