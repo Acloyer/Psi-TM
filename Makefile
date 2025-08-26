@@ -5,6 +5,22 @@ all: notebooks lean test
 	@echo "✓ v0.8.6 artifacts built (skeletons + notebooks)"
 	@echo "⚠ PDF compilation disabled - manual LaTeX compilation required"
 
+# Add triple-quotes to all code cells in notebooks
+python - <<'PY'
+import json, sys, pathlib
+for p in pathlib.Path("notebooks").glob("*.ipynb"):
+    nb = json.loads(p.read_text(encoding="utf-8"))
+    changed = False
+    for c in nb.get("cells", []):
+        if c.get("cell_type") == "code" and c.get("source"):
+            src = "".join(c["source"]).lstrip()
+            if src and not src.startswith(("#","'''",'"""',"import","from","def","for","while","if")):
+                c["source"] = ['"""'] + c["source"] + ['"""\n']
+                changed = True
+    if changed:
+        p.write_text(json.dumps(nb, ensure_ascii=False, indent=1), encoding="utf-8")
+PY
+
 notebooks:
 	@echo "Executing notebooks..."
 	mkdir -p fig
