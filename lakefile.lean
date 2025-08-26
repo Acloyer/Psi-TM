@@ -1,12 +1,13 @@
 import Lake
 open Lake DSL
 
-package psi_tm
-
-lean_lib PsiTM where
-  moreLeanArgs := # ["-R", "lean", "PsiTM"]
+package psi_tm where
 
 @[default_target]
-lean_exe psi_tm where
+lean_lib PsiTM where
+  roots := #[`PsiTM.BudgetLemma, `PsiTM.PsiFooling, `PsiTM.LkLowerBound, `PsiTM.AntiSimulationHook]
+  moreLeanArgs := #["-R","lean","PsiTM"]
+
+lean_exe psitm where
   root := `Main
-  moreLeanArgs := # ["-R", "lean", "PsiTM"]
+  moreLeanArgs := #["-R","lean","PsiTM"]
