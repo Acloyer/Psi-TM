@@ -1,4 +1,4 @@
-# CI-safe Makefile (no TAB issues), extended targets
+# CI-safe Makefile (no TAB issues), extended targets — stable
 .RECIPEPREFIX := >
 SHELL := /bin/bash
 .ONESHELL:
@@ -6,7 +6,6 @@ SHELL := /bin/bash
 .PHONY: all check notebooks sanitize_notebooks lean pdf test clean figures plots arxiv verify
 
 # ------------------------------------------------------------------------------
-
 all: check notebooks lean test
 > echo "✓ v0.8.6 artifacts built (skeletons + notebooks)"
 > echo "⚠ PDF compilation disabled - manual LaTeX compilation required"
@@ -37,27 +36,15 @@ notebooks: sanitize_notebooks
 > test -f fig/anti_simulation_budget.png && echo "✓ Anti-simulation plot saved to fig/" || echo "✗ Anti-simulation plot missing from fig/"
 > echo "✓ Notebook(s) executed"
 
-# --- sanitize: wrap bare text in code cells; normalize ψ/– --------------------
+# --- sanitize: disabled heredoc to avoid CI indent issues ---------------------
+# No-op by default. If scripts/sanitize_notebooks.py exists — run it.
 sanitize_notebooks:
-> python - <<'PY'
-> import json
-> from pathlib import Path
-> 
-> for p in Path("notebooks").glob("*.ipynb"):
->     txt = p.read_text(encoding="utf-8").replace("ψ","Psi").replace("–","-")
->     nb = json.loads(txt)
->     changed = False
->     for c in nb.get("cells", []):
->         if c.get("cell_type") == "code" and c.get("source"):
->             src = "".join(c["source"]).lstrip()
->             if src and not src.startswith(("#","'''",'\"\"\"',"import","from","def","class","for","while","if","with","try","print","%")):
->                 c["source"] = ['\"\"\"'] + c["source"] + ['\"\"\"\\n']
->                 changed = True
->     if changed:
->         p.write_text(json.dumps(nb, ensure_ascii=False, indent=1), encoding="utf-8")
-> PY
-
-
+> if [ -f scripts/sanitize_notebooks.py ]; then \
+>   echo "Sanitizing notebooks…"; \
+>   python scripts/sanitize_notebooks.py || true; \
+> else \
+>   echo "ℹ sanitizer not present; skipping"; \
+> fi
 
 # --- optional figures from scripts --------------------------------------------
 FIGS := fig/anti_simulation_budget.png fig/anti_simulation_failure_modes.png
