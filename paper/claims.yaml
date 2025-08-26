@@ -19,6 +19,12 @@
 - latex: AntiSim:thm:no-poly-sim
   lean: AntiSim:Hook:Core
 
+# Anti-Simulation auxiliary results
+- latex: AntiSim:lem:failure-modes
+  lean: AntiSim:lem:failure-modes
+- latex: AntiSim:cor:barrier
+  lean: AntiSim:cor:barrier
+
 # Lkphase (stub; not yet mapped to a dedicated Lean file)
 - latex: Lkphase:thm:LB
   lean: Lk:LB:Main  # placeholder linkage until dedicated file exists
