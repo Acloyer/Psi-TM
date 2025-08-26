@@ -39,22 +39,24 @@ notebooks: sanitize_notebooks
 
 # --- sanitize: wrap bare text in code cells; normalize ψ/– --------------------
 sanitize_notebooks:
-> python - <<-'PY'
-> 	import json, pathlib
-> 	from pathlib import Path
-> 	for p in Path("notebooks").glob("*.ipynb"):
-> 		txt = p.read_text(encoding="utf-8").replace("ψ","Psi").replace("–","-")
-> 		nb = json.loads(txt)
-> 		changed = False
-> 		for c in nb.get("cells", []):
-> 			if c.get("cell_type") == "code" and c.get("source"):
-> 				src = "".join(c["source"]).lstrip()
-> 				if src and not src.startswith(("#","'''",'\"\"\"',"import","from","def","class","for","while","if","with","try","print","%")):
-> 					c["source"] = ['\"\"\"'] + c["source"] + ['\"\"\"\\n']
-> 					changed = True
-> 		if changed:
-> 			p.write_text(json.dumps(nb, ensure_ascii=False, indent=1), encoding="utf-8")
-> PY
+> python - <<'PY'
+import json
+from pathlib import Path
+
+for p in Path("notebooks").glob("*.ipynb"):
+    txt = p.read_text(encoding="utf-8").replace("ψ","Psi").replace("–","-")
+    nb = json.loads(txt)
+    changed = False
+    for c in nb.get("cells", []):
+        if c.get("cell_type") == "code" and c.get("source"):
+            src = "".join(c["source"]).lstrip()
+            if src and not src.startswith(("#","'''",'\"\"\"',"import","from","def","class","for","while","if","with","try","print","%")):
+                c["source"] = ['\"\"\"'] + c["source"] + ['\"\"\"\\n']
+                changed = True
+    if changed:
+        p.write_text(json.dumps(nb, ensure_ascii=False, indent=1), encoding="utf-8")
+PY
+
 
 # --- optional figures from scripts --------------------------------------------
 FIGS := fig/anti_simulation_budget.png fig/anti_simulation_failure_modes.png
