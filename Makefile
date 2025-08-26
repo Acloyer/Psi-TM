@@ -56,18 +56,16 @@ fig/anti_simulation_budget.png: scripts/plot_anti_simulation.py
 fig/anti_simulation_failure_modes.png: scripts/plot_anti_simulation.py
 > python scripts/plot_anti_simulation.py --plot modes
 
-# --- Lean build (Lake + soft skeletons) ---------------------------------------
+# --- Lean build (Lake only) ---------------------------------------------------
 lean:
-> echo "Checking Lean proofs… (allowing sorrys)"
-> if [ -f lakefile.lean ]; then lake update && lake build; fi || true
-> -lean --make lean/PsiTM/BudgetLemma.lean || true
-> -lean --make lean/PsiTM/PsiFooling.lean || true
-> -lean --make lean/PsiTM/LkLowerBound.lean || true
-> -lean --make lean/PsiTM/AntiSimulationHook.lean || true
-> -lean --make lean/AntiSim_Hook_Skeleton.lean || true
-> -lean --make lean/Lk_LB_Skeleton.lean || true
-> -lean --make lean/Lkphase_Transcript_Skeleton.lean || true
+> echo "Checking Lean proofs… (Lake build)"
+> if [ -f lakefile.lean ]; then \
+>   lake update && lake build; \
+> else \
+>   echo "ℹ no lakefile.lean — skipping"; \
+> fi
 > echo "✓ Lean skeletons verified (type-check may be partial)"
+
 
 # --- PDF (soft) ---------------------------------------------------------------
 pdf:
