@@ -23,17 +23,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install jupyter nbconvert matplotlib numpy pandas pyyaml
 
-      - name: Set up Lean (elan)
-        uses: leanprover/elan-action@v1
+      # === Install elan (Lean toolchain) ===
+      - name: Install elan
+        shell: bash
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | bash -s -- -y --default-toolchain $(cat lean-toolchain)
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          echo "Elan installed at $HOME/.elan/bin"
+
+      - name: Lean/Lake versions
+        run: |
+          lean --version
+          lake --version
 
       - name: Lake build
         run: |
-          lake build | cat || true
+          lake update
+          lake build
 
-      - name: Run checks
-        run: |
-          make check | cat || true
+      - name: make check
+        run: make check
 
-      - name: Build all
-        run: |
-          make all | cat || true
+      - name: make all
+        run: make all
