@@ -79,10 +79,10 @@ By Lemma~\ref{Lk:lem:fooling-Lk}, there is a fooling family of size $|\mathcal{F
  keeping $c$ and $\alpha$ explicit until the asymptotic form. In particular, $T \ge \alpha m / ( c (k-1) \log_{2} n )$. Here constants $\alpha,c>0$ are absorbed into the $\Omega(\cdot)$ notation.
 \end{proof}
 
-\IfFileExists{paper/fig/lk_logM.png}{%
+\IfFileExists{fig/lk_logM.png}{%
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\linewidth]{paper/fig/lk_logM.png}
+  \includegraphics[width=\linewidth]{fig/lk_logM.png}
   \caption{Fooling set size analysis for $L_k$ pointer-chase language. Plot shows $\log_{2}(M)$ (distinguishable instances, bits) vs. $m$ (table size) with theoretical bound $y = \alpha\cdot m$ where $\alpha \approx 0.9$. Linear relationship confirms that $|F_n| = 2^{\alpha m}$ fooling families can be constructed, validating the lower bound $T = \Omega(n/(k(k{-}1) \log_{2} n))$ via the $\Psi$-Fooling framework. Data points: synthetic values from theoretical formula; line: theoretical prediction.}
   \label{Lk:fig-lk-logM}
 \end{figure}

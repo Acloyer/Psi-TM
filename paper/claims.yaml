@@ -1,0 +1,24 @@
+# Mapping of LaTeX labels to Lean theorem IDs (v0.8.6)
+# Keep namespaces consistent: "Lk:", "AntiSim:", "Lkphase:", "Budget:", "Psi:"
+
+# Budget Lemma
+- latex: Lk:budget-lemma
+  lean: Budget:Lemma:Core
+
+# Psi–Fooling Bound
+- latex: thm:psi-fooling
+  lean: Psi:Fooling:Bound
+- latex: Lk:psi-fooling
+  lean: Psi:Fooling:Bound
+
+# L_k main lower bound
+- latex: Lk:lb-main
+  lean: Lk:LB:Main
+
+# Anti-Simulation Hook
+- latex: AntiSim:thm:no-poly-sim
+  lean: AntiSim:Hook:Core
+
+# Lkphase (stub; not yet mapped to a dedicated Lean file)
+- latex: Lkphase:thm:LB
+  lean: Lk:LB:Main  # placeholder linkage until dedicated file exists
