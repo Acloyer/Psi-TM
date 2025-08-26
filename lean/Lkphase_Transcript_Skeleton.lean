@@ -55,7 +55,7 @@ by sorry -- TODO: Reference paper Lemma Lkphase:lem:transcript-collision
 theorem LB_depth_k_minus_1_phase (params : PhaseParams) :
   forall (alg : DepthKMinus1PsiAlgorithm),
     decides_Lkphase alg -> 
-    time_bound alg >= Omega(n / (params.k * (params.k - 1) * Nat.log n)) :=
+    time_bound alg >= Omega(n / (params.k * (params.k - 1) * Nat.log2 n)) :=
 by sorry -- TODO: Reference paper Theorem Lkphase:thm:LB
 
 -- Phase-lock constraint formalization
