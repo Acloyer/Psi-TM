@@ -1,7 +1,20 @@
 import Lake
 open Lake DSL
 
+/-- Enable stress build via `-Kstress=1` (presence -> true). -/
+def stress : Bool := (get_config? stress).isSome
+
+/-- Extra compiler args in stress mode. -/
+def stressArgs : Array String :=
+  if stress then
+    #[
+      "-Dpsi.stress=true"
+    ]
+  else
+    #[]
+
 package psi_tm where
+  moreLeanArgs := stressArgs
 
 @[default_target]
 lean_lib PsiTM where
