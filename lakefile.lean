@@ -10,7 +10,10 @@ lean_lib PsiTM where
     `PsiTM.BudgetLemma,
     `PsiTM.PsiFooling,
     `PsiTM.LkLowerBound,
-    `PsiTM.AntiSim_Hook_Skeleton
+    `PsiTM.AntiSim_Hook_Skeleton,
+    `PsiTM.AltForms.AntiSimAlt,
+    `PsiTM.AltForms.LkAlt,
+    `PsiTM.AltForms.LkphaseAlt
   ]
 
 lean_exe psitm where

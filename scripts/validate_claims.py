@@ -16,7 +16,7 @@ LEAN_ID_RE = re.compile(r"^--\s*ID:\s*([^\s]+)\s*$", re.MULTILINE)
 
 def collect_declared_ids() -> set[str]:
     ids: set[str] = set()
-    for lf in (ROOT / "lean").glob("*.lean"):
+    for lf in (ROOT / "lean").rglob("*.lean"):
         ids |= set(LEAN_ID_RE.findall(lf.read_text(encoding='utf-8', errors='ignore')))
     return ids
 

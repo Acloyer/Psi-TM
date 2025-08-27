@@ -23,7 +23,7 @@ structure Params where
   time Ω(n / (k (k−1) log n)). We keep constants explicit in paper;
   here we provide a placeholder theorem with trivial proof.
 -/
-theorem LB_Main (p : Params) : True := by
+theorem LB_Main : True := by
   trivial
 
 end Lk

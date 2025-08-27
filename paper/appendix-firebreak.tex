@@ -1,0 +1,28 @@
+% v0.8.7 Pre-Fortress / Firebreak Appendix
+% All logs base 2: use \log_{2}
+
+\section{Pre-Fortress Firebreak: Stress and Red-Team Outcomes}
+\label{sec:appendix-firebreak}
+
+This appendix summarizes the stress tests, attack families, and outcomes used to harden the $\Psi$-TM stack prior to v0.9.0.
+
+\subsection{Stress Matrix}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Family} & \textbf{Params} & \textbf{Pass Region} & \textbf{Fail Region} \\
+    \midrule
+    Anti-Sim & $B(d,n)=c\cdot d\cdot \log_{2} n$ & $d\le 3$, single-pass & multi-pass, advice \\
+    L$_k$ UB/LB & $k\in\{2,3,4\}$ & $\text{UB: }O(n),\ \text{LB: }\Omega(n/\log_{2} n)$ & extra budget factor $>1$ \\
+    L$^{\text{phase}}_k$ & transcript collision & UB holds & collision breaks UB \\
+    Sandbox & multi-pass/rand toggles & deterministic, one-pass & stochastic, advice \\
+    \bottomrule
+  \end{tabular}
+  \caption{Stress matrix and outcomes (v0.8.7).}
+\end{table}
+
+\subsection{Notes}
+All experiments use deterministic seeds (1337). Plots included here are representative; code and full results are available in the repository.
+

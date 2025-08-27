@@ -1,0 +1,42 @@
+// v0.8.7 lemma-level dependency DAG (Graphviz DOT)
+// Nodes are Lean IDs; edges represent logical dependency (A -> B means A depends on B)
+digraph psi_dag {
+  rankdir=LR;
+
+  // Core
+  "Budget:Lemma:Core";
+  "Psi:Fooling:Bound";
+  "AntiSim:Hook:Core";
+  "AntiSim:lem:failure-modes";
+  "AntiSim:cor:barrier";
+
+  // Lk/Lkphase canonical
+  "Lk:LB:Main";
+  "Lkphase:lem:transcript-collision";
+  "Lkphase:thm:UB";
+
+  // Alt forms / duals (v0.8.7)
+  "AntiSim:thm:hook-alt";
+  "AntiSim:thm:hook-dual";
+  "Lk:lb:dual";
+  "Lk:ub:dual";
+  "Lkphase:lem:collision-alt";
+  "Lkphase:thm:ub-alt";
+
+  // Edges
+  "AntiSim:cor:barrier" -> "AntiSim:lem:failure-modes";
+  "Lk:LB:Main" -> "Budget:Lemma:Core";
+  "Lk:LB:Main" -> "AntiSim:cor:barrier";
+  "Lkphase:thm:UB" -> "Budget:Lemma:Core";
+  "Lkphase:thm:UB" -> "Psi:Fooling:Bound";
+  "Lkphase:lem:transcript-collision" -> "AntiSim:cor:barrier";
+
+  // Alt cross-checks
+  "AntiSim:thm:hook-alt" -> "AntiSim:Hook:Core";
+  "AntiSim:thm:hook-dual" -> "AntiSim:Hook:Core";
+  "Lk:lb:dual" -> "Lk:LB:Main";
+  "Lk:ub:dual" -> "Lkphase:thm:UB";
+  "Lkphase:lem:collision-alt" -> "Lkphase:lem:transcript-collision";
+  "Lkphase:thm:ub-alt" -> "Lkphase:thm:UB";
+}
+

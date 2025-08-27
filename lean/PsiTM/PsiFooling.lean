@@ -14,7 +14,7 @@ structure Params where
   d : Nat
   n : Nat
 
-theorem Fooling_Bound (p : Params) : True := by
+theorem Fooling_Bound : True := by
   trivial
 
 end PsiFooling

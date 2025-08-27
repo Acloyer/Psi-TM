@@ -12,7 +12,7 @@ axiom B : Nat → Nat → Nat
 axiom c : Nat
 axiom c_pos : 0 < c
 
-theorem Lemma_Core (d n : Nat) : True := by
+theorem Lemma_Core : True := by
   trivial
 
 end Budget

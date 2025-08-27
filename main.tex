@@ -79,6 +79,9 @@ We introduce Psi-TM ($\Psi$-TM), a computational model that extends Structurally
 We analyze minimal introspection requirements ($d=1,2,3$) with oracle-relative strictness; $d=3$ is a plausible target subject to algebraization; unrelativized sufficiency remains open. This frames barrier progress conservatively while maintaining selectors-only semantics and explicit information-budget accounting.
 \end{abstract}
 
+% Reproducibility & Artifact Summary (v0.8.7)
+\input{paper/section-release-overview}
+
 \tableofcontents
 \newpage
 
@@ -88,7 +91,7 @@ We write logarithms with explicit base: e.g., $\log_{2} n$. Unless stated otherw
 \end{remark}
 
 \section{Roadmap}\label{sec:roadmap}
-This paper is organized to first freeze the model and the $\iota$ interface, then present lower-bound tools, hierarchy results, and conservative barrier statements. For a high-level overview and acceptance criteria, see README.md.
+This paper is organized to first freeze the model and the $\iota$ interface, then present lower-bound tools, hierarchy results, and conservative barrier statements. For a high-level overview and acceptance criteria, see Section~\ref{sec:repro}.
 
 \input{psi-tm-formal-definition}
 \input{psi-tm-lower-bound-tools}
@@ -101,6 +104,9 @@ This paper is organized to first freeze the model and the $\iota$ interface, the
 \input{psi-tm-theoretical-results}
 % Canonical sections included via inputs above (v0.8.1 Model Freeze).
 % (legacy monolithic duplicate content removed in v0.8.41)
+
+% Firebreak appendix (v0.8.7)
+\input{paper/appendix-firebreak}
 
 \section{Discussion}\label{sec:discussion}
 

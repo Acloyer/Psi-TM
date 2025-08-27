@@ -8,8 +8,6 @@
 # Psi–Fooling Bound
 - latex: thm:psi-fooling
   lean: Psi:Fooling:Bound
-- latex: Lk:psi-fooling
-  lean: Psi:Fooling:Bound
 
 # L_k main lower bound
 - latex: Lk:lb-main
@@ -30,3 +28,17 @@
   lean: Lkphase:lem:transcript-collision
 - latex: Lkphase:thm:UB
   lean: Lkphase:thm:UB
+
+# v0.8.7 Alt forms / duals
+- latex: AntiSim:thm:hook-alt
+  lean: AntiSim:thm:hook-alt
+- latex: AntiSim:thm:hook-dual
+  lean: AntiSim:thm:hook-dual
+- latex: Lk:lb:dual
+  lean: Lk:lb:dual
+- latex: Lk:ub:dual
+  lean: Lk:ub:dual
+- latex: Lkphase:lem:collision-alt
+  lean: Lkphase:lem:collision-alt
+- latex: Lkphase:thm:ub-alt
+  lean: Lkphase:thm:ub-alt
