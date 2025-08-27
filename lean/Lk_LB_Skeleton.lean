@@ -4,6 +4,7 @@
 set_option warningAsError false
 
 import PsiTM.BudgetLemma
+import PsiTM.Asymptotics
 import PsiTM.AntiSim_Hook_Skeleton
 
 namespace Lk_Pointer_Chase
@@ -18,8 +19,9 @@ axiom α_pos : α > 0
 structure LkParams where
   k : Nat
   m : Nat
+  n : Nat
   k_ge_2 : k ≥ 2
-  m_size_relation : True -- TODO: formalize m * k = Θ(n) in v0.8.6
+  m_size_relation : Asym.ThetaMul m k n
 
 -- Placeholder algorithm types
 axiom DepthKPsiAlgorithm : Type
@@ -35,7 +37,7 @@ axiom Ω : (Nat → Nat) → (Nat → Nat)
 
 -- Lightweight references to Budget and AntiSim components to document dependencies
 def usesBudgetLemma : True := by
-  have _ := Budget.Lemma_Core 0 0
+  have _ := Budget.Lemma_Core
   trivial
 
 def usesAntiSimHook : True := by
