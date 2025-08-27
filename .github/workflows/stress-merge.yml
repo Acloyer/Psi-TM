@@ -23,16 +23,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install jupyter matplotlib numpy pandas ipykernel
 
-      - name: Setup Lean
-        uses: leanprover/lean-action@v1
-        with:
-          auto-config: false
+      - name: Install Lean (elan)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Lake version
+        run: |
+          lake --version | cat
+          lean --version | cat
 
       - name: Lake update
         run: lake update | cat
 
       - name: Lean build
-        run: lake -Kstress=1 build
+        run: lake -Kstress=1 build | cat
 
       - name: Validate claims
         run: python scripts/validate_claims.py paper/claims.yaml | cat
