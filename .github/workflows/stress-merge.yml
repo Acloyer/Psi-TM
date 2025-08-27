@@ -25,6 +25,11 @@ jobs:
 
       - name: Setup Lean
         uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+
+      - name: Lake update
+        run: lake update | cat
 
       - name: Lean build
         run: lake -Kstress=1 build
