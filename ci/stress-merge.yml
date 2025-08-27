@@ -1,0 +1,22 @@
+# Stress-merge CI (reference config for local/alt CI systems)
+# GitHub Actions uses .github/workflows/stress-merge.yml
+
+name: stress-merge
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - uses: leanprover/lean-action@v1
+      - run: lake build
+      - run: python scripts/validate_claims.py paper/claims.yaml
+      - run: |
+          if git grep -n "Nat\.log\b" -- lean/; then exit 1; fi

@@ -1,0 +1,49 @@
+name: stress-merge
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Setup Lean
+        uses: leanprover/lean-action@v1
+
+      - name: Lean build
+        run: lake build | cat
+
+      - name: Validate claims
+        run: python scripts/validate_claims.py paper/claims.yaml | cat
+
+      - name: Grep guard (Nat.log)
+        run: |
+          if git grep -n "Nat\.log\b" -- lean/; then
+            echo "Found Nat.log usage"; exit 1; fi
+
+      - name: Sanitize notebooks
+        run: python scripts/sanitize_notebooks.py | cat
+
+      - name: List notebooks
+        run: ls -la notebooks | cat
+
+      - name: Record timing
+        run: |
+          echo "TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+          echo "Recorded timing baseline"

@@ -1,12 +1,12 @@
-### Risk Ledger (v0.8.7)
+### Risk Ledger (v0.8.71)
 
 - Baseline residual risk: 12–15%
-- Post-firebreak target: 5–7%
+- Post-convergence target: 2–3% (97–98% safety)
 
-| Risk | Pre | Post | Notes |
-|------|-----|------|-------|
-| Advice/leakage | 4% | 1% | One-pass, no-advice guard |
-| Extra budget | 3% | 1% | Sandbox flags isolated |
-| Stochasticity | 3% | 1% | seed=1337 enforced |
-| DAG coverage | 3% | 1–2% | Validator cross-check |
-
+| Risk           | Pre (0.8.7) | Post (0.8.71) | Notes/Guard                       |
+|----------------|-------------|---------------|-----------------------------------|
+| Advice/leakage | 4%          | 0.5–1%        | One-pass, no-advice guard         |
+| Extra budget   | 3%          | 0.5–1%        | Sandbox flags isolated            |
+| Stochasticity  | 3%          | 0.5–1%        | seed=1337 enforced                |
+| DAG coverage   | 3%          | 0.5–1%        | Validator cross-check             |
+| **Total**      | **12–15%**  | **2–3%**      | **97–98% safety**                 |

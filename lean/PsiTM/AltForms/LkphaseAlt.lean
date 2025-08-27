@@ -3,8 +3,8 @@ import PsiTM.PsiFooling
 import PsiTM.AntiSim_Hook_Skeleton
 
 /-
-  Alternative formulations for Lk^phase (v0.8.7)
-  Strict headers only; bodies may remain as placeholders in 0.8.6.x.
+  Deprecated alt forms (v0.8.71): canonical statements selected; file retained for history.
+  Excluded from build roots. IDs remain for traceability only.
 -/
 
 set_option warningAsError false

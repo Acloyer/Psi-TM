@@ -1,0 +1,12 @@
+session PsiTM = HOL +
+  sessions
+    "HOL"
+  theories
+    PsiTM/AltForms
+    PsiTM/BudgetLemma
+    PsiTM/PsiFooling
+    PsiTM/Lk
+    PsiTM/Lkphase
+    PsiTM/AntiSim
+  document_files
+    "root.tex"
