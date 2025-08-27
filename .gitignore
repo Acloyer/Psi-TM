@@ -237,6 +237,22 @@ pythontex-files-*/
 # titletoc
 *.ptc
 
+# Lake
+.lake
+lake-manifest.json
+
+# Powershell
+*.ps1
+*.sh
+
+# Personal Files
+*.pdf
+*.docx
+*.doc
+*.txt
+VERSIONS.md
+versions.yml
+
 # todonotes
 *.tdo
 

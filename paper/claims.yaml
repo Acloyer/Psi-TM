@@ -25,6 +25,8 @@
 - latex: AntiSim:cor:barrier
   lean: AntiSim:cor:barrier
 
-# Lkphase (stub; not yet mapped to a dedicated Lean file)
-- latex: Lkphase:thm:LB
-  lean: Lk:LB:Main  # placeholder linkage until dedicated file exists
+# Lkphase (transcript & UB)
+- latex: Lkphase:lem:transcript-collision
+  lean: Lkphase:lem:transcript-collision
+- latex: Lkphase:thm:UB
+  lean: Lkphase:thm:UB
