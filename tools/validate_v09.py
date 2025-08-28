@@ -5,7 +5,8 @@ MUST = [
   r"lem:R1-entropy-budget", r"lem:R2-multipass", r"lem:R3-advice", r"lem:R4-bandwidth-tweak",
   r"lem:DT-LB-under-R", r"lem:IC-transcript",
   r"thm:bridge-machine-tree", r"thm:bridge-tree-circuit",
-  r"Post-0\.8\.71 residual-risk ≈ 97–98%"
+  # Accept \approx, ~, or the unicode ≈; accept en-dash, hyphen, or -- for the range
+  r"Post-0\.8\.71 residual-risk (?:≈|~|\\approx) 97(?:–|--|-)98%"
 ]
 fail = 0
 for pat in MUST:
