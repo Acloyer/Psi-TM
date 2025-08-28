@@ -1,0 +1,27 @@
+% v0.9.3 Bridges: Machine↔Tree and Tree↔Circuit with explicit losses, plus composition corollary
+\section{Bridges with Explicit Losses (v0.9.3)}
+
+We establish bidirectional transfer principles among $\Psi$-machines, $\Psi$-decision trees, and information-theoretic circuits, tracking polynomial losses in $n$ and explicit polylogarithmic factors in bandwidth/advice.
+
+\begin{theorem}[Bridge: Machine$\leftrightarrow$Tree]\label{thm:bridge-machine-tree}
+Under Controlled Relaxations $R$ and standard invariants (no-cheat), $\Psi$-machine parameters $\{B,T,bw,adv,rand\}$ transfer to Psi-DT $\{\mathrm{depth},\#\mathrm{queries}\}$ with losses bounded by $\mathrm{poly}(n)$ and at most $\mathrm{polylog}(n)$ in bandwidth/advice, within domain $n\ge n_0$, $bw\le O(\log n)$, and advice $\le O(\log n)$ (or explicitly $o(n)$ where stated).
+\emph{Sketch.} Encode a run as a DT transcript with per-query budget $\B(d,n)$ and apply Lemma~\ref{lem:DT-LB-under-R}. R1 contributes an additive entropy term; R2 aggregates $P$ passes with constant $c_0$ from the Budget tool; R3 adds explicit $|adv|$ bits; R4 shifts $\B(d,n)$ by $\pm O(\log n)$ incurring only polylog losses. These yield the stated polynomial/polylogarithmic degradation and the validity domain.
+\end{theorem}
+
+\begin{theorem}[Bridge: Tree$\leftrightarrow$Circuit]\label{thm:bridge-tree-circuit}
+Under $R$ and the anti-simulation hook, Psi-DT bounds transfer to IC-circuits with parameter map $\{B,T,bw\}\to\{\text{size},\text{depth},\text{fan-in}\}$ and losses bounded by $\mathrm{poly}(n)$ (log factors from transcript encoding explicit). Validity domain as above.
+\emph{Sketch.} Use Lemma~\ref{lem:IC-transcript} to turn DT query budgets into transcript-counting constraints for IC circuits. Anti-simulation ensures no super-budget leakage. Log factors arise from base-2 encoding and layer-wise fan-in aggregation; remaining losses are polynomial from size-depth normalization.
+\end{theorem}
+
+\begin{table}[t]
+\centering
+\caption{Bridge Param Map (v0.9.3)}
+\begin{tabular}{lll}
+\toprule
+Source & Target & Map / Notes \\
+\midrule
+$\Psi\{B,T,bw,adv,rand\}$ & DT$\{\mathrm{depth},\#\mathrm{queries}\}$ & depth $\leftrightarrow \lceil \log M / B(d,n)\rceil$; losses: poly + polylog \\
+DT$\{\mathrm{depth},\#\mathrm{queries}\}$ & IC$\{\text{size},\text{depth},\text{fan-in}\}$ & via transcript bound; losses: poly (log factors explicit) \\
+\bottomrule
+\end{tabular}
+\end{table}

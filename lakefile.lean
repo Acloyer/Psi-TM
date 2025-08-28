@@ -24,7 +24,9 @@ lean_lib PsiTM where
     `PsiTM.PsiFooling,
     `PsiTM.LkLowerBound,
     `PsiTM.AntiSim_Hook_Skeleton,
-    `PsiTM.Relaxations
+    `PsiTM.Relaxations,
+    `PsiTM.Platforms,
+    `PsiTM.Bridges
   ]
 
 lean_exe psitm where

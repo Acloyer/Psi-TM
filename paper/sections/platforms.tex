@@ -1,0 +1,28 @@
+% v0.9.2 Platforms — independent lower-bound frameworks
+\section{Independent Platforms}
+\label{sec:platforms}
+
+\subsection{Psi-decision trees}
+We consider a query model for Psi-machines as decision trees. The depth lower bound obeys
+\(\mathrm{depth} \ge \lceil \log_{2} M / B(d,n) \rceil\), matching budget constraints.
+
+\begin{lemma}[DT Lower Bound under $R$]\label{lem:DT-LB-under-R}
+In the query model (queries reveal at most $\B(d,n)$ bits per step under relaxations $R$),
+\[\mathrm{depth} \;\ge\; \left\lceil \frac{\log M}{\B(d,n)} \right\rceil.\]
+\emph{Sketch.} Apply the Budget tool: each query contributes at most $\B(d,n)$ bits of information. Combine with $\Psi$-Fano/\,$\Psi$-fooling to relate distinguishability among $M$ possibilities to total revealed bits. This yields the inequality; constants follow the transcript encoding used in the tools.
+\end{lemma}
+
+\subsection{IC-circuits}
+We formalize information-constrained (IC) circuits and derive transcript-counting bounds.
+\paragraph{IC-AC\textsuperscript{0}/IC-NC\textsuperscript{1}.} We use transcript counting with per-gate information constraints.
+
+\begin{lemma}[IC Transcript Bound]\label{lem:IC-transcript}
+For suitable gate/query budget $Q$, transcript counting yields
+$Q \cdot B(k-1,n) \;\ge\; \Omega(n/k)$.
+\emph{Sketch.} Model gate-level observations as bounded-information queries. Count distinguishable transcripts over input space and equate to required separations; the anti-simulation and budget tools provide the per-step (per-gate) $B(k-1,n)$ factor.
+\end{lemma}
+
+\paragraph{Parameter synchronization.} Identify $\{B,T,bw,adv,rand\}$ with circuit parameters: $B$ maps to per-layer fan-in bound (information per gate), $T$ to depth, bandwidth $bw$ to local wiring/fanin caps, advice to nonuniform side inputs (advice lines), and randomness to public coins. Thus a DT budget in Lemma~\ref{lem:DT-LB-under-R} transfers to circuit size/depth bounds through Lemma~\ref{lem:IC-transcript}.
+
+% Table (auto-generated from CSV; wrapped to fit width)
+\input{paper/tables/platforms_table}

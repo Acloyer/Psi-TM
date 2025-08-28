@@ -1,0 +1,17 @@
+% v0.9.2 Platforms table (source of truth: results CSV)
+\begin{table}[t]
+  \centering
+  \resizebox{\textwidth}{!}{
+  \begin{tabular}{l l l l l}
+    \toprule
+    Platform & Bound & Constants & ReferenceLemma & Notes \\
+    \midrule
+    PsiDecisionTree & $\lceil \log_{2} M / B(d,n) \rceil$ & $c_0; M$ & Platform:PsiDecisionTree & Query model depth lower bound \\
+    ICGate & transcript LB & $\alpha$ & Platform:ICGate & Transcript counting over IC-gates \\
+    ICAC$^{0}$ & IC-AC$^{0}$ LB & $c_0$ & Platform:ICAC0 & Depth/size tradeoff via transcripts \\
+    ICNC$^{1}$ & IC-NC$^{1}$ LB & $c_0$ & Platform:ICNC1 & Depth/size tradeoff via transcripts \\
+    \bottomrule
+  \end{tabular}}
+  \caption{Independent platforms and their lower bounds.}
+  \label{tab:platforms}
+\end{table}

@@ -1,0 +1,23 @@
+\begin{table}[H]
+  \centering
+  \resizebox{1.1\textwidth}{!}{%
+    \pgfplotstableread[col sep=comma]{results/2025-08-28/bridges.csv}\bridgesdata
+    \pgfplotstabletypeset[
+      columns={bridge_id,source,target,assumptions,param_map,lb_ref,ub_ref,anti_sim_ref,validity_domain,notes},
+      columns/bridge_id/.style={string type, column name=Bridge},
+      columns/source/.style={string type, column name=Source},
+      columns/target/.style={string type, column name=Target},
+      columns/assumptions/.style={string type, column name=Assumptions},
+      columns/param_map/.style={string type, column name=Param Map},
+      columns/lb_ref/.style={string type, column name=LB Ref},
+      columns/ub_ref/.style={string type, column name=UB Ref},
+      columns/anti_sim_ref/.style={string type, column name=Anti-sim Ref},
+      columns/validity_domain/.style={string type, column name=Validity},
+      columns/notes/.style={string type, column name=Notes},
+      every head row/.style={before row=\toprule, after row=\midrule},
+      every last row/.style={after row=\bottomrule}
+    ]{\bridgesdata}
+  }
+  \caption{Bridge equivalences with explicit losses (v0.9.3).}
+  \label{tab:bridges}
+\end{table}

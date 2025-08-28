@@ -1,0 +1,28 @@
+name: acceptance-v0.9
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils texlive-latex-extra texlive-fonts-recommended latexmk
+      - name: Build Lean
+        uses: leanprover/lean-action@v1
+      - name: Lake build
+        run: lake build
+      - name: Compile LaTeX
+        run: |
+          latexmk -pdf -halt-on-error -interaction=nonstopmode main.tex
+      - name: Validate v0.9 acceptance
+        run: |
+          pdftotext main.pdf paper.txt
+          python3 tools/validate_v09.py

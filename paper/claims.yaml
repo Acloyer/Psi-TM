@@ -52,3 +52,21 @@
   lean: Lkphase:lem:collision-alt
 - latex: Lkphase:thm:ub-alt
   lean: Lkphase:thm:ub-alt
+
+# v0.9.2 Platforms
+- latex: Platform:PsiDecisionTree
+  lean: Platform:PsiDecisionTree
+- latex: Platform:ICGate
+  lean: Platform:ICGate
+- latex: Platform:ICAC0
+  lean: Platform:ICAC0
+- latex: Platform:ICNC1
+  lean: Platform:ICNC1
+
+# v0.9.3 Bridges
+- latex: Bridge:MachineTree
+  lean: Bridge:MachineTree
+- latex: Bridge:TreeCircuit
+  lean: Bridge:TreeCircuit
+- latex: Bridge:MachineCircuit:Cor
+  lean: Bridge:MachineCircuit:Cor

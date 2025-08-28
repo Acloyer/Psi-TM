@@ -1,0 +1,5 @@
+Platform,Bound,Constants,ReferenceLemma,Notes
+PsiDecisionTree,"ceil(log2(M)/B(d,n))","c0; M","Platform:PsiDecisionTree","Query model depth lower bound"
+ICGate,"transcript LB","alpha","Platform:ICGate","Transcript counting over IC-gates"
+ICAC0,"IC-AC^0 LB","c0","Platform:ICAC0","Depth/size tradeoff via transcripts"
+ICNC1,"IC-NC^1 LB","c0","Platform:ICNC1","Depth/size tradeoff via transcripts"

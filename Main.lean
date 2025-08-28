@@ -3,6 +3,8 @@ import PsiTM.PsiFooling
 import PsiTM.LkLowerBound
 import PsiTM.AntiSim_Hook_Skeleton
 import PsiTM.Relaxations
+import PsiTM.Platforms
+import PsiTM.Bridges
 import Lk_LB_Skeleton
 import Lkphase_Transcript_Skeleton
 

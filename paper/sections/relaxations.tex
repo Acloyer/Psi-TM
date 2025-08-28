@@ -1,22 +1,30 @@
 % Controlled Relaxations (v0.9.1)
 \subsection{Controlled relaxations}
-We record four relaxations and their explicit polynomial degradations; see Table~\ref{tab:relaxations}.
-
-\paragraph{Public randomness (R1).}
-Allow an entropy budget $\Delta H$ of public randomness. See Lemma \textsc{Relax:PublicRand}.
-
-\paragraph{Multi-pass (R2).}
-If $P\cdot(m+B(d,n)) \ge c_0\cdot \log_{2} M$, the lower bound degrades polynomially. See Lemma \textsc{Relax:MultiPass}.
-
-\paragraph{Advice (R3).}
-With $o(n)$ or $O(\log n)$ bits of advice, the bound remains polynomially stable; see Lemma \textsc{Relax:Advice}.
-
-\paragraph{Bandwidth shifts (R4).}
-For $B(d,n)\pm O(\log n)$, the lower bound is stable; see Lemma \textsc{Relax:Bandwidth}.
+We record four relaxations and their explicit polynomial degradations.
 
 \begin{table}[t]
-  \centering
-  \caption{Controlled relaxations and degradation bounds.}
-  \label{tab:relaxations}
-  \input{paper/tables/relaxations_table.tex}
+\centering
+\caption{Controlled Relaxations (v0.9.1): Relaxation $\to$ Degradation bound $\to$ Reference}
+\begin{tabular}{lll}
+\toprule
+Relaxation & Degradation bound & Reference \\
+\midrule
+R1: Public randomness & explicit in entropy budget $H$ (state dependence on $H$) & Lemma~\ref{lem:R1-entropy-budget} \\
+R2: Multi-pass ($P$ passes) & $P\cdot(m+B(d,n)) \ge c_0\cdot \log M$ (state origin of $c_0$) & Lemma~\ref{lem:R2-multipass} \\
+R3: Advice & survives for $o(n)$ and $O(\log n)$; show explicit dependence on $|adv|$ & Lemma~\ref{lem:R3-advice} \\
+R4: Bandwidth tweak $\pm O(\log n)$ & LB stable under small shifts in $B(d,n)$; bound losses & Lemma~\ref{lem:R4-bandwidth-tweak} \\
+\bottomrule
+\end{tabular}
 \end{table}
+
+\paragraph{Lemma (R1: entropy budget).}\label{lem:R1-entropy-budget}
+Public randomness with entropy budget $H$ perturbs the information budget by at most an additive $H$ term. By Budget accounting and $\Psi$-Fano/\,$\Psi$-fooling arguments, the lower bound degrades polynomially with explicit dependence on $H$ in the state space; no change to asymptotic exponents beyond this parameterization.
+
+\paragraph{Lemma (R2: multi-pass).}\label{lem:R2-multipass}
+For $P$ passes, if $P\cdot(m+\B(d,n)) \ge c_0\cdot \log M$, the bound persists with polynomial loss. The constant $c_0$ arises from the query-to-entropy conversion in the Budget Lemma (normalizing per-step payload to $\B(d,n)$ and per-pass overhead $m$) and the base-2 encoding used in transcript counting.
+
+\paragraph{Lemma (R3: advice).}\label{lem:R3-advice}
+With advice $|adv| \in \{O(\log n),\, o(n)\}$, the lower bound is stable: the proof augments the information budget by $|adv|$ bits and then applies the $\Psi$-Fooling/\,$\Psi$-Fano tool. Dependence on $|adv|$ is explicit and purely additive inside the budget term.
+
+\paragraph{Lemma (R4: bandwidth tweak).}\label{lem:R4-bandwidth-tweak}
+For bandwidth shifts $\B(d,n) \mapsto \B(d,n) \pm O(\log n)$, the transcript and budget inequalities change by polylogarithmic factors. Anti-simulation and budget monotonicity yield that the lower bound is preserved up to polylogarithmic losses with constants inherited from the corresponding tools.

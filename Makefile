@@ -76,6 +76,8 @@ pdf:
 >   echo "[warn] latexmk not found; skipping pdf build"; \
 > fi
 
+
+
 # --- tests / arxiv / verify (optional) ----------------------------------------
 test:
 > echo "Running tests…"
