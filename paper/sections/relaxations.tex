@@ -4,8 +4,12 @@ We record four relaxations and their explicit polynomial degradations.
 
 \begin{table}[t]
 \centering
+\begingroup
+\small % slightly smaller font
+\setlength{\tabcolsep}{4.5pt} % tighter horizontal padding
+\renewcommand{\arraystretch}{1.05} % slightly tighter vertical spacing
 \caption{Controlled Relaxations (v0.9.1): Relaxation $\to$ Degradation bound $\to$ Reference}
-\begin{tabular}{lll}
+\begin{tabular}{@{}p{0.24\linewidth}p{0.56\linewidth}p{0.18\linewidth}@{}}
 \toprule
 Relaxation & Degradation bound & Reference \\
 \midrule
@@ -15,6 +19,7 @@ R3: Advice & survives for $o(n)$ and $O(\log n)$; show explicit dependence on $|
 R4: Bandwidth tweak $\pm O(\log n)$ & LB stable under small shifts in $B(d,n)$; bound losses & Lemma~\ref{lem:R4-bandwidth-tweak} \\
 \bottomrule
 \end{tabular}
+\endgroup
 \end{table}
 
 \paragraph{Lemma (R1: entropy budget).}\label{lem:R1-entropy-budget}
