@@ -15,10 +15,16 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           sudo apt-get update
           sudo apt-get install -y poppler-utils texlive-latex-extra texlive-fonts-recommended latexmk
-      - name: Build Lean
-        uses: leanprover/lean-action@v1
+      - name: Install Lean (elan)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          ~/.elan/bin/elan default $(cat lean-toolchain)
+          ~/.elan/bin/lake --version
+      - name: Lake update
+        run: ~/.elan/bin/lake update
       - name: Lake build
-        run: lake build
+        run: ~/.elan/bin/lake build
       - name: Compile LaTeX
         run: |
           latexmk -pdf -halt-on-error -interaction=nonstopmode main.tex
