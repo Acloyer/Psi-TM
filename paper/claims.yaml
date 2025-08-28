@@ -23,6 +23,16 @@
 - latex: AntiSim:cor:barrier
   lean: AntiSim:cor:barrier
 
+# v0.9.1 Relaxations
+- latex: Relax:PublicRand
+  lean: Relax:PublicRand
+- latex: Relax:MultiPass
+  lean: Relax:MultiPass
+- latex: Relax:Advice
+  lean: Relax:Advice
+- latex: Relax:Bandwidth
+  lean: Relax:Bandwidth
+
 # Lkphase (transcript & UB)
 - latex: Lkphase:lem:transcript-collision
   lean: Lkphase:lem:transcript-collision

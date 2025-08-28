@@ -1,0 +1,22 @@
+% Controlled Relaxations (v0.9.1)
+\subsection{Controlled relaxations}
+We record four relaxations and their explicit polynomial degradations; see Table~\ref{tab:relaxations}.
+
+\paragraph{Public randomness (R1).}
+Allow an entropy budget $\Delta H$ of public randomness. See Lemma \textsc{Relax:PublicRand}.
+
+\paragraph{Multi-pass (R2).}
+If $P\cdot(m+B(d,n)) \ge c_0\cdot \log_{2} M$, the lower bound degrades polynomially. See Lemma \textsc{Relax:MultiPass}.
+
+\paragraph{Advice (R3).}
+With $o(n)$ or $O(\log n)$ bits of advice, the bound remains polynomially stable; see Lemma \textsc{Relax:Advice}.
+
+\paragraph{Bandwidth shifts (R4).}
+For $B(d,n)\pm O(\log n)$, the lower bound is stable; see Lemma \textsc{Relax:Bandwidth}.
+
+\begin{table}[t]
+  \centering
+  \caption{Controlled relaxations and degradation bounds.}
+  \label{tab:relaxations}
+  \input{paper/tables/relaxations_table.tex}
+\end{table}

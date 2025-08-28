@@ -1,0 +1,5 @@
+Relaxation,DegradationBound,Constants,ReferenceLemma,Notes
+R1: PublicRand,poly(2^{DeltaH}),c0,Relax:PublicRand,Entropy budget DeltaH explicit
+R2: MultiPass,poly(P*(m+B(d,n))/log2 M),c0,Relax:MultiPass,Constants traced to prior lemmas
+R3: Advice,poly(f(n)),c0,Relax:Advice,o(n) and O(log n) cases covered
+R4: Bandwidth,stable under +/-O(log n),c0,Relax:Bandwidth,Phase alignment preserved
