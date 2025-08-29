@@ -249,7 +249,6 @@ lake-manifest.json
 *.pdf
 *.docx
 *.doc
-*.txt
 VERSIONS.md
 versions.yml
 
