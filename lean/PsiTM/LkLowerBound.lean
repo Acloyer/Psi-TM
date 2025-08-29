@@ -1,5 +1,5 @@
 /-
-  L_k Lower Bound Skeleton (v0.8.6)
+  L_k Lower Bound Skeleton
   IDs: Lk:LB:Main
   Depends conceptually on Budget Lemma and Ψ–Fooling.
 -/

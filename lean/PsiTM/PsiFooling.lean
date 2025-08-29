@@ -1,5 +1,5 @@
 /-
-  Psi–Fooling Bound Skeleton (v0.8.6)
+  Psi–Fooling Bound Skeleton
   ID: Psi:Fooling:Bound
 -/
 

@@ -1,5 +1,5 @@
 /-
-  Budget Lemma Skeleton (v0.8.6)
+  Budget Lemma Skeleton
   ID: Budget:Lemma:Core
 -/
 

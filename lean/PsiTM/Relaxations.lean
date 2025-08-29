@@ -1,5 +1,5 @@
 /-
-  Relaxations (v0.9.1): Controlled degradations for public randomness, multi-pass,
+  Relaxations: Controlled degradations for public randomness, multi-pass,
   advice, and bandwidth ±O(log n). Statements are formal headers; proofs deferred.
   Guards: use Nat.log2 only; strict IDs in headers.
 -/

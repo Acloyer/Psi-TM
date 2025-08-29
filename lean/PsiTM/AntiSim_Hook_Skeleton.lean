@@ -1,5 +1,5 @@
 /-
-  Anti-simulation hook auxiliary results (v0.8.6.1)
+  Anti-simulation hook auxiliary results
   Clean formal headers matching claims.yaml; avoids undefined constants.
 -/
 

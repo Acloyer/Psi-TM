@@ -1,5 +1,5 @@
 /*
-  Lk^phase transcript skeleton (v0.8.6.3)
+  Lk^phase transcript skeleton
   Clean headers; no unstable symbols; uses Nat.log2 only.
 */
 

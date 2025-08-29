@@ -1,5 +1,5 @@
-/- Platforms: Independent frameworks (v0.9.2)
-   Clean headers only; proof bodies may remain as axioms in 0.8.6.x.
+/- Platforms: Independent frameworks
+   Clean headers only; proof bodies may remain as axioms.
    Uses Nat.log2 only. -/
 
 import PsiTM.BudgetLemma

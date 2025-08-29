@@ -1,4 +1,4 @@
-% TikZ diagram snippet for the separation stack (v0.9.3)
+% TikZ diagram snippet for the separation stack
 % Requires in main preamble: \usepackage{tikz} and \usetikzlibrary{positioning}
 \begin{tikzpicture}[node distance=4.0cm]
   % Nodes: models
@@ -14,7 +14,7 @@
   \draw[<->, dashed] (M) to[bend left=15] node[below]{\small $(d^{a})(k^{c})(\log_{2} n)^{b+\ell}$} (C);
 
   % Title/notes
-  \node[above=1.2cm of T, align=center] (title) {\large \textbf{Bridges with Explicit Losses (v0.9.3)}};
+  \node[above=1.2cm of T, align=center] (title) {\large \textbf{Bridges with Explicit Losses}};
   \node[below=1.3cm of T, align=center] (notes) {\small Losses are multiplicative; logs are base 2. Composition matches algebraic product.};
 \end{tikzpicture}
 

@@ -1,13 +1,16 @@
-% v0.9 Methods: Stitching Relaxations, Platforms, and Bridges
-\section{Methods (v0.9)}
-We consolidate the three methodological components: (i) Relaxations (v0.9.1), (ii) Platforms (v0.9.2), and (iii) Bridges (v0.9.3). Each component exposes explicit parameters and loss accounting that thread through the main separation.
+% Methods: Stitching Relaxations, Platforms, and Bridges
+\section{Methods}
+We consolidate the three methodological components: (i) Relaxations, (ii) Platforms, and (iii) Bridges. Each component exposes explicit parameters and loss accounting that thread through the main separation.
 
 \begin{figure}[H]
   \centering
   % Directly input TikZ snippet (built-in compilation)
   \input{paper/fig/stack_diagram.tex}
-  \caption{Separation Stack (v0.9): tools $\to$ relaxations $\to$ platforms $\to$ bridges. Cross-refs: R1--R4 (Lemmas~\ref{lem:R1-entropy-budget}--\ref{lem:R4-bandwidth-tweak}), DT/IC (Lemmas~\ref{lem:DT-LB-under-R},~\ref{lem:IC-transcript}), Bridges (Theorems~\ref{thm:bridge-machine-tree},~\ref{thm:bridge-tree-circuit}).}
+  \caption{Separation Stack: tools $\to$ relaxations $\to$ platforms $\to$ bridges. Cross-refs: R1--R4 (Lemmas~\ref{lem:R1-entropy-budget}--\ref{lem:R4-bandwidth-tweak}), DT/IC (Lemmas~\ref{lem:DT-LB-under-R},~\ref{lem:IC-transcript}), Bridges (Theorems~\ref{thm:bridge-machine-tree},~\ref{thm:bridge-tree-circuit}).}
   \label{fig:stack}
 \end{figure}
 
-The cross-references are stable: we cite \Cref{tab:bridges} for bridge losses and reuse platform and relaxation identifiers defined in earlier sections. All logarithms are base 2 ($\log_{2}$). Post-0.8.71 residual-risk $\approx$ 97--98\%; 0.9.x adds portability/polish; 1.0 unifies.\;{\small\texttt{(Post-0.8.71 residual-risk \~\ 97--98\%)}}
+The cross-references are stable: we cite \Cref{tab:bridges} for bridge losses and reuse platform and relaxation identifiers defined in earlier sections. All logarithms are base 2 ($\log_{2}$).
+
+\paragraph{Artifacts \& Reproducibility.}
+Repository: \texttt{Psi-TM}. Build: \texttt{make all} (runs checks, Lean build, and notebooks). Formal status: Lean skeletons build with Lake; IDs synchronized via \texttt{paper/claims.yaml}. Results and tables under \texttt{results/} (deterministic seeds). Optionally record DOI in final camera-ready.

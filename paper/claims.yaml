@@ -1,4 +1,4 @@
-# Mapping of LaTeX labels to Lean theorem IDs (v0.8.6)
+# Mapping of LaTeX labels to Lean theorem IDs
 # Keep namespaces consistent: "Lk:", "AntiSim:", "Lkphase:", "Budget:", "Psi:"
 
 # Budget Lemma
@@ -23,7 +23,7 @@
 - latex: AntiSim:cor:barrier
   lean: AntiSim:cor:barrier
 
-# v0.9.1 Relaxations
+# Relaxations
 - latex: Relax:PublicRand
   lean: Relax:PublicRand
 - latex: Relax:MultiPass
@@ -39,7 +39,7 @@
 - latex: Lkphase:thm:UB
   lean: Lkphase:thm:UB
 
-# v0.8.7 Alt forms / duals
+# Alt forms / duals
 - latex: AntiSim:thm:hook-alt
   lean: AntiSim:thm:hook-alt
 - latex: AntiSim:thm:hook-dual
@@ -53,7 +53,7 @@
 - latex: Lkphase:thm:ub-alt
   lean: Lkphase:thm:ub-alt
 
-# v0.9.2 Platforms
+# Platforms
 - latex: Platform:PsiDecisionTree
   lean: Platform:PsiDecisionTree
 - latex: Platform:ICGate
@@ -63,7 +63,7 @@
 - latex: Platform:ICNC1
   lean: Platform:ICNC1
 
-# v0.9.3 Bridges
+# Bridges
 - latex: Bridge:MachineTree
   lean: Bridge:MachineTree
 - latex: Bridge:TreeCircuit

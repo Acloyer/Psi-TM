@@ -89,7 +89,7 @@ n^{\beta} \cdot c \cdot (k{-}1) \cdot \log_{2} n
 \end{corollary}
 
 \paragraph{Integration with LB Proofs.}
-This anti-simulation hook reinforces the lower bounds from v0.8.3--v0.8.4 by removing the main potential workaround for depth-\((k{-}1)\) algorithms. The quantitative gap ensures our hierarchy is robust against polynomial-time simulation attacks. In particular, the dependency on LB arguments via the Budget Lemma~\ref{lem:budget} and the $\Psi$-Fooling bound~\ref{thm:psi-fooling} persists unchanged: any attempt to trade many $\iota_{k-1}$ calls for a single $\iota_k$ call triggers a budget violation.
+This anti-simulation hook reinforces the lower bounds from prior sections by removing the main potential workaround for depth-\((k{-}1)\) algorithms. The quantitative gap ensures our hierarchy is robust against polynomial-time simulation attacks. In particular, the dependency on LB arguments via the Budget Lemma~\ref{lem:budget} and the $\Psi$-Fooling bound~\ref{thm:psi-fooling} persists unchanged: any attempt to trade many $\iota_{k-1}$ calls for a single $\iota_k$ call triggers a budget violation.
 
 \paragraph{Research Significance.}
 The No-Poly-Simulation result establishes computational barriers beyond information-theoretic separation. Even with arbitrarily complex payload designs (still injected only via $\delta$), fundamental budget constraints prevent simulation under our deterministic, one-pass, no-advice model with logarithmic information budget.

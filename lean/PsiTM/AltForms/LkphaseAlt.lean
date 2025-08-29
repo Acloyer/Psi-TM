@@ -3,7 +3,7 @@ import PsiTM.PsiFooling
 import PsiTM.AntiSim_Hook_Skeleton
 
 /-
-  Deprecated alt forms (v0.8.71): canonical statements selected; file retained for history.
+  Deprecated alt forms: canonical statements selected; file retained for history.
   Excluded from build roots. IDs remain for traceability only.
 -/
 

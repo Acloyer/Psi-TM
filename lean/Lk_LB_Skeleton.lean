@@ -1,5 +1,5 @@
 /- Clean skeleton without unstable imports
-/- Placeholders for integration in v0.8.6
+/- Placeholders for integration
 
 set_option warningAsError false
 

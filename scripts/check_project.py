@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Project checks for v0.8.6 (hardened):
+Project checks (hardened):
 - Validate paper/claims.yaml via PyYAML; required file
 - Strict Lean ID detection using `-- ID: <Token>` headers
 - Verify deterministic seeds (1337) in notebooks

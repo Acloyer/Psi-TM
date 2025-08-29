@@ -1,9 +1,9 @@
-### Risk Ledger (v0.8.71)
+### Risk Ledger
 
 - Baseline residual risk: 12–15%
 - Post-convergence target: 2–3% (97–98% safety)
 
-| Risk           | Pre (0.8.7) | Post (0.8.71) | Notes/Guard                       |
+| Risk           | Pre         | Post          | Notes/Guard                       |
 |----------------|-------------|---------------|-----------------------------------|
 | Advice/leakage | 4%          | 0.5–1%        | One-pass, no-advice guard         |
 | Extra budget   | 3%          | 0.5–1%        | Sandbox flags isolated            |

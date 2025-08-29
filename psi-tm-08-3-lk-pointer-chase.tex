@@ -1,4 +1,4 @@
-% v0.8.3 - L_k (Pointer-Chase). Content-only file; included via main.tex
+% L_k (Pointer-Chase). Content-only file; included via main.tex
 
 \section{Target Language \texorpdfstring{$L_k$}{Lk} (Pointer-Chase)}
 \label{Lk:sec:Lk}
@@ -94,5 +94,5 @@ By Lemma~\ref{Lk:lem:fooling-Lk}, there is a fooling family of size $|\mathcal{F
 \begin{remark}[Average-case via $\Psi$--Fano]\label{Lk:avg-fano}
 For average-case instances of $L_k$, combining the same budget accounting with $\Psi$--Fano (Lemma~\ref{Lk:psi-fano}) yields the standard mutual-information bound; we do not pursue the optimization here, as our focus is the worst-case separation.
 \end{remark}
-In future work (v0.8.6), we extend the anti-simulation hook showing that depth $(k{-}1)$ cannot polynomially simulate depth $k$ even with transcript access bounded by $B(d,n)$, since the final-layer entropy revealed only at depth $k$ cannot be recovered within the $(k{-}1)$ budget. The full statement and proof strategy are given in Section~\ref{AntiSim:sec:hook}.
+We establish the anti-simulation hook showing that depth $(k{-}1)$ cannot polynomially simulate depth $k$ even with transcript access bounded by $B(d,n)$, since the final-layer entropy revealed only at depth $k$ cannot be recovered within the $(k{-}1)$ budget. The full statement and proof strategy are given in Section~\ref{AntiSim:sec:hook}.
 

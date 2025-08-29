@@ -1,5 +1,5 @@
 /-
-  Bridges between Machine, Decision Tree, and IC-Circuit models (v0.9.3)
+  Bridges between Machine, Decision Tree, and IC-Circuit models
   Headers strict; proof bodies omitted (axiomatized) per skeleton policy.
   All logs are base 2 and use Nat.log2.
 -/

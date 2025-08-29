@@ -7,7 +7,7 @@
 All results in this section assume the \textbf{restricted regime}: deterministic computation, single pass over input, no advice strings, no randomness. All introspection functions $\iota_d$ follow the specification in Table~\ref{tab:iota-spec} with fixed parameter $c \geq 1$ throughout.
 \end{remark}
 
-These three fundamental tools constitute the core methodology for establishing lower bounds in the restricted regime. The Budget Lemma provides a basic counting argument for transcript limitations. The $\Psi$-Fooling Bound extends this to worst-case distinguishability, while the $\Psi$-Fano Bound handles average-case scenarios with error tolerance. Together, they form the foundation for proving separations in subsequent target languages (v0.8.3--v0.8.4).
+These three fundamental tools constitute the core methodology for establishing lower bounds in the restricted regime. The Budget Lemma provides a basic counting argument for transcript limitations. The $\Psi$-Fooling Bound extends this to worst-case distinguishability, while the $\Psi$-Fano Bound handles average-case scenarios with error tolerance. Together, they form the foundation for proving separations in subsequent target languages.
 
 \begin{lemma}[Budget Lemma]
 \label{lem:budget}\label{Lk:budget-lemma}\label{lemma:budget-9-2}
@@ -25,7 +25,7 @@ A \textbf{transcript} is the sequence $(y_1, y_2, \ldots, y_T)$ where $y_t = \io
 
 \textbf{Tightness:} This bound is achieved when $\iota_d$ outputs the maximum allowed payload at each step. For example, consider the introspection function:
 \[
-\iota_d(C_t, n) \;=\; \text{encode}\big(\text{step\_number}(t) \;\|\; \text{head\_position}(C_t) \;\|\; \text{state}(C_t)\big)
+\iota_d(C_t, n) \;=\; \text{encode}(\text{step\_number}(t) \;\|\; \text{head\_position}(C_t) \;\|\; \text{state}(C_t))
 \]
 where the encoding uses exactly $B(d,n)$ bits by padding or truncating as needed. Over $T$ steps, this produces $2^{T \cdot B(d,n)}$ distinct transcript sequences when the machine visits $2^{B(d,n)}$ different configurations per step.
 
@@ -153,7 +153,6 @@ This demonstrates scalability: even with a significantly higher introspection bu
 \end{itemize}
 The Fano bound trades input complexity for error tolerance, typically yielding weaker but more general bounds.
 \end{minipage}
-\end{remark}
 
 \begin{table}[htbp]
 \centering
@@ -240,7 +239,7 @@ Figure~\ref{fig:bounds-visualization} shows the linear relationship between tran
 \label{fig:lower-bound-mechanism}
 \end{figure}
 
-These information-theoretic bounds enable the separation proofs in Section~\ref{sec:target-languages}. For the pointer-chase language $L_k$ in v0.8.3, we will construct fooling sets with $M = 2^{\alpha m}$ where $m = \Theta(n/k)$, yielding:
+These information-theoretic bounds enable the separation proofs in Section~\ref{sec:target-languages}. For the pointer-chase language $L_k$, we will construct fooling sets with $M = 2^{\alpha m}$ where $m = \Theta(n/k)$, yielding:
 \begin{equation}
 \label{eq:lk-preview}
  T(n) = \Omega\!\left(\frac{\alpha \cdot n/k}{(k-1) \cdot \log_{2} n}\right) = \Omega\!\left(\frac{n}{k(k-1)\log_{2} n}\right)
