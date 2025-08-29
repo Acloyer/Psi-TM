@@ -1,4 +1,4 @@
-name: acceptance-v0.9
+name: acceptance-v1.0
 on: [push, pull_request]
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
       - name: Compile LaTeX
         run: |
           latexmk -pdf -halt-on-error -interaction=nonstopmode main.tex
-      - name: Validate v0.9 acceptance
+      - name: Validate v1.0 acceptance
         run: |
           pdftotext main.pdf paper.txt
           python3 tools/validate_v09.py

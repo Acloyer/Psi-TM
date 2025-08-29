@@ -1,0 +1,44 @@
+% General-Model Strict Depth Hierarchy (v1.0.1)
+\section{Strict Hierarchy in the General Model}
+
+We prove a strict depth hierarchy for the general \(\Psi\) model where relaxations R1--R4 are handled within the model interface. For each fixed \(k\ge 2\), there exists a family \(\{L_k^{(t)}\}_t\) with \(L_k^{(t)}\in \Psi\text{-}P_k\) and \(L_k^{(t)}\notin \Psi\text{-}P_{k-1}\).
+
+\paragraph{Indexing of the family.}
+% Optional: make this a formal definition
+\begin{definition}[Family indexing]
+Let \(t\) index the last-layer choices (e.g., selector/phase options consistent with the frozen interface); we write \(L_k^{(t)}\) for the instance induced by \(t\).
+\end{definition}
+
+% Lean ID: Psi.Hierarchy.General.MainTheorem
+\begin{theorem}[Main Strict Hierarchy, general model]\label{thm:psi-general-hierarchy}
+Under the frozen interface (all relaxations R1--R4 handled within the model), for every integer \(k\) with \(k\ge 2\) there exists a family \(\{L_k^{(t)}\}_t\) such that
+\[
+L_k^{(t)} \in \Psi\text{-}P_k \quad\text{and}\quad L_k^{(t)} \notin \Psi\text{-}P_{k-1}.
+\]
+All constants and parameters are frozen by the interface; the transcript budget is specified by the map \(\iota\) with
+\[
+B(d,n) = c\, d\, \log_{2} n .
+\]
+Here \(M\) denotes the interface-specified payload/alphabet bound (as in the bridges/loss forms).
+
+Moreover, the upper and lower bounds satisfy
+\[
+T_{\mathrm{UB}}(n) = O(n),\quad S_{\mathrm{UB}}(n) = O(\log_{2} m),\quad
+T_{\mathrm{LB}}(n) = \Omega\!\Big(\frac{n}{k(k-1)\,\log_{2} n}\Big),
+\]
+with explicit per-relaxation degradation mapping (R1--R4) and certification via the anti-simulation guard and the bridges (see Tables~\ref{tab:bridges} and~\ref{tab:relaxations}).
+\end{theorem}
+
+\paragraph{Proof sketch.} We do not invoke lemmas whose premises assume the restricted regime; all dependencies are routed via Controlled Relaxations and Bridges. \emph{Lean IDs}: \texttt{Psi.Hierarchy.General.MainTheorem}, \texttt{Psi.Hierarchy.General.UB\_LkT}, \texttt{Psi.Hierarchy.General.LB\_LkT}, \texttt{Psi.Hierarchy.General.AntiSim\_Generalized}.
+
+\paragraph{Upper bound.} A depth-\(k\) \(\Psi\)-decider for \(L_k^{(t)}\) runs in \(O(n)\) time and \(O(\log_{2} m)\) space with constants frozen by the interface. \emph{Lean ID}: \texttt{Psi.Hierarchy.General.UB\_LkT}.
+
+\paragraph{Lower bound at depth \(k-1\).} For any depth-\(k-1\) decider, the time satisfies
+\[ T(n) = \Omega\!\Big(\frac{n}{k(k-1)\,\log_{2} n}\Big), \]
+with explicit degradation mapping accounting for R1--R4. \emph{Lean ID}: \texttt{Psi.Hierarchy.General.LB\_LkT}.
+
+\paragraph{Anti-simulation guard.} No polynomial emulation of \(\iota_k\) via many \(\iota_{k-1}\) calls within the information budget. \emph{Lean ID}: \texttt{Psi.Hierarchy.General.AntiSim\_Generalized}.
+
+\input{paper/tables/bridges.tex}
+\input{paper/tables/relaxations.tex}
+

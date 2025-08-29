@@ -1,0 +1,3 @@
+Bridge,Source,Target,LossForm,Parameters,ReferenceLemma,Notes
+Machine->Tree,Psi-Machine,Psi-DecisionTree,log_2 M + B(d n),alpha-beta per lemma,Psi.Bridge.MachineToTree,interface-preserving translation
+Tree->Circuit,Psi-DecisionTree,IC-Circuits,log_2 M + B(d n),alpha-beta per lemma,Psi.Bridge.TreeToCircuit,IC-AC0 / IC-NC1

@@ -26,7 +26,10 @@ lean_lib PsiTM where
     `PsiTM.AntiSim_Hook_Skeleton,
     `PsiTM.Relaxations,
     `PsiTM.Platforms,
-    `PsiTM.Bridges
+    `PsiTM.Bridges,
+    `PsiTM.Hierarchy.GeneralModel,
+    `PsiTM.Relaxations.Controlled,
+    `PsiTM.Platforms.Bridges
   ]
 
 lean_exe psitm where

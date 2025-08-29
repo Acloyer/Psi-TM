@@ -1,3 +1,12 @@
+% Stepwise budget accumulation and generalized anti-simulation (tooling-friendly labels)
+
+\begin{lemma}[Stepwise budget accumulation]\label{lem:step-budget}
+Under the interface (one $\iota$-call per step), any strategy that makes $s$ calls to $\iota_{k-1}$ consumes total budget $s\cdot B(k-1,n)$.
+\end{lemma}
+
+\begin{theorem}[Generalized Anti-Simulation]\label{thm:antisim}
+For every fixed $\beta>0$ there exists $N$ such that for all $n\ge N$ no computation that replaces a single $\iota_{k}$-interaction by $n^{\beta}$ calls to $\iota_{k-1}$ can respect the information budget. Equivalently, any such replacement violates Lemma~\ref{lem:step-budget} with $B(k-1,n)=c\,(k-1)\log_{2}n$.
+\end{theorem}
 \section{Anti-Simulation Hook}
 \label{AntiSim:sec:hook}
 

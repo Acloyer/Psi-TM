@@ -1,19 +1,17 @@
 \begin{table}[H]
   \centering
   \resizebox{1.1\textwidth}{!}{%
-    \pgfplotstableread[col sep=comma]{results/2025-08-28/bridges.csv}\bridgesdata
+    \pgfplotstableread[col sep=comma]{results/2025-08-29/bridges.csv}\bridgesdata
     \pgfplotstabletypeset[
-      columns={bridge_id,source,target,assumptions,param_map,lb_ref,ub_ref,anti_sim_ref,validity_domain,notes},
-      columns/bridge_id/.style={string type, column name=Bridge},
-      columns/source/.style={string type, column name=Source},
-      columns/target/.style={string type, column name=Target},
-      columns/assumptions/.style={string type, column name=Assumptions},
-      columns/param_map/.style={string type, column name=Param Map},
-      columns/lb_ref/.style={string type, column name=LB Ref},
-      columns/ub_ref/.style={string type, column name=UB Ref},
-      columns/anti_sim_ref/.style={string type, column name=Anti-sim Ref},
-      columns/validity_domain/.style={string type, column name=Validity},
-      columns/notes/.style={string type, column name=Notes},
+      columns={Bridge,Source,Target,LossForm,Parameters,ReferenceLemma,Notes},
+      columns/Bridge/.style={string type, column name=Bridge},
+      columns/Source/.style={string type, column name=Source},
+      columns/Target/.style={string type, column name=Target},
+      columns/LossForm/.style={string type, column name=LossForm},
+      columns/Parameters/.style={string type, column name=Parameters},
+      columns/ReferenceLemma/.style={string type, column name=ReferenceLemma},
+      columns/Notes/.style={string type, column name=Notes},
+      string replace*={_}{\_},
       every head row/.style={before row=\toprule, after row=\midrule},
       every last row/.style={after row=\bottomrule}
     ]{\bridgesdata}

@@ -1,0 +1,22 @@
+\begin{table}[t]
+  \centering
+  \resizebox{\textwidth}{!}{%
+    \pgfplotstableread[col sep=comma]{results/2025-08-29/bridges.csv}\bridgesdataNew
+    \pgfplotstabletypeset[
+      columns={Bridge,Source,Target,LossForm,Parameters,ReferenceLemma,Notes},
+      columns/Bridge/.style={string type},
+      columns/Source/.style={string type},
+      columns/Target/.style={string type},
+      columns/LossForm/.style={string type},
+      columns/Parameters/.style={string type},
+      columns/ReferenceLemma/.style={string type},
+      columns/Notes/.style={string type},
+      string replace*={_}{\_},
+      every head row/.style={before row=\toprule, after row=\midrule},
+      every last row/.style={after row=\bottomrule}
+    ]{\bridgesdataNew}
+  }
+  \caption{Bridges with explicit loss forms.}
+  \label{tab:bridges-new}
+\end{table}
+

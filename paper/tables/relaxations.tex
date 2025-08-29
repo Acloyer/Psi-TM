@@ -1,0 +1,21 @@
+\begin{table}[t]
+  \centering
+  \resizebox{\textwidth}{!}{%
+    \pgfplotstableread[col sep=comma]{results/2025-08-29/relaxations.csv}\relaxdataNew
+    \pgfplotstabletypeset[
+      columns={Relaxation,Setting,LossForm,Parameters,ReferenceLemma,Notes},
+      columns/Relaxation/.style={string type},
+      columns/Setting/.style={string type},
+      columns/LossForm/.style={string type},
+      columns/Parameters/.style={string type},
+      columns/ReferenceLemma/.style={string type},
+      columns/Notes/.style={string type},
+      string replace*={_}{\_},
+      every head row/.style={before row=\toprule, after row=\midrule},
+      every last row/.style={after row=\bottomrule}
+    ]{\relaxdataNew}
+  }
+  \caption{Controlled relaxations with explicit loss forms.}
+  \label{tab:relaxations}
+\end{table}
+

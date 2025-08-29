@@ -70,3 +70,29 @@
   lean: Bridge:TreeCircuit
 - latex: Bridge:MachineCircuit:Cor
   lean: Bridge:MachineCircuit:Cor
+
+# General Model Hierarchy (v1.0.1)
+- latex: Psi.Hierarchy.General.MainTheorem
+  lean: Psi.Hierarchy.General.MainTheorem
+- latex: Psi.Hierarchy.General.UB_LkT
+  lean: Psi.Hierarchy.General.UB_LkT
+- latex: Psi.Hierarchy.General.LB_LkT
+  lean: Psi.Hierarchy.General.LB_LkT
+- latex: Psi.Hierarchy.General.AntiSim_Generalized
+  lean: Psi.Hierarchy.General.AntiSim_Generalized
+
+# Controlled Relaxations IDs (R1–R4)
+- latex: Psi.Relax.R1.PublicRand.Degradation
+  lean: Psi.Relax.R1.PublicRand.Degradation
+- latex: Psi.Relax.R2.MultiPass.Degradation
+  lean: Psi.Relax.R2.MultiPass.Degradation
+- latex: Psi.Relax.R3.Advice.Degradation
+  lean: Psi.Relax.R3.Advice.Degradation
+- latex: Psi.Relax.R4.BandwidthShift.Degradation
+  lean: Psi.Relax.R4.BandwidthShift.Degradation
+
+# Platform Bridges (Psi namespace)
+- latex: Psi.Bridge.MachineToTree
+  lean: Psi.Bridge.MachineToTree
+- latex: Psi.Bridge.TreeToCircuit
+  lean: Psi.Bridge.TreeToCircuit
