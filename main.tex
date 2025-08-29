@@ -122,7 +122,7 @@ We write logarithms with explicit base: e.g., $\log_{2} n$. Unless stated otherw
 \section{Open Problems and Research Directions}
 
 \subsection{Fractional k values}
-Can we define meaningful introspection for k = 1.5 or k = $\pi$? This would require extending the structural depth concept to non-integer values and analyzing whether such extensions provide additional computational power or barrier bypass capabilities.
+An open question is whether one can define meaningful introspection for non-integer values of k (e.g., k = 1.5 or k = $\pi$), which would require extending the structural depth concept to non-integers.
 
 \subsection{Quantum Psi-TM}
 How does superposition affect introspection depth? A quantum Psi-TM model could explore whether quantum parallelism provides additional introspection capabilities or whether the k-constraint remains fundamental even in quantum computation.
@@ -142,14 +142,14 @@ Psi-TM demonstrates that minimal self-reflection ($d = O(1)$ introspection depth
 
 The minimality analysis suggests differing introspection requirements under these conservative assumptions:
 \begin{itemize}
-\item \textbf{Relativization} is the easiest to bypass ($d \geq 1$)
+\item \textbf{Relativization} requires the lowest introspection depth to bypass ($d \geq 1$)
 \item \textbf{Proof Complexity} and \textbf{Natural Proofs} require moderate introspection ($d \geq 2$)
 \item \textbf{Algebraization}: plausible with $d \geq 3$ subject to algebraization lower bounds (open)
 \end{itemize}
 
 It is plausible that $d=3$ suffices for simultaneous bypass subject to algebraization; unrelativized sufficiency remains open.
 
-The key insight is that even constant-depth structural awareness fundamentally alters the landscape of complexity-theoretic impossibility results, suggesting new directions for both theoretical computer science and practical algorithm design.
+The key insight is that even constant-depth structural awareness significantly changes the scope of complexity-theoretic impossibility results, suggesting new directions for both theoretical computer science and practical algorithm design.
 
 \textbf{Impact:} This work opens new research directions in:
 \begin{itemize}

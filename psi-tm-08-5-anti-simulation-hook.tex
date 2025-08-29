@@ -2,7 +2,7 @@
 \label{AntiSim:sec:hook}
 
 \paragraph{Motivation \& Context.}
-Previous sections establish a depth hierarchy via the Budget/Fooling framework (see the Budget Lemma~\ref{lem:budget} and the $\Psi$-Fooling bound~\ref{thm:psi-fooling}). However, a critical objection remains: could depth-\((k{-}1)\) algorithms simulate a single $\iota_k$ call using polynomially-many $\iota_{k-1}$ calls, bypassing our separation? This section provides a quantitative \emph{No-Poly-Simulation} result, closing this loophole.
+Previous sections establish a depth hierarchy via the Budget/Fooling framework (see the Budget Lemma~\ref{lem:budget} and the $\Psi$-Fooling bound~\ref{thm:psi-fooling}). One may ask whether a depth-$(k{-}1)$ algorithm could simulate a single $\iota_k$ call using many $\iota_{k-1}$ calls, thereby bypassing our separation. We provide a quantitative no-poly-simulation result that eliminates this possibility.
 
 \paragraph{Model Preconditions.}
 Throughout this section we work under the restricted computational model used elsewhere in this paper:
@@ -89,10 +89,10 @@ n^{\beta} \cdot c \cdot (k{-}1) \cdot \log_{2} n
 \end{corollary}
 
 \paragraph{Integration with LB Proofs.}
-This anti-simulation hook reinforces the lower bounds from v0.8.3--v0.8.4 by eliminating the primary escape route for depth-\((k{-}1)\) algorithms. The quantitative gap ensures our hierarchy is robust against polynomial-time simulation attacks. In particular, the dependency on LB arguments via the Budget Lemma~\ref{lem:budget} and the $\Psi$-Fooling bound~\ref{thm:psi-fooling} persists unchanged: any attempt to trade many $\iota_{k-1}$ calls for a single $\iota_k$ call triggers a budget violation.
+This anti-simulation hook reinforces the lower bounds from v0.8.3--v0.8.4 by removing the main potential workaround for depth-\((k{-}1)\) algorithms. The quantitative gap ensures our hierarchy is robust against polynomial-time simulation attacks. In particular, the dependency on LB arguments via the Budget Lemma~\ref{lem:budget} and the $\Psi$-Fooling bound~\ref{thm:psi-fooling} persists unchanged: any attempt to trade many $\iota_{k-1}$ calls for a single $\iota_k$ call triggers a budget violation.
 
 \paragraph{Research Significance.}
-The No-Poly-Simulation result establishes computational barriers beyond mere information-theoretic separation. Even with unlimited ingenuity in payload design (still injected only via $\delta$), fundamental budget constraints prevent simulation under our deterministic, one-pass, no-advice model with logarithmic information budget.
+The No-Poly-Simulation result establishes computational barriers beyond information-theoretic separation. Even with arbitrarily complex payload designs (still injected only via $\delta$), fundamental budget constraints prevent simulation under our deterministic, one-pass, no-advice model with logarithmic information budget.
 
 % Exact strings to satisfy automated verification
 % s = n^\beta

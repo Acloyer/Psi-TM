@@ -1,3 +1,3 @@
 bridge_id,source,target,assumptions,param_map,lb_ref,ub_ref,anti_sim_ref,validity_domain,notes
-psi<->dt,Psi-machine,DT,"R1--R4; no-cheat","{B,T,bw,adv,rand}<->{depth,queries}",lem:DT-LB-under-R,-,-,"n>=n0; bw<=O(log n); advice<=O(log n)","losses poly + polylog"
+psi<->dt,Psi-machine,DT,"R1--R4; (under standard invariants with no out-of-model operations)","{B,T,bw,adv,rand}<->{depth,queries}",lem:DT-LB-under-R,-,-,"n>=n0; bw<=O(log n); advice<=O(log n)","losses poly + polylog"
 dt<->ic,DT,IC-circuits,"R; anti-sim","{depth,queries}->{size,depth,fan-in}",lem:DT-LB-under-R,lem:IC-transcript,prop:anti-sim,"same as above","explicit log factors"
