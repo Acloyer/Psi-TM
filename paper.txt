@@ -772,11 +772,11 @@ Remark 9.4 (Aliases for Ψ–Fooling and Ψ–Fano). Within this section, we ref
 statements in the lower-bound tools as Ψ–Fooling (Theorem 8.4) and Ψ–Fano (Lemma 8.5).
 Lemma 9.5 (Single-Pass Access for Lk ). In the restricted regime (deterministic, one-pass, no-advice,
 no-randomness) with ι-interface B(d, n) = c · d · log2 n, the encoding layout T1 ∥ T2 ∥ · · · ∥ Tk ∥ b
-admits a single-pass evaluation strategy: in phase j, the index uj−1 is maintained using O(log m)
+admits a single-pass evaluation strategy: in phase j, the index uj−1 is maintained using O(log2m)
 workspace; exactly one ιj -call is made per step, and no random access across blocks is required.
 Theorem 9.6 (UB at depth k). Assume the restricted regime (deterministic, single pass, no advice,
 no randomness) and Table 1. There exists a depth-k Ψ-algorithm deciding Lk in time O(n) and
-workspace O(log m). The proof follows the phase-by-phase single-pass strategy of Lemma 9.5.
+workspace O(log2m). The proof follows the phase-by-phase single-pass strategy of Lemma 9.5.
 Proof. We execute a k-phase sequential scan of the input, conforming to the one-pass constraint. In
 Phase j ∈ {1, . . . , k} we read the table of Tj left-to-right and maintain a single index register storing
 uj−1 ∈ [m] and its update to uj = Tj (uj−1 ). During Phase j, each computation step uses exactly one
@@ -788,7 +788,7 @@ the Tj table, updating the index when the row for uj−1 is encountered.
     After completing Phase k, we scan the b array once and read b(uk ) at the designated position.
 Accounting: each phase scans a disjoint Θ(m log m)-bit block once, so total I/O is O(n). The
 workspace keeps only the current phase counter, the index uj and constant-many loop variables,
-which is O(log m) bits. Preconditions are satisfied and the per-step ι usage complies with Table 1.
+which is O(log2m) bits. Preconditions are satisfied and the per-step ι usage complies with Table 1.
 Lemma 9.7 (Fooling family for Lk ). There exists a family {Fn }n with |Fn | = 2αm for a constant
 α > 0, such that any depth-(k−1) Ψ-algorithm in the restricted regime produces identical transcripts
 on distinct x, x′ ∈ Fn while the answers differ via b(uk ).
@@ -871,12 +871,12 @@ n = k · m · ℓ bits.
 
 Theorem 10.2 (UB at depth k). There exists a depth-k Ψ-algorithm deciding Lphase
                                                                            k     in time O(n)
-and O(log m) workspace.
+and O(log2m) workspace.
 
 Proof. Run a k-phase scan. In phase j, stream through Sj using exactly one ιj call per step to access
 the current snapshot view; when the stream position equals q, read vj = Sj (q) and store it. Across
-all phases, we store only v1 , . . . , vk plus counters, totaling O(kℓ) = O(log m) bits. After phase k,
-compute f (v1 , . . . , vk ) and accept accordingly. The total I/O is O(n) and workspace is O(log m).
+all phases, we store only v1 , . . . , vk plus counters, totaling O(kℓ) = O(log2m) bits. After phase k,
+compute f (v1 , . . . , vk ) and accept accordingly. The total I/O is O(n) and workspace is O(log2m).
 
 Lemma 10.3 (Transcript Collision Lemma). There exists a family Fn with |Fn | = 2αmℓ for a fixed
 constant α > 0, such that any depth-(k−1) Ψ-algorithm in the restricted regime produces identical
@@ -979,7 +979,7 @@ separation. We provide a quantitative no-poly-simulation result that eliminates 
 Model Preconditions. Throughout this section we work under the restricted computational
 model used elsewhere in this paper: deterministic, one-pass, no-advice, no-randomness; exactly one
 ιj call per step with information budget B(d, n) = c · d · log2 n; payloads are injected only through
-the transition function δ; workspace is O(log m) and total I/O is O(n). These assumptions are
+the transition function δ; workspace is O(log2m) and total I/O is O(n). These assumptions are
 required to apply the Budget Lemma 8.2 and the associated Ψ-Fooling arguments 8.4.
 
 Simulation Attack Model. Consider a depth-(k−1) algorithm attempting to simulate a single
@@ -1049,7 +1049,7 @@ one of the following occurs:
   4. Multi-pass access: Multiple sequential scans of input enabling state accumulation.
 
 Each violates our restricted computational model assumptions (deterministic, one-pass, no-advice,
-no-randomness; exactly one ιj call per step; B(d, n) = c d log2 n; O(log m) workspace; payload
+no-randomness; exactly one ιj call per step; B(d, n) = c d log2 n; O(log2m) workspace; payload
 injection only via δ).
 
 Proof. Mode 1: If B(d, n) = nγ for some γ > 0, then the total available budget becomes polynomial,
@@ -2472,10 +2472,10 @@ We record four relaxations and their explicit polynomial degradations.
 Relaxation                Degradation bound                                             Reference
 R1: Public randomness     explicit in entropy budget H (state dependence on H)          Lemma 45.1
 R2: Multi-pass (P passes) P · (m + B(d, n)) ≥ c0 · log M (state origin of c0 )          Lemma 45.1
-R3: Advice                survives for o(n) and O(log n); show explicit dependence on   Lemma 45.1
+R3: Advice                survives for o(n) and O(log2n); show explicit dependence on   Lemma 45.1
                           |adv|
 R4: Bandwidth tweak LB stable under small shifts in B(d, n); bound losses               Lemma 45.1
-±O(log n)
+±O(log2n)
 
 
 Lemma (R1: entropy budget). (lem:R1-entropy-budget) Public randomness with entropy
@@ -2488,12 +2488,12 @@ the bound persists with polynomial loss. The constant c0 arises from the query-t
 in the Budget Lemma (normalizing per-step payload to B(d, n) and per-pass overhead m) and the
 base-2 encoding used in transcript counting.
 
-Lemma (R3: advice). (lem:R3-advice) With advice |adv| ∈ {O(log n), o(n)}, the lower bound
+Lemma (R3: advice). (lem:R3-advice) With advice |adv| ∈ {O(log2n), o(n)}, the lower bound
 is stable: the proof augments the information budget by |adv| bits and then applies the Ψ-Fooling/ Ψ-
 Fano tool. Dependence on |adv| is explicit and purely additive inside the budget term.
 
 Lemma (R4: bandwidth tweak). (lem:R4-bandwidth-tweak) For bandwidth shifts B(d, n) 7→
-B(d, n) ± O(log n), the transcript and budget inequalities change by polylogarithmic factors. Anti-
+B(d, n) ± O(log2n), the transcript and budget inequalities change by polylogarithmic factors. Anti-
 simulation and budget monotonicity yield that the lower bound is preserved up to polylogarithmic
 losses with constants inherited from the corresponding tools.
 
@@ -2550,10 +2550,10 @@ width/advice.
 Theorem 47.1 (Bridge: Machine↔Tree). (thm:bridge-machine-tree) Under Controlled
 Relaxations R and standard invariants (no out-of-model operations), Ψ-machine parameters
 {B, T, bw, adv, rand} transfer to Psi-DT {depth, #queries} with losses bounded by poly(n) and at
-most polylog(n) in bandwidth/advice, within domain n ≥ n0 , bw ≤ O(log n), and advice ≤ O(log n)
+most polylog(n) in bandwidth/advice, within domain n ≥ n0 , bw ≤ O(log2n), and advice ≤ O(log2n)
 (or explicitly o(n) where stated). Sketch. Encode a run as a DT transcript with per-query budget
 B(d, n) and apply Lemma 46.1. R1 contributes an additive entropy term; R2 aggregates P passes
-with constant c0 from the Budget tool; R3 adds explicit |adv| bits; R4 shifts B(d, n) by ±O(log n)
+with constant c0 from the Budget tool; R3 adds explicit |adv| bits; R4 shifts B(d, n) by ±O(log2n)
 incurring only polylog losses. These yield the stated polynomial/polylogarithmic degradation and the
 validity domain.
 
@@ -2566,7 +2566,7 @@ base-2 encoding and layer-wise fan-in aggregation; remaining losses are polynomi
 normalization.
 
  Bridge      Source        Target                                 Assumptions                                            Param Map                       LB Ref             UB Ref          Anti-sim Ref                    Validity                           Notes
-psi<->dt   Psi-machine      DT         "R1–R4; (under standard invariants with no out-of-model operations)"   "B,T,bw,adv,rand<->depth,queries"     lem:DT-LB-under-R           -                 -         "n>=n0; bw<=O(log n); advice<=O(log n)"   "losses poly + polylog"
+psi<->dt   Psi-machine      DT         "R1–R4; (under standard invariants with no out-of-model operations)"   "B,T,bw,adv,rand<->depth,queries"     lem:DT-LB-under-R           -                 -         "n>=n0; bw<=O(log2n); advice<=O(log2n)"   "losses poly + polylog"
 dt<->ic        DT        IC-circuits                              "R; anti-sim"                                "depth,queries->size,depth,fan-in"   lem:DT-LB-under-R   lem:IC-transcript   prop:anti-sim              "same as above"                  "explicit log factors"
 
 

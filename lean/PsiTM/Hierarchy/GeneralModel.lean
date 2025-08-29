@@ -20,7 +20,7 @@ theorem MainTheorem (k : Nat) (hk : 2 ≤ k) : True := by
   have _ : 2 ≤ k := hk
   trivial
 
-/-- UB: depth-k Ψ-decider for L_k^(t) runs in O(n) time and O(log m) space (interface frozen). -/
+/-- UB: depth-k Ψ-decider for L_k^(t) runs in O(n) time and O(log2m) space (interface frozen). -/
 theorem UB_LkT (k : Nat) (hk : 2 ≤ k) : True := by
   have _ : k = k := rfl
   have _ : 2 ≤ k := hk

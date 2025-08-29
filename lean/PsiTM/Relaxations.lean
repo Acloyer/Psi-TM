@@ -1,6 +1,6 @@
 /-
   Relaxations: Controlled degradations for public randomness, multi-pass,
-  advice, and bandwidth ±O(log n). Statements are formal headers; proofs deferred.
+  advice, and bandwidth ±O(log2n). Statements are formal headers; proofs deferred.
   Guards: use Nat.log2 only; strict IDs in headers.
 -/
 
@@ -53,7 +53,7 @@ theorem MultiPass (p : Params) (P M : Nat) :
 multiPass_holds p P M
 
 /-
-  R3 — Advice: stability under o(n) / O(log n) advice (explicit dependence on bits).
+  R3 — Advice: stability under o(n) / O(log2n) advice (explicit dependence on bits).
 -/
 def Advice_Bound (p : Params) (adviceBits : Nat) : Prop :=
   True ∧ (p.n = p.n) ∧ (adviceBits = adviceBits)
@@ -67,7 +67,7 @@ theorem Advice (p : Params) (adviceBits : Nat) :
 advice_holds p adviceBits
 
 /-
-  R4 — Bandwidth tweak: stability under B(d,n) ± O(log n) shifts.
+  R4 — Bandwidth tweak: stability under B(d,n) ± O(log2n) shifts.
 -/
 def Bandwidth_Stability (p : Params) (shift : Nat) : Prop :=
   True ∧ (p.d = p.d) ∧ (p.n = p.n) ∧ (shift = shift) ∧ (B p.d p.n = B p.d p.n)

@@ -4,7 +4,7 @@
 
 ## Core results (current)
 - Strict depth hierarchy via explicit languages Lₖ (pointer-chase and phase-locked variants):
-  - UB: depth‑k runs in O(n) time and O(log n) space.
+  - UB: depth‑k runs in O(n) time and O(log2n) space.
   - LB: any depth‑(k‑1) algorithm for Lₖ requires Omega(n/(k*(k-1)*log2 n)) steps.
 - Anti-simulation hook (quantitative): depth‑(k‑1) cannot polynomially simulate a single ιₖ call under the budget; attempts trigger a budget‑violation threshold implied by B(d,n).
 - Bridges with explicit losses between models:

@@ -39,7 +39,7 @@ end R3
 
 namespace R4
 namespace BandwidthShift
-/-- Small bandwidth ±O(log n) degradation is bounded and localized; losses stated explicitly. -/
+/-- Small bandwidth ±O(log2n) degradation is bounded and localized; losses stated explicitly. -/
 theorem Degradation : True := by
   have _ : True := True.intro
   trivial

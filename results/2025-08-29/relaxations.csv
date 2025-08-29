@@ -2,4 +2,4 @@ Relaxation,Setting,LossForm,Parameters,ReferenceLemma,Notes
 R1,Public randomness,log_2 M + B(d n),alpha-beta explicit,Psi.Relax.R1.PublicRand.Degradation,public seeds; no advice
 R2,Multi-pass,log_2 M + B(d n),passes=O(1) or logged; alpha-beta explicit,Psi.Relax.R2.MultiPass.Degradation,state accumulation bound
 R3,Advice,log_2 M + B(d n),advice-size tracked; alpha-beta explicit,Psi.Relax.R3.Advice.Degradation,non-uniform
-R4,Bandwidth +-O(log n),log_2 M + B(d n),+- log_2 factor; alpha-beta explicit,Psi.Relax.R4.BandwidthShift.Degradation,per-step budget perturbation
+R4,Bandwidth +-O(log2n),log_2 M + B(d n),+- log_2 factor; alpha-beta explicit,Psi.Relax.R4.BandwidthShift.Degradation,per-step budget perturbation
