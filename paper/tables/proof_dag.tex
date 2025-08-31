@@ -1,0 +1,15 @@
+\begin{table}[t]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{llllll}
+    From & To & LossForm & Parameters & ReferenceLemma & Notes \\
+    \hline
+    Psi.Bounds.Budget.Core & Psi.Bounds.Fooling.General & $(\log_{2} M)^1 \times (B(d,n))^-1$ & $\alpha=1; \beta=-1$ & Psi.Bounds.Fooling.General & channel capacity \\
+    Psi.Bounds.Fooling.General & Psi.Hierarchy.General.LB\_LkT & $(\log_{2} M)^1 \times (B(d,n))^-1$ & $\alpha=1; \beta=-1$ & Psi.Hierarchy.General.LB\_LkT & depth k-1 LB \\
+    Psi.Hierarchy.General.UB\_LkT & Psi.Hierarchy.General.MainTheorem & $(\log_{2} M)^0 \times (B(d,n))^0$ & $\alpha=0; \beta=0$ & Psi.Hierarchy.General.MainTheorem & UB part \\
+    Psi.Hierarchy.General.AntiSim\_Generalized & Psi.Hierarchy.General.MainTheorem & $(\log_{2} M)^0 \times (B(d,n))^0$ & \textemdash{} & Psi.Hierarchy.General.MainTheorem & anti-sim guard \\
+    Psi.Bridge.MachineToTree & Psi.Bridge.TreeToCircuit & $(\log_{2} M)^0 \times (B(d,n))^0$ & $\alpha,\beta per lemma$ & Psi.Bridge.TreeToCircuit & bridge composition \\
+  \end{tabular}%
+  }
+  \caption{Proof DAG with explicit, localized losses.}
+\end{table}

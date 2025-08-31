@@ -29,7 +29,17 @@ T_{\mathrm{LB}}(n) = \Omega\!\Big(\frac{n}{k(k-1)\,\log_{2} n}\Big),
 with explicit per-relaxation degradation mapping (R1--R4) and certification via the anti-simulation guard and the bridges (see Tables~\ref{tab:bridges} and~\ref{tab:relaxations}).
 \end{theorem}
 
-\paragraph{Proof sketch.} We do not invoke lemmas whose premises assume the restricted regime; all dependencies are routed via Controlled Relaxations and Bridges. \emph{Lean IDs}: \texttt{Psi.Hierarchy.General.MainTheorem}, \texttt{Psi.Hierarchy.General.UB\_LkT}, \texttt{Psi.Hierarchy.General.LB\_LkT}, \texttt{Psi.Hierarchy.General.AntiSim\_Generalized}.
+\paragraph{Proof sketch.}
+We do not invoke lemmas whose premises assume the restricted regime; all
+dependencies are routed via Controlled Relaxations and Bridges.
+\emph{Lean IDs}:
+\begin{flushleft}
+\small\ttfamily
+\texttt{Psi.Hierarchy.General.MainTheorem}\\
+\texttt{Psi.Hierarchy.General.UB\_LkT}\\
+\texttt{Psi.Hierarchy.General.LB\_LkT}\\
+\texttt{Psi.Hierarchy.General.AntiSim\_Generalized}
+\end{flushleft}
 
 \paragraph{Upper bound.} A depth-\(k\) \(\Psi\)-decider for \(L_k^{(t)}\) runs in \(O(n)\) time and \(O(\log_{2} m)\) space with constants frozen by the interface. \emph{Lean ID}: \texttt{Psi.Hierarchy.General.UB\_LkT}.
 

@@ -96,3 +96,11 @@
   lean: Psi.Bridge.MachineToTree
 - latex: Psi.Bridge.TreeToCircuit
   lean: Psi.Bridge.TreeToCircuit
+
+# Bounds (Proof Stack)
+- latex: Psi.Bounds.Budget.Core
+  lean: Psi.Bounds.Budget.Core
+- latex: Psi.Bounds.Fooling.General
+  lean: Psi.Bounds.Fooling.General
+- latex: Psi.Bounds.Fano.General
+  lean: Psi.Bounds.Fano.General

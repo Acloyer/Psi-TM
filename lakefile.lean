@@ -29,7 +29,8 @@ lean_lib PsiTM where
     `PsiTM.Bridges,
     `PsiTM.Hierarchy.GeneralModel,
     `PsiTM.Relaxations.Controlled,
-    `PsiTM.Platforms.Bridges
+    `PsiTM.Platforms.Bridges,
+    `PsiTM.ProofStack.Bounds
   ]
 
 lean_exe psitm where

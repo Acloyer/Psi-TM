@@ -8,6 +8,7 @@ import PsiTM.Bridges
 import PsiTM.Hierarchy.GeneralModel
 import PsiTM.Relaxations.Controlled
 import PsiTM.Platforms.Bridges
+import PsiTM.ProofStack.Bounds
 import Lk_LB_Skeleton
 import Lkphase_Transcript_Skeleton
 

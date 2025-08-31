@@ -1,0 +1,12 @@
+% Proof Stack: Bounds and DAG (v1.0.2)
+\section{Proof Stack and Loss Accounting}
+We formalize the proof stack with explicit, localized losses per edge. The budget is \(B(d,n)=c\,d\log_{2} n\). All entropy terms use base-2 logs.
+
+\paragraph{Core bounds.} The budget counting lemma (\texttt{\textup{Psi.Bounds.Budget.Core}}) parameterizes transcripts under budget; the \emph{$\Psi$-fooling} bound (\texttt{\textup{Psi.Bounds.Fooling.General}}) converts budget and alphabet size \(M\) into channel capacity \(\log_{2} M\); and a Fano-style average-case statement (\texttt{\textup{Psi.Bounds.Fano.General}}) is available when invoked.
+
+\paragraph{Hierarchy wiring.} The lower bound at depth \(k-1\) (\texttt{\textup{Psi.Hierarchy.General.LB\_LkT}}) composes the core bounds with controlled relaxations (R1--R4). The main theorem (\texttt{\textup{Psi.Hierarchy.General.MainTheorem}}) combines the UB construction and the anti-simulation guard.
+
+\paragraph{Bridges.} Platform bridges compose with losses stated as powers of \(\log_{2} M\) and \(B(d,n)\), without hidden polynomial factors.
+
+\paragraph{Determinism.} All logs are base-2; no polynomial placeholders appear in statements.
+

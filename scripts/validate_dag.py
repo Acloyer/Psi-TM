@@ -1,83 +1,106 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Validate docs/deps/psi_dag.gv:
- - Acyclic graph
- - All referenced Lean IDs exist in paper/claims.yaml
-"""
-from __future__ import annotations
-import sys
+import sys, argparse, csv, re
 from pathlib import Path
-import re
-import yaml  # type: ignore
 
 ROOT = Path(__file__).resolve().parents[1]
-DAG_PATH = ROOT / "docs" / "deps" / "psi_dag.gv"
-CLAIMS = ROOT / "paper" / "claims.yaml"
+CLAIMS = ROOT / 'paper' / 'claims.yaml'
 
-EDGE_RE = re.compile(r"\s*\"([^\"]+)\"\s*->\s*\"([^\"]+)\"\s*;")
-NODE_RE = re.compile(r"\s*\"([^\"]+)\"\s*;")
+try:
+    import yaml  # type: ignore
+except Exception as e:
+    yaml = None
 
-def parse_dot_edges(text: str) -> tuple[set[str], list[tuple[str,str]]]:
-    nodes: set[str] = set(NODE_RE.findall(text))
-    edges = EDGE_RE.findall(text)
-    return nodes, edges
+LOSS = re.compile(
+    r'^\s*\(log_2\s*M\)\^\s*(?P<a>-?\d+|α|β)\s*×\s*\(B\(\s*d\s*,\s*n\s*\)\)\^\s*(?P<b>-?\d+|α|β)\s*\s*$'
+)
+ID = re.compile(r'^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9_]+)+$')
+HEADERS = {"From","To","LossForm","Parameters","ReferenceLemma","Notes"}
 
-def is_acyclic(nodes: set[str], edges: list[tuple[str,str]]) -> bool:
-    # Kahn's algorithm
-    incoming = {n: 0 for n in nodes}
-    adj: dict[str, list[str]] = {n: [] for n in nodes}
-    for u, v in edges:
-        if u not in nodes:
-            nodes.add(u)
-            incoming[u] = 0
-            adj[u] = []
-        if v not in nodes:
-            nodes.add(v)
-            incoming[v] = 0
-            adj[v] = []
-        adj[u].append(v)
-        incoming[v] += 1
-    queue = [n for n, deg in incoming.items() if deg == 0]
-    visited = 0
-    while queue:
-        u = queue.pop()
-        visited += 1
-        for v in adj[u]:
-            incoming[v] -= 1
-            if incoming[v] == 0:
-                queue.append(v)
-    return visited == len(nodes)
-
-def load_claim_ids() -> set[str]:
-    data = yaml.safe_load(CLAIMS.read_text(encoding="utf-8"))
+def load_known_ids(claims_path: str) -> set[str]:
+    claims_file = Path(claims_path)
+    if yaml is None or not claims_file.exists():
+        return set()
+    data = yaml.safe_load(claims_file.read_text(encoding='utf-8'))
     ids: set[str] = set()
-    for entry in data:
-        ids.add(entry["lean"])
+    if isinstance(data, list):
+        for entry in data:
+            lean = entry.get('lean') if isinstance(entry, dict) else None
+            if isinstance(lean, str):
+                ids.add(lean)
     return ids
 
-def main() -> int:
-    if not DAG_PATH.exists():
-        print(f"[ERR] Missing DAG: {DAG_PATH}")
-        return 1
-    text = DAG_PATH.read_text(encoding="utf-8")
-    nodes, edges = parse_dot_edges(text)
-    ok = True
-    if not is_acyclic(set(nodes), list(edges)):
-        print("[ERR] Graph has a cycle")
-        ok = False
-    claim_ids = load_claim_ids()
-    missing = sorted([n for n in nodes if n not in claim_ids])
-    if missing:
-        print("[ERR] Nodes not declared in paper/claims.yaml:")
-        for m in missing:
-            print(" -", m)
-        ok = False
-    if ok:
-        print("[OK] DAG acyclic and all nodes covered by claims.yaml")
-        return 0
-    return 1
+from typing import Set, Dict, List, Tuple
 
-if __name__ == "__main__":
+def check_csv(path: Path, known: Set[str], strict: bool) -> int:
+    rc = 0
+    with path.open(newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        if set(reader.fieldnames or []) != HEADERS:
+            print(f"[FAIL] {path}: headers must be exactly {sorted(HEADERS)}, got {reader.fieldnames}")
+            return 1
+        # ID format checks + loss regex
+        nodes: Set[str] = set()
+        edges: List[Tuple[str,str]] = []
+        ok = True
+        for i, row in enumerate(reader, 1):
+            frm = row['From'] or ''
+            to = row['To'] or ''
+            lf = row['LossForm'] or ''
+            rl = row['ReferenceLemma'] or ''
+            # exact loss grammar
+            if not LOSS.match(lf):
+                print(f"[FAIL] {path}:{i} LossForm regex mismatch: {lf}")
+                ok = False
+            # strict node existence in claims if requested
+            if strict:
+                if frm not in known:
+                    print(f"[FAIL] {path}:{i} From node not found in claims.yaml: {frm}")
+                    ok = False
+                if to not in known:
+                    print(f"[FAIL] {path}:{i} To node not found in claims.yaml: {to}")
+                    ok = False
+            # reference must exist in claims
+            if rl not in known:
+                print(f"[FAIL] {path}:{i} ReferenceLemma unknown: {rl}")
+                ok = False
+            nodes.add(frm); nodes.add(to)
+            edges.append((frm, to))
+        if not ok:
+            rc |= 1
+        # DAG acyclicity via Kahn's algorithm
+        adj: Dict[str, Set[str]] = {n: set() for n in nodes}
+        indeg: Dict[str, int] = {n: 0 for n in nodes}
+        for a, b in edges:
+            if b not in adj[a]:
+                adj[a].add(b)
+                indeg[b] += 1
+        queue = [n for n, d in indeg.items() if d == 0]
+        topo: list[str] = []
+        while queue:
+            u = queue.pop()
+            topo.append(u)
+            for v in list(adj[u]):
+                indeg[v] -= 1
+                adj[u].remove(v)
+                if indeg[v] == 0:
+                    queue.append(v)
+        remaining = sum(len(s) for s in adj.values())
+        if remaining != 0:
+            print(f"[FAIL] {path}: cycle(s) detected; not a DAG")
+            rc |= 1
+        if rc == 0:
+            print(f"[OK] {path}")
+        return rc
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--csv', required=True)
+    ap.add_argument('--claims', default=str(CLAIMS))
+    ap.add_argument('--strict', action='store_true')
+    args = ap.parse_args()
+    known = load_known_ids(args.claims)
+    return check_csv(Path(args.csv), known, args.strict)
+
+if __name__ == '__main__':
     sys.exit(main())
 

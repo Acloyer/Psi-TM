@@ -1,3 +1,5 @@
+import PsiTM.ProofStack.Bounds
+
 /-
   General Model Strict Hierarchy (skeleton headers only)
   IDs declared for claims mapping; proofs deferred via admits in bodies.
@@ -8,6 +10,7 @@
 -- ID: Psi.Hierarchy.General.UB_LkT
 -- ID: Psi.Hierarchy.General.LB_LkT
 -- ID: Psi.Hierarchy.General.AntiSim_Generalized
+-- Uses (bounds): Psi.Bounds.Budget.Core, Psi.Bounds.Fooling.General, Psi.Bounds.Fano.General
 
 namespace Psi
 namespace Hierarchy
